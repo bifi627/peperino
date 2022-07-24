@@ -1,4 +1,5 @@
-﻿using Peperino.Infrastructure;
+﻿using Peperino.Application;
+using Peperino.Infrastructure;
 
 namespace Peperino
 {
@@ -7,6 +8,8 @@ namespace Peperino
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddInfrastructure(configuration);
+
+            services.AddApplication();
 
             return services;
         }
