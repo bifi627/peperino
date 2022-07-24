@@ -454,3 +454,5 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 Peperino.Core/Peperino.UserManagement/UserManagement.Api/appsettings.Development.json
+
+Peperino/appsettings.Development.json
