@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using Peperino;
+using Peperino.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Configuration.AddEnvironmentVariables();
+    //builder.Configuration.AddEnvironmentVariables();
 
     builder.Services.AddHttpContextAccessor();
 
@@ -11,7 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
-
 
     builder.Services.AddServices(builder.Configuration);
 }
@@ -27,6 +28,13 @@ var app = builder.Build();
     else
     {
         app.UseHttpsRedirection();
+    }
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
     }
 
     app.UseAuthentication();

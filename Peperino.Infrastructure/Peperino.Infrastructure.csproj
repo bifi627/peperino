@@ -9,8 +9,14 @@
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Peperino.Contracts\Peperino.Contracts.csproj" />
+    <ProjectReference Include="..\Peperino.Domain\Peperino.Domain.csproj" />
   </ItemGroup>
 
 </Project>

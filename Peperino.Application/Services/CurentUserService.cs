@@ -17,7 +17,7 @@ namespace Peperino.Application.Services
         {
             get
             {
-                var id = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var id = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "0";
 
                 return id;
             }
