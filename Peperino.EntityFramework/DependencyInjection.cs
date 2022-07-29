@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Peperino.Infrastructure.Persistence;
 
 namespace Peperino.EntityFramework
 {
@@ -19,6 +20,7 @@ namespace Peperino.EntityFramework
             });
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<IUsersDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
             return services;
         }

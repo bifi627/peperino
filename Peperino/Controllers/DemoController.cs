@@ -9,7 +9,7 @@ namespace Peperino.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DemoController : ControllerBase
+    public class DemoController : ApiControllerBase
     {
         private readonly IApplicationDbContext dbContext;
 
@@ -22,17 +22,26 @@ namespace Peperino.Controllers
         [HttpGet]
         public IEnumerable<Demo> Get()
         {
-            return this.dbContext.Demos.Include(f => f.CreatedBy).Include(f => f.LastModifiedBy);
+            return dbContext.Demos.Include(f => f.CreatedBy).Include(f => f.LastModifiedBy);
         }
 
         // POST api/<DemoController>
         [HttpPost]
         public async Task Post()
         {
-            var demo = new Demo();
-            demo.Value = "TEST";
-            await this.dbContext.Demos.AddAsync(demo);
-            await this.dbContext.SaveChangesAsync(CancellationToken.None);
+            var demo = new Demo
+            {
+                Value = "TEST"
+            };
+
+            await dbContext.Demos.AddAsync(demo);
+            await dbContext.SaveChangesAsync(CancellationToken.None);
+        }
+
+        [HttpDelete]
+        public async Task Delete()
+        {
+            await dbContext.Database.ExecuteSqlRawAsync($"DELETE from public.\"Demos\"");
         }
     }
 }

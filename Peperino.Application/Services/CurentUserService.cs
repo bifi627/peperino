@@ -13,7 +13,7 @@ namespace Peperino.Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string? UserId
+        public string UserId
         {
             get
             {

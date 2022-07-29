@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Peperino.Domain.Base;
 using Peperino.EntityFramework.Entities;
 using Peperino.Infrastructure.Persistence;
@@ -9,12 +10,14 @@ namespace Peperino.EntityFramework
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext, IUsersDbContext
     {
+        private readonly IMediator _mediator;
         private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
 
-        public ApplicationDbContext(DbContextOptions options, AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
+        public ApplicationDbContext(DbContextOptions options, IMediator mediator, AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
             : base(options)
         {
-            this._auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
+            _mediator = mediator;
+            _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
         }
 
         public DbSet<User> Users => Set<User>();
@@ -30,19 +33,14 @@ namespace Peperino.EntityFramework
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
             base.OnModelCreating(builder);
-            //// PostgreSQL uses the public schema by default - not dbo.
-            //modelBuilder.HasDefaultSchema("public");
+        }
 
-            //base.OnModelCreating(modelBuilder);
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            await _mediator.DispatchDomainEvents(this);
 
-            ////Rename Identity tables to lowercase
-            //foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            //{
-            //    var currentTableName = modelBuilder.Entity(entity.Name).Metadata.GetDefaultTableName();
-            //    modelBuilder.Entity(entity.Name).ToTable(currentTableName.ToLower());
-            //}
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }
