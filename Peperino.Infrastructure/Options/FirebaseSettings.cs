@@ -1,4 +1,4 @@
-﻿namespace Peperino.Infrastructure.Authentication
+﻿namespace Peperino.Infrastructure.Options
 {
     internal class FirebaseSettings
     {

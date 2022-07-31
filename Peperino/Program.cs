@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Peperino;
 using Peperino.EntityFramework;
+using Peperino.Infrastructure.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -15,6 +16,20 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSwaggerGen();
 
     builder.Services.AddServices(builder.Configuration);
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DEV", policy =>
+        {
+            policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+        });
+
+        options.AddPolicy("PROD", policy =>
+        {
+            var corsSettings = builder.Configuration.GetSection(CorsSettings.SECTION_NAME).Get<CorsSettings>();
+            policy.WithOrigins(corsSettings.Frontend).WithMethods("POST", "PUT", "GET", "DELETE");
+        });
+    });
 }
 
 var app = builder.Build();
@@ -24,10 +39,14 @@ var app = builder.Build();
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+
+        app.UseCors("DEV");
     }
     else
     {
         app.UseHttpsRedirection();
+
+        app.UseCors("DEV");
     }
 
     using (var scope = app.Services.CreateScope())

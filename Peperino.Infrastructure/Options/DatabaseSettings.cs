@@ -1,4 +1,4 @@
-﻿namespace Peperino.EntityFramework
+﻿namespace Peperino.Infrastructure.Options
 {
     public class DatabaseSettings
     {
