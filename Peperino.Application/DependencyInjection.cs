@@ -13,8 +13,8 @@ namespace Peperino.Application
         {
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             return services;
         }

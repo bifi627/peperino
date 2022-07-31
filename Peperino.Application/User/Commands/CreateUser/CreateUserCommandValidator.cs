@@ -12,10 +12,10 @@ namespace Peperino.Application.User.Commands.CreateUser
             _usersDbContext = usersDbContext;
 
             RuleFor(user => user.ExternalId).NotEmpty().NotEqual("0");
-            RuleFor(user => user.ExternalId).Must(BeUniqueExternalId);
+            RuleFor(user => user.ExternalId).Must(BeUniqueExternalId).WithMessage("Account with this id already created");
 
             RuleFor(user => user.UserName).NotEmpty().MinimumLength(6).MaximumLength(64);
-            RuleFor(user => user.UserName).Must(BeUniqueUserName);
+            RuleFor(user => user.UserName).Must(BeUniqueUserName).WithMessage("Username already in use");
         }
 
         private bool BeUniqueExternalId(string externalId)

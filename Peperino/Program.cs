@@ -37,6 +37,8 @@ var app = builder.Build();
         await context.Database.MigrateAsync();
     }
 
+    app.UseMiddleware<Peperino.Middleware.ExceptionHandlerMiddleware>();
+
     app.UseAuthentication();
     app.UseAuthorization();
 

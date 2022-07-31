@@ -8,6 +8,8 @@ namespace Peperino
     {
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<Middleware.ExceptionHandlerMiddleware>();
+
             services.AddEntityFramework(configuration);
             services.AddInfrastructure(configuration);
 
