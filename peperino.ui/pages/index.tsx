@@ -4,6 +4,17 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
+  const test = () => {
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+    alert(BACKEND_URL);
+
+    fetch(BACKEND_URL + "api/Demo").then(async result => {
+      alert(result.statusText);
+      console.log(result)
+      console.log(await result.json())
+    });
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -14,7 +25,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to Peperino powered by <a href="https://nextjs.org">Next.js!</a>
+          Welcome to <span onClick={test}>Peperino</span> powered by <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
         <p className={styles.description}>
