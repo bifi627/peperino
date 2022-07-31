@@ -1,16 +1,19 @@
+import { EmailAuthProvider, getAuth, GoogleAuthProvider } from "firebase/auth";
 import type { NextPage } from 'next';
-import { signIn, useSession } from "next-auth/react";
 import Head from 'next/head';
 import Image from 'next/image';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { BACKEND_URL } from '../shared/constants';
 import styles from '../styles/Home.module.css';
 
 
 const Home: NextPage = () => {
+    const [user, loading, error] = useAuthState(getAuth());
 
-    const { data: session } = useSession()
-
-    console.log(session);
+    if (loading) {
+        return null;
+    }
 
     const test = () => {
         alert(BACKEND_URL);
@@ -22,11 +25,32 @@ const Home: NextPage = () => {
         });
     };
 
-    if (!session) {
+    const uiConfig: firebaseui.auth.Config = {
+        // Popup signin flow rather than redirect flow.
+        signInFlow: 'popup',
+        // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
+        signInSuccessUrl: '/',
+        callbacks: {
+            signInSuccessWithAuthResult: (result, redirect) => {
+                console.log(result);
+                return true;
+            },
+            signInFailure: (error) => {
+                console.error(error);
+            }
+        },
+        // We will display Google and Facebook as auth providers.
+        signInOptions: [
+            GoogleAuthProvider.PROVIDER_ID,
+            EmailAuthProvider.PROVIDER_ID,
+        ],
+    };
+
+    if (!user) {
         return (
             <>
                 Not signed in <br />
-                <button onClick={() => signIn()}>Sign in</button>
+                <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
             </>
         );
     }
