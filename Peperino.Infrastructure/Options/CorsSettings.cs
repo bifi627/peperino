@@ -3,6 +3,6 @@
     public class CorsSettings
     {
         public const string SECTION_NAME = "CorsSettings";
-        public string Frontend { get; } = "";
+        public string FrontendUrl { get; set; } = "";
     }
 }
