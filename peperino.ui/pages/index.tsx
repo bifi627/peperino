@@ -1,4 +1,4 @@
-import { EmailAuthProvider, getAuth, GoogleAuthProvider } from "firebase/auth";
+import { EmailAuthProvider, getAuth, GoogleAuthProvider, signOut } from "firebase/auth";
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -53,6 +53,12 @@ const Home: NextPage = () => {
                 <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
             </>
         );
+    }
+    else {
+        return (<>
+            Signed in with {user.displayName ?? user.email}<br />
+            <button onClick={() => signOut(getAuth())}>Sign out</button>
+        </>);
     }
 
     return (
