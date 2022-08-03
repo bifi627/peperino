@@ -27,7 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
         options.AddPolicy("PROD", policy =>
         {
             var corsSettings = builder.Configuration.GetSection(CorsSettings.SECTION_NAME).Get<CorsSettings>();
-            policy.WithOrigins(corsSettings.FrontendUrl).WithMethods("POST", "PUT", "GET", "DELETE");
+            policy.WithOrigins(corsSettings.FrontendUrl).WithMethods("POST", "PUT", "GET", "DELETE").AllowAnyHeader();
         });
     });
 }
