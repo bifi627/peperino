@@ -53,6 +53,7 @@ namespace Peperino.Middleware
             return exception switch
             {
                 ApplicationException applicationException => applicationException.Message,
+                ValidationException validationException => validationException.Message,
                 _ => "Server Error"
             };
         }

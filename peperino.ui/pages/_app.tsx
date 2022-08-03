@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import "../lib/apiConfig";
 import "../lib/firebase";
 import '../styles/globals.css';
 
