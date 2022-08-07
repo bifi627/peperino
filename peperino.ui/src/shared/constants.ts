@@ -1,5 +1,5 @@
 export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
-export const FRONTEND_URL = process.env.NEXT_PUBLIC_VERCEL_URL ?? process.env.NEXT_PUBLIC_FRONTEND_URL;
+export const FRONTEND_URL = process.env.NEXT_PUBLIC_VERCEL_URL ? process.env.NEXT_PUBLIC_VERCEL_URL + "/" : process.env.NEXT_PUBLIC_FRONTEND_URL!;
 
 export const AUTH_TOKEN_COOKIE_NAME = process.env.NEXT_PUBLIC_COOKIE_NAME!;
 

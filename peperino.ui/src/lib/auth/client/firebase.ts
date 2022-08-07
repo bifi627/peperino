@@ -39,7 +39,6 @@ export async function postUserToken(token?: string) {
     var url = FRONTEND_URL + path;
     var data = { token: token }
     // Default options are marked with *
-    console.log(url);
     fetch(url, {
         method: 'POST',
         headers: {
