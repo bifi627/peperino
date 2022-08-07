@@ -27,6 +27,22 @@ requestBody?: string,
 
     /**
      * @param requestBody 
+     * @returns string Success
+     * @throws ApiError
+     */
+    public static postApiAuthDelete(
+requestBody?: string,
+): CancelablePromise<string> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/Auth/delete',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @param requestBody 
      * @returns SessionResponseDto Success
      * @throws ApiError
      */

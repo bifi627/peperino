@@ -1,17 +1,11 @@
 import { EmailAuthProvider, getAuth, GoogleAuthProvider, signOut } from "firebase/auth";
 import type { NextPage } from 'next';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { useAuthState } from "react-firebase-hooks/auth";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { ApiError, DemoService, UserService, WeatherForecastService } from "../lib/api";
 import { handleError } from "../lib/apiConfig";
 
 const Home: NextPage = () => {
-    const [user, loading, error] = useAuthState(getAuth());
-
-    if (loading) {
-        return null;
-    }
-
     const uiConfig: firebaseui.auth.Config = {
         // Popup signin flow rather than redirect flow.
         signInFlow: 'popup',
@@ -66,22 +60,26 @@ const Home: NextPage = () => {
         );
     }
 
-    if (!user) {
-        return (
-            <>
+    const [user, loading, error] = useAuthState(getAuth());
+
+    if (loading) {
+        return <>Loading...</>;
+    }
+
+    return (
+        <>
+            {user && <>
+                Signed in with {user?.displayName ?? user?.email}<br />
+                <button onClick={() => signOut(getAuth())}>Sign out</button>
+                <DemoRequests></DemoRequests>
+            </>}
+            {!user && <>
                 Not signed in <br />
                 <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
                 <DemoRequests></DemoRequests>
-            </>
-        );
-    }
-    else {
-        return (<>
-            Signed in with {user.displayName ?? user.email}<br />
-            <button onClick={() => signOut(getAuth())}>Sign out</button>
-            <DemoRequests></DemoRequests>
-        </>);
-    }
+            </>}
+        </>
+    );
 }
 
 export default Home

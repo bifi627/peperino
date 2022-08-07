@@ -8,7 +8,7 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
     if (await authPage(context) === false) {
-        return redirectLogin<Props>();
+        return await redirectLogin<Props>();
     }
 
     const x = await WeatherForecastService.getWeatherForecastAuth();

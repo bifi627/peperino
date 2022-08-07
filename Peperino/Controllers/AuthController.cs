@@ -5,6 +5,7 @@ using Peperino.Contracts.DbContexts;
 using Peperino.Contracts.Services;
 using Peperino.Dtos.Auth;
 using Peperino.Infrastructure.Sessions.Commands.CreateSession;
+using Peperino.Infrastructure.Sessions.Commands.DeleteSession;
 using Peperino.Infrastructure.Sessions.Queries.GetSession;
 
 namespace Peperino.Controllers
@@ -43,6 +44,15 @@ namespace Peperino.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPost("delete")]
+        public async Task<ActionResult<string>> DeleteSession([FromBody] string sessionCookie)
+        {
+            await Mediator.Send(new DeleteSessionCommand(sessionCookie));
+
+            return Ok();
+
         }
 
         [HttpPost("get")]

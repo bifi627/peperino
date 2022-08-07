@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generateApi": "npx openapi-typescript-codegen -i http://localhost:5000/swagger/v1/swagger.json -o ./lib/api --client axios",
-    "generateApi2": " npx swagger-typescript-api -p http://localhost:5000/swagger/v1/swagger.json -o ./lib/api2 --modular --axios"
+    "generateApi": "npx openapi-typescript-codegen -i http://localhost:5000/swagger/v1/swagger.json -o ./src/lib/api --client axios"
   },
   "dependencies": {
     "cookie": "^0.5.0",
