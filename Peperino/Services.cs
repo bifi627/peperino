@@ -15,6 +15,8 @@ namespace Peperino
 
             services.AddApplication();
 
+            services.AddTransient<Middleware.InitialConnectionMiddleware>();
+
             return services;
         }
     }

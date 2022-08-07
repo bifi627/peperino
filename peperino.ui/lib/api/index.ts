@@ -8,10 +8,12 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { BaseEvent } from './models/BaseEvent';
 export type { Demo } from './models/Demo';
+export type { SessionResponseDto } from './models/SessionResponseDto';
 export type { User } from './models/User';
 export type { UserInDto } from './models/UserInDto';
 export type { WeatherForecast } from './models/WeatherForecast';
 
+export { AuthService } from './services/AuthService';
 export { DemoService } from './services/DemoService';
 export { UserService } from './services/UserService';
 export { WeatherForecastService } from './services/WeatherForecastService';

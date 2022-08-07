@@ -2,6 +2,8 @@ export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 export const AUTH_TOKEN_COOKIE_NAME = process.env.NEXT_PUBLIC_COOKIE_NAME!;
 
+export const IS_LOCAL_DEV = BACKEND_URL.includes("192.168.0.106");
+
 export const FIREBASE_CONFIG = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,

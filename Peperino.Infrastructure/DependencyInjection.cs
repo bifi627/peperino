@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Peperino.Contracts.Services;
@@ -6,6 +7,7 @@ using Peperino.Infrastructure.Authentication;
 using Peperino.Infrastructure.Persistence.Interceptors;
 using Peperino.Infrastructure.Services;
 using Peperino.Infrastructure.Validation;
+using System.Reflection;
 
 namespace Peperino.Infrastructure
 {
@@ -20,6 +22,9 @@ namespace Peperino.Infrastructure
             services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             return services;
         }

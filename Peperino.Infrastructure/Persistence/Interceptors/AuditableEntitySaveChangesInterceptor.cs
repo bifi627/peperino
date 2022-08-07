@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Peperino.Contracts.DbContexts;
 using Peperino.Contracts.Services;
 using Peperino.Domain.Base;
 
@@ -42,7 +43,7 @@ namespace Peperino.Infrastructure.Persistence.Interceptors
 
             if (context is IUsersDbContext usersDbContext)
             {
-                var user = usersDbContext.Users.FirstOrDefault(f => f.ExternalId == _currentUserService.UserId);
+                var user = usersDbContext.Users.FirstOrDefault(f => f.ExternalId == _currentUserService.FirebaseUserId);
 
                 foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
                 {

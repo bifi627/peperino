@@ -1,5 +1,6 @@
 ﻿using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,10 +25,10 @@ namespace Peperino.Infrastructure.Authentication
             services.AddSingleton(FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt =>
+                .AddJwtBearer(options =>
                 {
-                    opt.Authority = firebaseConfig.ValidIssuer;
-                    opt.TokenValidationParameters = new TokenValidationParameters
+                    options.Authority = firebaseConfig.ValidIssuer;
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
@@ -36,7 +37,9 @@ namespace Peperino.Infrastructure.Authentication
                         ValidIssuer = firebaseConfig.ValidIssuer,
                         ValidAudience = firebaseConfig.ValidAudience
                     };
-                });
+
+                    options.Validate();
+                }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return services;
         }
