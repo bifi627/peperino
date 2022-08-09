@@ -1,6 +1,6 @@
 import { getApps, initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, onIdTokenChanged, User } from 'firebase/auth';
-import { FIREBASE_CONFIG, FRONTEND_URL } from '../../../shared/constants';
+import { FIREBASE_CONFIG } from '../../../shared/constants';
 
 const firebaseConfig = {
     apiKey: FIREBASE_CONFIG.apiKey,
@@ -36,15 +36,16 @@ export async function setTokenForUser(user: User | null) {
 
 export async function postUserToken(token?: string) {
     var path = "api/auth";
-    var url = FRONTEND_URL + path;
+    var url = path;
     var data = { token: token }
-    console.log(url);
-    // Default options are marked with *
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data) // body data type must match "Content-Type" header
-    });
+
+    if (typeof window !== "undefined") {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+    }
 }
