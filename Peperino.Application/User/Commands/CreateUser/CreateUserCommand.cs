@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Peperino.Application.User.Events;
-using Peperino.Infrastructure.Persistence;
+using Peperino.Contracts.DbContexts;
 
 namespace Peperino.Application.User.Commands.CreateUser
 {
@@ -24,7 +24,7 @@ namespace Peperino.Application.User.Commands.CreateUser
 
             user.AddDomainEvent(new UserCreatedEvent(user));
 
-            _dbContext.Users.Add(user);
+            await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return user.Id;

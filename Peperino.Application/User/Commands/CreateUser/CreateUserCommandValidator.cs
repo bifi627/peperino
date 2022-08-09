@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Peperino.Infrastructure.Persistence;
+using Peperino.Contracts.DbContexts;
 
 namespace Peperino.Application.User.Commands.CreateUser
 {

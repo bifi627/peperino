@@ -19,7 +19,7 @@ namespace Peperino.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> Create(UserInDto user)
         {
-            var userId = await Mediator.Send(new CreateUserCommand(currentUserService.UserId, user.UserName));
+            var userId = await Mediator.Send(new CreateUserCommand(currentUserService.FirebaseUserId, user.UserName));
 
             return Ok(userId);
         }

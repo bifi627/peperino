@@ -61,6 +61,8 @@ var app = builder.Build();
     app.UseAuthentication();
     app.UseAuthorization();
 
+    app.UseMiddleware<Peperino.Middleware.InitialConnectionMiddleware>();
+
     app.MapControllers();
 
     var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";

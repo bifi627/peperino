@@ -1,7 +1,6 @@
 import { getApps, initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, onIdTokenChanged, User } from 'firebase/auth';
-import cookie from "js-cookie";
-import { AUTH_TOKEN_COOKIE_NAME, FIREBASE_CONFIG } from '../shared/constants';
+import { FIREBASE_CONFIG, FRONTEND_URL } from '../../../shared/constants';
 
 const firebaseConfig = {
     apiKey: FIREBASE_CONFIG.apiKey,
@@ -28,11 +27,24 @@ onIdTokenChanged(getAuth(), async (user) => {
 export async function setTokenForUser(user: User | null) {
     if (user) {
         const token = await user?.getIdToken();
-        // console.log(token);
-        // cookie.set(AUTH_TOKEN_COOKIE_NAME, token, { expires: 1, secure: true });
+        await postUserToken(token);
     }
-
     else {
-        cookie.remove(AUTH_TOKEN_COOKIE_NAME);
+        await postUserToken();
     }
+}
+
+export async function postUserToken(token?: string) {
+    var path = "api/auth";
+    var url = FRONTEND_URL + path;
+    var data = { token: token }
+    console.log(url);
+    // Default options are marked with *
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data) // body data type must match "Content-Type" header
+    });
 }

@@ -26,7 +26,7 @@ namespace Peperino.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
-            _logger.LogInformation("{userId} current user id", this.currentUserService.UserId);
+            _logger.LogInformation("{userId} current user id", this.currentUserService.FirebaseUserId);
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -41,7 +41,7 @@ namespace Peperino.Controllers
         [HttpGet("auth", Name = "GetWeatherForecastAuth")]
         public IEnumerable<WeatherForecast> GetAuth()
         {
-            _logger.LogInformation("{userId} current user id", this.currentUserService.UserId);
+            _logger.LogInformation("{userId} current user id", this.currentUserService.FirebaseUserId);
 
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

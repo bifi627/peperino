@@ -1,14 +1,14 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Domain.Base;
+using Peperino.Domain.Session;
 using Peperino.EntityFramework.Entities;
-using Peperino.Infrastructure.Persistence;
 using Peperino.Infrastructure.Persistence.Interceptors;
 using System.Reflection;
 
 namespace Peperino.EntityFramework
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext, IUsersDbContext
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         private readonly IMediator _mediator;
         private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
@@ -23,6 +23,8 @@ namespace Peperino.EntityFramework
         public DbSet<User> Users => Set<User>();
 
         public DbSet<Demo> Demos => Set<Demo>();
+
+        public DbSet<Session> Sessions => Set<Session>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
