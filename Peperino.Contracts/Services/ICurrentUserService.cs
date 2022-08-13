@@ -3,5 +3,6 @@
     public interface ICurrentUserService
     {
         string FirebaseUserId { get; }
+        bool IsKnownPeperinoUser { get; }
     }
 }

@@ -18,7 +18,7 @@ namespace Peperino.Middleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            if (_currentUserService.FirebaseUserId != "0" && _usersDbContext.Users.FirstOrDefault(user => user.ExternalId == _currentUserService.FirebaseUserId) is null)
+            if (_currentUserService.FirebaseUserId != "0" && !_currentUserService.IsKnownPeperinoUser && _usersDbContext.Users.FirstOrDefault(user => user.ExternalId == _currentUserService.FirebaseUserId) is null)
             {
                 var mediatR = context?.RequestServices.GetRequiredService<ISender>();
                 if (mediatR is not null)

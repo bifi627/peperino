@@ -28,7 +28,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 res.status(401).send('Invalid authentication');
             }
         }
-        else {
+        else if (session) {
             const options: CookieSerializeOptions = { httpOnly: true, secure: !IS_LOCAL_DEV, path: '/', expires: new Date(1970) };
             res.setHeader("Set-Cookie", serialize(AUTH_TOKEN_COOKIE_NAME, "__", options));
             await AuthService.postApiAuthDelete(session);

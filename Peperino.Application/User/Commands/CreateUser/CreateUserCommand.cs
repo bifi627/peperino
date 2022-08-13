@@ -24,7 +24,7 @@ namespace Peperino.Application.User.Commands.CreateUser
 
             user.AddDomainEvent(new UserCreatedEvent(user));
 
-            await _dbContext.Users.AddAsync(user);
+            await _dbContext.Users.AddAsync(user, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return user.Id;
