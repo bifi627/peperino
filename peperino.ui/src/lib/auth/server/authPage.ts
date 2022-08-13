@@ -9,6 +9,7 @@ export const authPage = async (context: GetServerSidePropsContext, ...claimReque
     const sessionCookie = context.req.cookies[AUTH_TOKEN_COOKIE_NAME];
 
     if (sessionCookie === undefined || sessionCookie === "") {
+        console.log("No session cookie!")
         return false;
     }
 
@@ -16,6 +17,7 @@ export const authPage = async (context: GetServerSidePropsContext, ...claimReque
         const response = await AuthService.postApiAuthGet(sessionCookie);
 
         if (!response.idToken || !response.claims) {
+            console.log("No idtoken or claims!")
             return false;
         }
 
@@ -25,6 +27,8 @@ export const authPage = async (context: GetServerSidePropsContext, ...claimReque
         }
 
     } catch (error) {
+        console.error("CRASH");
+        console.error(error);
         return false;
     }
 
