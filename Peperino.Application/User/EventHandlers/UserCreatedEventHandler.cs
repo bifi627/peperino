@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Peperino.Application.User.Events;
-using Peperino.Contracts.Constants.Authentication;
 using Peperino.Contracts.Services;
 
 namespace Peperino.Application.User.EventHandlers
@@ -21,7 +20,7 @@ namespace Peperino.Application.User.EventHandlers
         {
             _logger.LogInformation("Sample Domain Event: {DomainEvent}", notification.GetType().Name);
 
-            await _customClaimService.AddClaim(notification.User.ExternalId, CustomClaimsTypes.IS_PEPERINO_USER, "true");
+            //await _customClaimService.AddClaim(notification.User.Id, CustomClaimsTypes.IS_PEPERINO_USER, "true");
         }
     }
 }

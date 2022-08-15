@@ -20,6 +20,8 @@ namespace Peperino.Infrastructure
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
             services.AddScoped<AuditableEntitySaveChangesInterceptor>();
+            services.AddScoped<OwnableEntityCreatedInterceptor>();
+
             services.AddScoped<ICustomClaimService, CustomClaimService>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

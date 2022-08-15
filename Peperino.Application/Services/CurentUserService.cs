@@ -9,12 +9,13 @@ namespace Peperino.Application.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        // Dont inject DbContexts here!!!! Migrations will hang...
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string FirebaseUserId
+        public string UserId
         {
             get
             {

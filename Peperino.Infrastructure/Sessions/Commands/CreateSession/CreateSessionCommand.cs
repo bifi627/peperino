@@ -4,7 +4,7 @@ using Peperino.Domain.Session;
 
 namespace Peperino.Infrastructure.Sessions.Commands.CreateSession
 {
-    public record CreateSessionCommand(string FirebaseUserId, string SessionCookie, string Token, string SessionName) : IRequest<Unit>;
+    public record CreateSessionCommand(string UserId, string SessionCookie, string Token, string SessionName) : IRequest<Unit>;
     public class CreateSessionCommandHandler : IRequestHandler<CreateSessionCommand, Unit>
     {
         private readonly ISessionDbContext _sessionDbContext;
@@ -18,10 +18,10 @@ namespace Peperino.Infrastructure.Sessions.Commands.CreateSession
 
         public async Task<Unit> Handle(CreateSessionCommand request, CancellationToken cancellationToken)
         {
-            request.Deconstruct(out string externalId, out string sessionCookie, out string token, out string sessionName);
+            request.Deconstruct(out string userId, out string sessionCookie, out string token, out string sessionName);
 
             // Get first existing session
-            var existingSession = _sessionDbContext.Sessions.FirstOrDefault(session => session.User.ExternalId == externalId && session.SessionName == sessionName);
+            var existingSession = _sessionDbContext.Sessions.FirstOrDefault(session => session.User.Id == userId && session.SessionName == sessionName);
 
             if (existingSession is not null)
             {
@@ -32,11 +32,11 @@ namespace Peperino.Infrastructure.Sessions.Commands.CreateSession
                 _sessionDbContext.Sessions.Update(existingSession);
 
                 // Remove other duplicate sessions
-                _sessionDbContext.Sessions.RemoveRange(_sessionDbContext.Sessions.Where(session => session.User.ExternalId == externalId && session.SessionName == sessionName && session.Id != existingSession.Id));
+                _sessionDbContext.Sessions.RemoveRange(_sessionDbContext.Sessions.Where(session => session.User.Id == userId && session.SessionName == sessionName && session.Id != existingSession.Id));
             }
             else
             {
-                var user = _usersDbContext.Users.FirstOrDefault(user => user.ExternalId == externalId);
+                var user = _usersDbContext.Users.FirstOrDefault(user => user.Id == userId);
 
                 // Create new session for user if user exists
                 if (user is not null)

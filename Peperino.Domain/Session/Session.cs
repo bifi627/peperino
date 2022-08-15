@@ -2,7 +2,7 @@
 
 namespace Peperino.Domain.Session
 {
-    public class Session : BaseEntity
+    public class Session : BaseEntity<int>
     {
         public string SessionCookie { get; set; } = "";
         public string SessionName { get; set; } = "";

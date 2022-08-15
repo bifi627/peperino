@@ -32,13 +32,13 @@ namespace Peperino.Controllers
             var expiresIn = 5 * 60 * 1000;
 
             var token = await _firebaseAuth.VerifyIdTokenAsync(idToken, true);
-            var user = await _firebaseAuth.GetUserAsync(_currentUserService.FirebaseUserId);
+            var user = await _firebaseAuth.GetUserAsync(_currentUserService.UserId);
 
             if (token.Uid == user.Uid)
             {
                 var sessionCookie = await _firebaseAuth.CreateSessionCookieAsync(idToken, new SessionCookieOptions() { ExpiresIn = TimeSpan.FromMilliseconds(expiresIn) });
 
-                await Mediator.Send(new CreateSessionCommand(_currentUserService.FirebaseUserId, sessionCookie, idToken, "WebSession"));
+                await Mediator.Send(new CreateSessionCommand(_currentUserService.UserId, sessionCookie, idToken, "WebSession"));
 
                 return Ok(sessionCookie);
             }
@@ -68,7 +68,7 @@ namespace Peperino.Controllers
                 {
                     IdToken = session.Token,
                     Claims = sessionTokenResponse.Claims,
-                    UserName = _usersDbContext.Users.First(user => user.ExternalId == sessionTokenResponse.Uid).UserName,
+                    UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "",
                 };
                 return response;
             }

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Peperino.Domain.Exceptions;
 using System.Text.Json;
 
 namespace Peperino.Middleware
@@ -28,9 +29,9 @@ namespace Peperino.Middleware
             var statusCode = GetStatusCode(exception);
             var response = new
             {
-                message = GetMessage(exception),
+                details = GetDetails(exception),
                 status = statusCode,
-                detail = exception.Message,
+                message = exception.Message,
                 errors = GetErrors(exception)
             };
             httpContext.Response.ContentType = "application/json";
@@ -44,16 +45,18 @@ namespace Peperino.Middleware
                 BadHttpRequestException => StatusCodes.Status400BadRequest,
                 //NotFoundException => StatusCodes.Status404NotFound,
                 ValidationException => StatusCodes.Status422UnprocessableEntity,
+                EntityAccessException => StatusCodes.Status403Forbidden,
                 _ => StatusCodes.Status500InternalServerError
             };
         }
 
-        private static string GetMessage(Exception exception)
+        private static string GetDetails(Exception exception)
         {
             return exception switch
             {
                 ApplicationException applicationException => applicationException.Message,
                 ValidationException validationException => validationException.Message,
+                EntityAccessException entityAccessException => entityAccessException.GetReason(),
                 _ => "Server Error"
             };
         }

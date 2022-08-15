@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Peperino.Domain.Base
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity<KeyType>
     {
         [Key]
-        public int Id { get; set; }
+        public KeyType Id { get; set; }
 
         private readonly List<BaseEvent> _domainEvents = new();
 

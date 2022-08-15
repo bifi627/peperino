@@ -19,18 +19,18 @@ namespace Peperino.Middleware
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            if (_currentUserService.FirebaseUserId != "0" && !_checkedConnections.Contains(_currentUserService.FirebaseUserId))
+            if (_currentUserService.UserId != "0" && !_checkedConnections.Contains(_currentUserService.UserId))
             {
-                if (_usersDbContext.Users.FirstOrDefault(user => user.ExternalId == _currentUserService.FirebaseUserId) is null)
+                if (await _usersDbContext.Users.FindAsync(_currentUserService.UserId) is null)
                 {
                     var mediatR = context?.RequestServices.GetRequiredService<ISender>();
                     if (mediatR is not null)
                     {
-                        var newUserId = await mediatR.Send(new CreateUserCommand(_currentUserService.FirebaseUserId, "Anonymous_" + Guid.NewGuid().ToString()));
+                        var newUserId = await mediatR.Send(new CreateUserCommand(_currentUserService.UserId, "Anonymous_" + Guid.NewGuid().ToString()));
                     }
                 }
 
-                _checkedConnections.Add(_currentUserService.FirebaseUserId);
+                _checkedConnections.Add(_currentUserService.UserId);
             }
 
             await next(context);

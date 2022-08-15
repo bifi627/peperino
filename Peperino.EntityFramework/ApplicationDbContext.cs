@@ -12,15 +12,21 @@ namespace Peperino.EntityFramework
     {
         private readonly IMediator _mediator;
         private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
+        private readonly OwnableEntityCreatedInterceptor _ownableEntityCreatedInterceptor;
 
-        public ApplicationDbContext(DbContextOptions options, IMediator mediator, AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor)
+        public ApplicationDbContext(DbContextOptions options,
+                                    IMediator mediator,
+                                    AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor,
+                                    OwnableEntityCreatedInterceptor ownableEntityCreatedInterceptor)
             : base(options)
         {
             _mediator = mediator;
             _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
+            _ownableEntityCreatedInterceptor = ownableEntityCreatedInterceptor;
         }
 
         public DbSet<User> Users => Set<User>();
+        public DbSet<UserGroup> UserGroups => Set<UserGroup>();
 
         public DbSet<Demo> Demos => Set<Demo>();
 
@@ -29,7 +35,8 @@ namespace Peperino.EntityFramework
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql();
-            optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor);
+
+            optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor, _ownableEntityCreatedInterceptor);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

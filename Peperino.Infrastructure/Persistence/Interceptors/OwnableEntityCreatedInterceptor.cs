@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Peperino.Contracts.DbContexts;
 using Peperino.Contracts.Services;
@@ -7,17 +6,13 @@ using Peperino.Domain.Base;
 
 namespace Peperino.Infrastructure.Persistence.Interceptors
 {
-    public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
+    public class OwnableEntityCreatedInterceptor : SaveChangesInterceptor
     {
         private readonly ICurrentUserService _currentUserService;
-        private readonly IDateTimeProvider _dateTime;
 
-        public AuditableEntitySaveChangesInterceptor(
-            ICurrentUserService currentUserService,
-            IDateTimeProvider dateTimeProvider)
+        public OwnableEntityCreatedInterceptor(ICurrentUserService currentUserService)
         {
             _currentUserService = currentUserService;
-            _dateTime = dateTimeProvider;
         }
 
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -36,7 +31,7 @@ namespace Peperino.Infrastructure.Persistence.Interceptors
 
         public void UpdateEntities(DbContext? context)
         {
-            if (context == null)
+            if (context is null)
             {
                 return;
             }
@@ -45,18 +40,11 @@ namespace Peperino.Infrastructure.Persistence.Interceptors
             {
                 var user = usersDbContext.Users.FirstOrDefault(user => user.Id == _currentUserService.UserId);
 
-                foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
+                foreach (var entry in context.ChangeTracker.Entries<BaseOwnableEntity>())
                 {
-                    if (entry.State == EntityState.Added)
+                    if (entry.State == EntityState.Added && user is not null && entry.Entity.Access.UserAccess.FirstOrDefault(a => a.User.Id == user.Id) is null)
                     {
-                        entry.Entity.CreatedBy = user;
-                        entry.Entity.Created = _dateTime.UtcNow;
-                    }
-
-                    if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
-                    {
-                        entry.Entity.LastModifiedBy = user;
-                        entry.Entity.LastModified = _dateTime.UtcNow;
+                        entry.Entity.Access.UserAccess.Add(new UserAccess() { User = user, AccessLevel = AccessLevel.Owner });
                     }
                 }
             }
@@ -64,17 +52,6 @@ namespace Peperino.Infrastructure.Persistence.Interceptors
             {
                 throw new Exception("Unknown db context");
             }
-        }
-    }
-
-    public static class Extensions
-    {
-        public static bool HasChangedOwnedEntities(this EntityEntry entry)
-        {
-            return entry.References.Any(r =>
-                r.TargetEntry != null &&
-                r.TargetEntry.Metadata.IsOwned() &&
-                (r.TargetEntry.State == EntityState.Added || r.TargetEntry.State == EntityState.Modified));
         }
     }
 }

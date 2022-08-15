@@ -10,10 +10,10 @@ namespace Peperino
         {
             services.AddTransient<Middleware.ExceptionHandlerMiddleware>();
 
+            services.AddApplication();
             services.AddEntityFramework(configuration);
             services.AddInfrastructure(configuration);
 
-            services.AddApplication();
 
             services.AddTransient<Middleware.InitialConnectionMiddleware>();
 

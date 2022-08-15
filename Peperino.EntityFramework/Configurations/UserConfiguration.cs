@@ -8,7 +8,8 @@ namespace Peperino.EntityFramework.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.HasKey(user => new { user.Id, user.ExternalId });
+            builder.HasKey(user => user.Id);
+            builder.HasMany(user => user.UserGroups).WithMany(ug => ug.Users);
         }
     }
 }

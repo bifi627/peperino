@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Peperino.Contracts.Services;
+using Peperino.Domain.Base;
 using Peperino.EntityFramework;
 using Peperino.EntityFramework.Entities;
 
@@ -9,20 +12,38 @@ namespace Peperino.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DemoController : ApiControllerBase
     {
-        private readonly IApplicationDbContext dbContext;
+        private readonly IApplicationDbContext _dbContext;
+        private readonly ICurrentUserService _currentUserService;
 
-        public DemoController(IApplicationDbContext dbContext)
+        public DemoController(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
-            this.dbContext = dbContext;
+            _dbContext = dbContext;
+            _currentUserService = currentUserService;
         }
 
         // GET: api/<DemoController>
         [HttpGet]
         public IEnumerable<Demo> Get()
         {
-            return dbContext.Demos.Include(f => f.CreatedBy).Include(f => f.LastModifiedBy);
+            var demos = _dbContext.Demos.WithOwnable().WithAuditable();
+
+            return demos.FilterRequireRead(CurrentUser);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Demo>> GetById(int id)
+        {
+            var demo = await _dbContext.Demos.Include(f => f.CreatedBy).Include(f => f.LastModifiedBy).Include(f => f.Access.UserAccess).Include(f => f.Access.GroupAccess).FirstOrDefaultAsync(demo => demo.Id == id);
+            if (demo is not null)
+            {
+                demo.RequireAccess(CurrentUser, AccessLevel.Read);
+                return demo;
+            }
+
+            return BadRequest();
         }
 
         // POST api/<DemoController>
@@ -34,14 +55,14 @@ namespace Peperino.Controllers
                 Value = "TEST"
             };
 
-            await dbContext.Demos.AddAsync(demo);
-            await dbContext.SaveChangesAsync(CancellationToken.None);
+            await _dbContext.Demos.AddAsync(demo);
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
         }
 
         [HttpDelete]
         public async Task Delete()
         {
-            await dbContext.Database.ExecuteSqlRawAsync($"DELETE from public.\"Demos\"");
+            await _dbContext.Database.ExecuteSqlRawAsync($"DELETE from public.\"Demos\"");
         }
     }
 }

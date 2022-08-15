@@ -4,8 +4,8 @@ using Peperino.Contracts.DbContexts;
 
 namespace Peperino.Application.User.Commands.CreateUser
 {
-    public record CreateUserCommand(string ExternalId, string UserName) : IRequest<int>;
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
+    public record CreateUserCommand(string UserId, string UserName) : IRequest<string>;
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, string>
     {
         private readonly IUsersDbContext _dbContext;
 
@@ -14,11 +14,11 @@ namespace Peperino.Application.User.Commands.CreateUser
             _dbContext = dbContext;
         }
 
-        public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var user = new Domain.Base.User
             {
-                ExternalId = request.ExternalId,
+                Id = request.UserId,
                 UserName = request.UserName
             };
 
