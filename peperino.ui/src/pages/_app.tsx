@@ -1,11 +1,28 @@
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import type { AppProps } from 'next/app';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
-import '../styles/globals.css';
+import createEmotionCache from '../lib/styles/EmotionCache';
+import { CustomTheme } from '../styles/CustomTheme';
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+const clientSideEmotionCache = createEmotionCache();
+
+interface MyAppProps extends AppProps {
+    emotionCache?: EmotionCache;
+}
+
+function MyApp(props: MyAppProps) {
+    const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
     return (
-        <Component {...pageProps} />
+        <CacheProvider value={emotionCache}>
+            <ThemeProvider theme={CustomTheme}>
+                <CssBaseline />
+                <div style={{ height: "100vh" }}>
+                    <Component {...pageProps} />
+                </div>
+            </ThemeProvider>
+        </CacheProvider>
     );
 }
 

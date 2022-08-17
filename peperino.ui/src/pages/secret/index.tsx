@@ -1,3 +1,4 @@
+import { Switch } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { WeatherForecastService } from "../../lib/api";
 import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
@@ -7,8 +8,9 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
+    console.log(context.resolvedUrl);
     if (await authPage(context) === false) {
-        return await redirectLogin<Props>();
+        return await redirectLogin<Props>(context.resolvedUrl);
     }
 
     const x = await WeatherForecastService.getWeatherForecastAuth();
@@ -25,6 +27,7 @@ const SecretPage = (p: Props) => {
         <>
             Secret
             {p.text}
+            <Switch></Switch>
         </>
     );
 };

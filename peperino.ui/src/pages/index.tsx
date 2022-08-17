@@ -1,31 +1,13 @@
-import { EmailAuthProvider, getAuth, GoogleAuthProvider, signOut } from "firebase/auth";
+import { Switch } from "@mui/material";
+import { getAuth, signOut } from "firebase/auth";
 import type { NextPage } from 'next';
+import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth";
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { ApiError, DemoService, UserService, WeatherForecastService } from "../lib/api";
 import { handleError } from "../lib/apiConfig";
+import { KnownRoutes } from "../lib/routing/knownRoutes";
 
 const Home: NextPage = () => {
-    const uiConfig: firebaseui.auth.Config = {
-        // Popup signin flow rather than redirect flow.
-        signInFlow: 'popup',
-        // Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
-        signInSuccessUrl: '/',
-        callbacks: {
-            signInSuccessWithAuthResult: (result, redirect) => {
-                console.log(result);
-                return true;
-            },
-            signInFailure: (error) => {
-                console.error(error);
-            }
-        },
-        // We will display Google and Facebook as auth providers.
-        signInOptions: [
-            GoogleAuthProvider.PROVIDER_ID,
-            EmailAuthProvider.PROVIDER_ID,
-        ],
-    };
 
     const DemoRequests = () => {
         return (
@@ -56,6 +38,10 @@ const Home: NextPage = () => {
                         console.log(m);
                     }
                 }}>Create User</button>
+                <br />
+                <Switch defaultChecked />
+                <Switch />
+                <Switch disabled defaultChecked />
             </>
         );
     }
@@ -75,7 +61,9 @@ const Home: NextPage = () => {
             </>}
             {!user && <>
                 Not signed in <br />
-                <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
+                <Link href={KnownRoutes.Login()} passHref>
+                    <button>Login</button>
+                </Link>
                 <DemoRequests></DemoRequests>
             </>}
         </>

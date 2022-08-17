@@ -34,5 +34,8 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             await AuthService.postApiAuthDelete(session);
             res.status(200).end();
         }
+        else {
+            res.status(500).end();
+        }
     }
 }

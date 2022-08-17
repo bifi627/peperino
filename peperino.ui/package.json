@@ -10,14 +10,18 @@
     "generateApi": "npx openapi-typescript-codegen -i http://localhost:5000/swagger/v1/swagger.json -o ./src/lib/api --client axios"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/server": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/material": "^5.10.1",
     "cookie": "^0.5.0",
     "firebase": "^9.9.1",
+    "firebaseui": "^6.0.1",
     "js-cookie": "^3.0.1",
     "next": "12.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-firebase-hooks": "^5.0.3",
-    "react-firebaseui": "^6.0.0"
+    "react-firebase-hooks": "^5.0.3"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",
