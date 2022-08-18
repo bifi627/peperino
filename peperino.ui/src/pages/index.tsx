@@ -1,20 +1,24 @@
-import { Switch } from "@mui/material";
-import { getAuth, signOut } from "firebase/auth";
+import { Login, Logout, MoreVert } from "@mui/icons-material";
+import { Avatar, Switch } from "@mui/material";
+import { getAuth, signOut, User } from "firebase/auth";
 import type { NextPage } from 'next';
 import Link from "next/link";
+import router, { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { ApiError, DemoService, UserService, WeatherForecastService } from "../lib/api";
+import { ApiError, UserService, WeatherForecastService } from "../lib/api";
 import { handleError } from "../lib/apiConfig";
+import { AppFrameConfig } from "../lib/appFrame/AppFrameConfig";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
 const Home: NextPage = () => {
+
+    const router = useRouter();
 
     const DemoRequests = () => {
         return (
             <>
                 <button onClick={async () => {
-                    const result = await DemoService.getApiDemo()
-                    console.log(result);
+                    router.push(KnownRoutes.Demo());
                 }}>Demo Request</button>
                 <button onClick={async () => {
                     const result = await WeatherForecastService.getWeatherForecast()
@@ -68,6 +72,33 @@ const Home: NextPage = () => {
             </>}
         </>
     );
+}
+
+export const DefaultAppFrameConifg = (user: User): AppFrameConfig => {
+    return {
+        contextMenuIcon: <MoreVert />,
+        userAvatarIcon: <Avatar src={user.photoURL ?? ""} />,
+        userAvatarActions: [{
+            text: "Logout",
+            action: async () => {
+                await signOut(getAuth())
+                router.push(KnownRoutes.Root());
+            },
+            icon: <Logout />
+        }]
+    }
+}
+
+export const AnonymousAppFrameConifg: AppFrameConfig = {
+    contextMenuIcon: <MoreVert />,
+    userAvatarIcon: <Avatar />,
+    userAvatarActions: [{
+        text: "Login",
+        action: async () => {
+            router.push(KnownRoutes.Login(router.asPath));
+        },
+        icon: <Login />
+    }]
 }
 
 export default Home

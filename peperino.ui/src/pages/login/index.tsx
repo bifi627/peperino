@@ -28,9 +28,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div>
-            <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
-        </div>
+        <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
     );
 };
 
