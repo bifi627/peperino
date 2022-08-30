@@ -7,15 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Peperino/Peperino.csproj", "Peperino/"]
-COPY ["Peperino.Infrastructure/Peperino.Infrastructure.csproj", "Peperino.Infrastructure/"]
-COPY ["Peperino.Contracts/Peperino.Contracts.csproj", "Peperino.Contracts/"]
-COPY ["Peperino.Domain/Peperino.Domain.csproj", "Peperino.Domain/"]
-COPY ["Peperino.EntityFramework/Peperino.EntityFramework.csproj", "Peperino.EntityFramework/"]
-COPY ["Peperino.Application/Peperino.Application.csproj", "Peperino.Application/"]
-RUN dotnet restore "Peperino/Peperino.csproj"
+COPY ["Peperino.csproj", "."]
+RUN dotnet restore "./Peperino.csproj"
 COPY . .
-WORKDIR "/src/Peperino"
+WORKDIR "/src/."
 RUN dotnet build "Peperino.csproj" -c Release -o /app/build
 
 FROM build AS publish
