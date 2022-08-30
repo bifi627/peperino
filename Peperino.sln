@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32602.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peperino", "Peperino\Peperino.csproj", "{BFB4319B-E13C-4E4B-8C00-0F1FB0152C89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.Application", "Peperino.Application\Peperino.Application.csproj", "{8C577B42-4CA2-40F3-99C4-640309338591}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.Infrastructure", "Peperino.Infrastructure\Peperino.Infrastructure.csproj", "{3E16D394-8E4A-45B1-860C-46FD08B0EFEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.Domain", "Peperino.Domain\Peperino.Domain.csproj", "{AE65ADB4-A46E-4275-B080-09716C98CABA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.EntityFramework", "Peperino.EntityFramework\Peperino.EntityFramework.csproj", "{7C32DF50-2F6F-4573-9C56-E55CFBEF32C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.Contracts", "Peperino.Contracts\Peperino.Contracts.csproj", "{C05906D1-F7AA-4B11-AF39-ED8F11891C53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntityFramework", "EntityFramework", "{24FEF750-9C6F-4332-82F9-AC70284C5093}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFB4319B-E13C-4E4B-8C00-0F1FB0152C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFB4319B-E13C-4E4B-8C00-0F1FB0152C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFB4319B-E13C-4E4B-8C00-0F1FB0152C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFB4319B-E13C-4E4B-8C00-0F1FB0152C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C577B42-4CA2-40F3-99C4-640309338591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C577B42-4CA2-40F3-99C4-640309338591}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C577B42-4CA2-40F3-99C4-640309338591}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C577B42-4CA2-40F3-99C4-640309338591}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E16D394-8E4A-45B1-860C-46FD08B0EFEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E16D394-8E4A-45B1-860C-46FD08B0EFEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E16D394-8E4A-45B1-860C-46FD08B0EFEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E16D394-8E4A-45B1-860C-46FD08B0EFEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE65ADB4-A46E-4275-B080-09716C98CABA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE65ADB4-A46E-4275-B080-09716C98CABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE65ADB4-A46E-4275-B080-09716C98CABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE65ADB4-A46E-4275-B080-09716C98CABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C32DF50-2F6F-4573-9C56-E55CFBEF32C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C32DF50-2F6F-4573-9C56-E55CFBEF32C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C32DF50-2F6F-4573-9C56-E55CFBEF32C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C32DF50-2F6F-4573-9C56-E55CFBEF32C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05906D1-F7AA-4B11-AF39-ED8F11891C53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05906D1-F7AA-4B11-AF39-ED8F11891C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05906D1-F7AA-4B11-AF39-ED8F11891C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05906D1-F7AA-4B11-AF39-ED8F11891C53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7C32DF50-2F6F-4573-9C56-E55CFBEF32C0} = {24FEF750-9C6F-4332-82F9-AC70284C5093}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04129814-D395-4903-937E-57B9EC5701AF}
+	EndGlobalSection
+EndGlobal
