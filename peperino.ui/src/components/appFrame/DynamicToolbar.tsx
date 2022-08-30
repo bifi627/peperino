@@ -14,7 +14,7 @@ export const DynamicToolbar = () => {
             <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
             </IconButton>
             <Typography sx={{ flexGrow: 1 }} variant="h6" color="inherit" component="div">
-                {router.route} | {router.pathname} | {router.asPath} | {router.basePath}
+                {appFrameConfig.toolbarText}
             </Typography>
             {appFrameConfig.contextMenuActions && <ContextAction />}
             <UserAvatarMenu />

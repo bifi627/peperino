@@ -1,30 +1,37 @@
-import { CacheProvider, EmotionCache } from '@emotion/react';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { EmotionCache } from '@emotion/react';
+import { getAuth } from 'firebase/auth';
 import type { AppProps } from 'next/app';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { AppFrame } from '../components/appFrame/AppFrame';
+import { FullLoadingPage } from '../components/loadingScreen/FullLoadingPage';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
-import createEmotionCache from '../lib/styles/EmotionCache';
-import { CustomTheme } from '../styles/CustomTheme';
+import PageProvider from '../styles/PageThemeProvider';
 
-const clientSideEmotionCache = createEmotionCache();
 
-interface MyAppProps extends AppProps {
+export interface MUIAppProps extends AppProps {
     emotionCache?: EmotionCache;
 }
 
-function MyApp(props: MyAppProps) {
-    const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+function MyApp(props: MUIAppProps) {
+    const { Component, pageProps, emotionCache } = props;
+
+    const [user, loading, error] = useAuthState(getAuth());
+
+    if (!loading) {
+        return (
+            <PageProvider emotionCache={emotionCache}>
+                <FullLoadingPage></FullLoadingPage>
+            </PageProvider>
+        );
+    }
 
     return (
-        <CacheProvider value={emotionCache}>
-            <ThemeProvider theme={CustomTheme}>
-                <CssBaseline />
-                <AppFrame>
-                    <Component {...pageProps} />
-                </AppFrame>
-            </ThemeProvider>
-        </CacheProvider>
+        <PageProvider emotionCache={emotionCache}>
+            <AppFrame>
+                <Component {...pageProps} />
+            </AppFrame>
+        </PageProvider>
     );
 }
 

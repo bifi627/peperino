@@ -1,10 +1,11 @@
 import createEmotionServer from '@emotion/server/create-instance';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 import * as React from 'react';
-import createEmotionCache from '../lib/styles/EmotionCache';
+import createEmotionCache from '../styles/EmotionCache';
 
 export default class MyDocument extends Document {
     render() {
+        console.log(process.env.theme);
         return (
             <Html lang="en">
                 <Head>
@@ -12,6 +13,7 @@ export default class MyDocument extends Document {
                         rel="stylesheet"
                         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
                     />
+                    {(this.props as any).emotionStyleTags}
                 </Head>
                 <body>
                     <Main />

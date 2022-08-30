@@ -76,6 +76,7 @@ const Home: NextPage = () => {
 
 export const DefaultAppFrameConifg = (user: User): AppFrameConfig => {
     return {
+        toolbarText: "Peperino",
         contextMenuIcon: <MoreVert />,
         userAvatarIcon: <Avatar src={user.photoURL ?? ""} />,
         userAvatarActions: [{
@@ -90,6 +91,7 @@ export const DefaultAppFrameConifg = (user: User): AppFrameConfig => {
 }
 
 export const AnonymousAppFrameConifg: AppFrameConfig = {
+    toolbarText: "Peperino",
     contextMenuIcon: <MoreVert />,
     userAvatarIcon: <Avatar />,
     userAvatarActions: [{
