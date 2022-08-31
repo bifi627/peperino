@@ -21,6 +21,7 @@ export type { WeatherForecast } from './models/WeatherForecast';
 
 export { AuthService } from './services/AuthService';
 export { DemoService } from './services/DemoService';
+export { HealthCheckService } from './services/HealthCheckService';
 export { UserService } from './services/UserService';
 export { UserStoreService } from './services/UserStoreService';
 export { WeatherForecastService } from './services/WeatherForecastService';

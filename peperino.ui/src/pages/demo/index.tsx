@@ -1,5 +1,6 @@
 import { Add } from "@mui/icons-material";
 import { Button } from "@mui/material";
+import { observer } from "mobx-react"; // Or "mobx-react".
 import { GetServerSideProps } from "next";
 import { useTheme } from "next-themes";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { UserStoreService } from "../../lib/api";
 import { AppFrameConfig } from "../../lib/appFrame/AppFrameConfig";
 import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
 import { useUserStore } from "../../lib/hooks/useUserStore";
+import { CommonApplicationObject, useCommonApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
     index: number;
@@ -34,7 +36,7 @@ let updater: Dispatch<SetStateAction<number>>;
 let themeUpdater: (theme: string) => void;
 let currentTheme: string | undefined;
 
-const SecretPage = (p: Props) => {
+const SecretPage = observer((p: Props) => {
     const [index, setIndex] = useState(p.index);
     updater = setIndex;
 
@@ -54,42 +56,55 @@ const SecretPage = (p: Props) => {
         }
     }, [index, userStore])
 
+    const applicationState = useCommonApplicationState();
+    const health = applicationState.healthCheckState.backendConnection;
+
     return (
         <>
-            Secret
+            <p>Secret {health ? "ALIVE" : "DEAD"}</p>
             {index}
             <Button onClick={() => setIndex(p => p + 1)}>Increment</Button>
         </>
     );
-};
+});
 
 export const DemoPageAppFrameConifg: AppFrameConfig = {
     toolbarText: "Demo Page",
-    contextMenuActions: [{
-        action: () => {
-            updater(p => p + 1);
-            return Promise.resolve();
+    contextMenuActions: [
+        {
+            action: () => {
+                updater(p => p + 1);
+                return Promise.resolve();
+            },
+            text: "TEST2",
+            keepMenuOpen: true,
+            icon: <Add />
         },
-        text: "TEST2",
-        keepMenuOpen: true,
-        icon: <Add />
-    },
-    {
-        action: () => {
-            updater(p => p + 1);
-            return Promise.resolve();
+        {
+            action: () => {
+                updater(p => p + 1);
+                return Promise.resolve();
+            },
+            text: "TEST",
+            icon: <Add />
         },
-        text: "TEST",
-        icon: <Add />
-    },
-    {
-        action: () => {
-            themeUpdater(currentTheme === "dark" ? "light" : "dark");
-            return Promise.resolve();
+        {
+            action: () => {
+                themeUpdater(currentTheme === "dark" ? "light" : "dark");
+                return Promise.resolve();
+            },
+            text: currentTheme ?? "THEME?",
+            icon: <Add />
         },
-        text: currentTheme ?? "THEME?",
-        icon: <Add />
-    }],
+        {
+            action: () => {
+                CommonApplicationObject.healthCheckState.checkConnection();
+                return Promise.resolve();
+            },
+            text: "TOGGLE HEALTH",
+            icon: <Add />
+        }
+    ],
 }
 
 

@@ -1,4 +1,6 @@
 import { AppBar, Toolbar } from "@mui/material";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { DynamicToolbar } from "./DynamicToolbar";
 
 interface Props {
@@ -13,6 +15,7 @@ export const AppFrame = (props: Props) => {
             </AppBar>
             <Toolbar />
             {props.children}
+            <ToastContainer />
         </div>
     );
 }

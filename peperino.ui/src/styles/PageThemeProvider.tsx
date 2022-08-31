@@ -13,7 +13,7 @@ interface PageProviderProps {
     children: React.ReactNode;
 }
 
-const PageProvider: FC<PageProviderProps> = ({
+const PageThemeProvider: FC<PageProviderProps> = ({
     children,
     emotionCache = clientSideEmotionCache,
 }) => (
@@ -27,4 +27,4 @@ const PageProvider: FC<PageProviderProps> = ({
     </PreferredThemeProvider>
 );
 
-export default PageProvider;
+export default PageThemeProvider;

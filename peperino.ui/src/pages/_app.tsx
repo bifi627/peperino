@@ -1,12 +1,14 @@
 import { EmotionCache } from '@emotion/react';
 import { getAuth } from 'firebase/auth';
+import { observer } from 'mobx-react';
 import type { AppProps } from 'next/app';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { AppFrame } from '../components/appFrame/AppFrame';
 import { FullLoadingPage } from '../components/loadingScreen/FullLoadingPage';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
-import PageProvider from '../styles/PageThemeProvider';
+import { PageStateProvider } from '../lib/state/PageStateProvider';
+import PageThemeProvider from '../styles/PageThemeProvider';
 
 
 export interface MUIAppProps extends AppProps {
@@ -20,19 +22,23 @@ function MyApp(props: MUIAppProps) {
 
     if (loading) {
         return (
-            <PageProvider emotionCache={emotionCache}>
-                <FullLoadingPage></FullLoadingPage>
-            </PageProvider>
+            <PageThemeProvider emotionCache={emotionCache}>
+                <PageStateProvider>
+                    <FullLoadingPage></FullLoadingPage>
+                </PageStateProvider>
+            </PageThemeProvider>
         );
     }
 
     return (
-        <PageProvider emotionCache={emotionCache}>
-            <AppFrame>
-                <Component {...pageProps} />
-            </AppFrame>
-        </PageProvider>
+        <PageThemeProvider emotionCache={emotionCache}>
+            <PageStateProvider>
+                <AppFrame>
+                    <Component {...pageProps} />
+                </AppFrame>
+            </PageStateProvider>
+        </PageThemeProvider>
     );
 }
 
-export default MyApp
+export default observer(MyApp);
