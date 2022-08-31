@@ -7,6 +7,10 @@ export type AllowedTheme = NonNullable<PaletteOptions["mode"]>;
 
 export const DEFAULT_THEME: AllowedTheme = "dark";
 
+export const getDefaultTheme = () => {
+    return "light";
+}
+
 export const lightTheme = createTheme({
     palette: {
         mode: "light",

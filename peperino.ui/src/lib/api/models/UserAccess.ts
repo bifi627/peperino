@@ -2,17 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AccessList } from './AccessList';
+import type { AccessLevel } from './AccessLevel';
 import type { BaseEvent } from './BaseEvent';
 import type { User } from './User';
 
-export type Demo = {
+export type UserAccess = {
     id?: number;
     readonly domainEvents?: Array<BaseEvent> | null;
-    created?: string;
-    createdBy?: User;
-    lastModified?: string | null;
-    lastModifiedBy?: User;
-    access?: AccessList;
-    value?: string | null;
+    user?: User;
+    accessLevel?: AccessLevel;
 };

@@ -32,7 +32,7 @@ namespace Peperino.EntityFramework
 
         public DbSet<Session> Sessions => Set<Session>();
 
-        public DbSet<UserStore> UserStores => Set<UserStore>();
+        public DbSet<UserStoreClient> UserStores => Set<UserStoreClient>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

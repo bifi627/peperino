@@ -2,12 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AccessLevel } from './AccessLevel';
 import type { BaseEvent } from './BaseEvent';
 import type { UserGroup } from './UserGroup';
 
-export type User = {
-    id?: string | null;
+export type GroupAccess = {
+    id?: number;
     readonly domainEvents?: Array<BaseEvent> | null;
-    userName?: string | null;
-    userGroups?: Array<UserGroup> | null;
+    userGroup?: UserGroup;
+    accessLevel?: AccessLevel;
 };

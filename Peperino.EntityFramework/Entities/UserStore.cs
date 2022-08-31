@@ -2,9 +2,14 @@
 
 namespace Peperino.EntityFramework.Entities
 {
-    public class UserStore : BaseEntity<int>
+    public class UserStoreClient : BaseEntity<string>
     {
         public User User { get; set; }
-        public string Theme { get; set; } = "Dark";
+        public Dictionary<string, string> KeyValueStorage = new();
+
+        public UserStoreClient()
+        {
+            KeyValueStorage.Add("Theme", "dark");
+        }
     }
 }

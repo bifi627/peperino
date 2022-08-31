@@ -12,8 +12,8 @@ using Peperino.EntityFramework;
 namespace Peperino.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220830205050_Add_userstores")]
-    partial class Add_userstores
+    [Migration("20220831180158_Add_userstore")]
+    partial class Add_userstore
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -206,25 +206,16 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("Demos");
                 });
 
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStore", b =>
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStoreClient", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Theme")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("KeyValueStorage")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("UserStores");
                 });
@@ -327,11 +318,11 @@ namespace Peperino.EntityFramework.Migrations
                     b.Navigation("LastModifiedBy");
                 });
 
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStore", b =>
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStoreClient", b =>
                 {
                     b.HasOne("Peperino.Domain.Base.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.UserStoreClient", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

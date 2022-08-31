@@ -18,7 +18,7 @@ function MyApp(props: MUIAppProps) {
 
     const [user, loading, error] = useAuthState(getAuth());
 
-    if (!loading) {
+    if (loading) {
         return (
             <PageProvider emotionCache={emotionCache}>
                 <FullLoadingPage></FullLoadingPage>

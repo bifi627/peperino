@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Peperino.Dtos.UserStore;
+using Peperino.Dtos.UserStoreClient;
+using Peperino.EntityFramework.Entities;
 
 namespace Peperino.Controllers
 {
@@ -12,7 +14,7 @@ namespace Peperino.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<UserStoreDto?>> GetUserStore()
+        public async Task<ActionResult<UserStoreDto>> LoadUserStore()
         {
             if (CurrentUser is not null)
             {
@@ -20,7 +22,7 @@ namespace Peperino.Controllers
 
                 if (userStore is null)
                 {
-                    userStore = new EntityFramework.Entities.UserStore
+                    userStore = new UserStoreClient
                     {
                         User = CurrentUser
                     };
@@ -29,9 +31,24 @@ namespace Peperino.Controllers
                     await DbContext.SaveChangesAsync();
                 }
 
-                //var result = _mapper.ProjectTo<UserStoreDto>(userStore);
+                var result = userStore.Adapt<UserStoreDto>();
+                return result;
+            }
 
-                return new UserStoreDto() { Theme = userStore.Theme };
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SaveUserStore([FromBody] UserStoreDto userStoreDto)
+        {
+            var existingUserStore = DbContext.UserStores.FirstOrDefault(s => s.User == CurrentUser);
+
+            if (existingUserStore is not null && CurrentUser is not null)
+            {
+                existingUserStore.KeyValueStorage = userStoreDto.KeyValueStorage;
+                await DbContext.SaveChangesAsync();
+
+                return Ok();
             }
 
             return BadRequest();

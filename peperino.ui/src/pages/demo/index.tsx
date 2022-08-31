@@ -2,13 +2,18 @@ import { Add } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { useTheme } from "next-themes";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { UserStoreService } from "../../lib/api";
 import { AppFrameConfig } from "../../lib/appFrame/AppFrameConfig";
 import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
+import { useUserStore } from "../../lib/hooks/useUserStore";
 
 interface Props {
     index: number;
 }
+
+const COUNTER_STORE_INDEX = "COUNTER";
+
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
     console.log(context.resolvedUrl);
@@ -16,9 +21,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
         return await redirectLogin<Props>(context.resolvedUrl);
     }
 
+    const userStore = await UserStoreService.getApiUserStore();
+
     return {
         props: {
-            index: 0
+            index: Number.parseInt(JSON.parse(userStore.keyValueStorage[COUNTER_STORE_INDEX]))
         }
     };
 }
@@ -34,6 +41,18 @@ const SecretPage = (p: Props) => {
     const { setTheme, resolvedTheme } = useTheme();
     themeUpdater = setTheme;
     currentTheme = resolvedTheme;
+
+    const userStore = useUserStore();
+
+    useEffect(() => {
+        if (userStore) {
+            const newValue = JSON.stringify(index)
+            if (userStore.keyValueStorage[COUNTER_STORE_INDEX] !== newValue) {
+                userStore.keyValueStorage[COUNTER_STORE_INDEX] = newValue;
+                UserStoreService.postApiUserStore(userStore);
+            }
+        }
+    }, [index, userStore])
 
     return (
         <>
@@ -51,7 +70,7 @@ export const DemoPageAppFrameConifg: AppFrameConfig = {
             updater(p => p + 1);
             return Promise.resolve();
         },
-        text: "TEST",
+        text: "TEST2",
         keepMenuOpen: true,
         icon: <Add />
     },
