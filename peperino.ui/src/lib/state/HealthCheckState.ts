@@ -10,7 +10,6 @@ export class HealthCheckState {
         makeAutoObservable(this);
 
         if (typeof window !== "undefined") {
-            this.checkConnection();
             setInterval(() => this.checkConnection(), 10 * 1000);
         }
     }

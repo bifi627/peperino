@@ -1,13 +1,11 @@
 import { EmotionCache } from '@emotion/react';
-import { getAuth } from 'firebase/auth';
 import { observer } from 'mobx-react';
 import type { AppProps } from 'next/app';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { AppFrame } from '../components/appFrame/AppFrame';
-import { FullLoadingPage } from '../components/loadingScreen/FullLoadingPage';
+import { AuthProvider } from '../components/appFrame/PageMiddleware/AuthMiddleware';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
-import { PageStateProvider } from '../lib/state/PageStateProvider';
+import { ClientStateProvider } from '../lib/state/ClientStateProvider';
 import PageThemeProvider from '../styles/PageThemeProvider';
 
 
@@ -18,25 +16,15 @@ export interface MUIAppProps extends AppProps {
 function MyApp(props: MUIAppProps) {
     const { Component, pageProps, emotionCache } = props;
 
-    const [user, loading, error] = useAuthState(getAuth());
-
-    if (loading) {
-        return (
-            <PageThemeProvider emotionCache={emotionCache}>
-                <PageStateProvider>
-                    <FullLoadingPage></FullLoadingPage>
-                </PageStateProvider>
-            </PageThemeProvider>
-        );
-    }
-
     return (
         <PageThemeProvider emotionCache={emotionCache}>
-            <PageStateProvider>
-                <AppFrame>
-                    <Component {...pageProps} />
-                </AppFrame>
-            </PageStateProvider>
+            <ClientStateProvider>
+                <AuthProvider>
+                    <AppFrame>
+                        <Component {...pageProps} />
+                    </AppFrame>
+                </AuthProvider>
+            </ClientStateProvider>
         </PageThemeProvider>
     );
 }

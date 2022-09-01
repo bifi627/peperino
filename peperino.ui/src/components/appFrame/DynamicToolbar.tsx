@@ -1,12 +1,9 @@
 import { IconButton, Toolbar, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 import { useAppFrameConfig } from "../../lib/appFrame/useAppFrameConfig";
 import { ContextAction } from "./ContextAction";
 import { UserAvatarMenu } from "./UserAvatarMenu";
 
 export const DynamicToolbar = () => {
-    const router = useRouter();
-
     const appFrameConfig = useAppFrameConfig();
 
     return (

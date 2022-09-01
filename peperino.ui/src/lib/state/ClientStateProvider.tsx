@@ -4,7 +4,7 @@ interface Props {
     children: React.ReactNode;
 }
 
-export const PageStateProvider = (props: Props) => {
+export const ClientStateProvider = (props: Props) => {
     return (
         <CommonApplicationContext.Provider value={CommonApplicationObject}>
             {props.children}

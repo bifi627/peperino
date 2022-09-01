@@ -1,6 +1,6 @@
 import { User } from "@firebase/auth";
 import { AnonymousAppFrameConifg, DefaultAppFrameConifg } from "../../pages";
-import { DemoPageAppFrameConifg } from "../../pages/demo";
+import { DemoPageAppFrameConfig } from "../../pages/demo";
 import { KnownRoutes } from "../routing/knownRoutes";
 import { AppFrameConfig } from "./AppFrameConfig";
 
@@ -9,7 +9,7 @@ export const getAppFrameConfig = (user: User | null | undefined, route: string) 
     const specialConfigs: AppFrameConfig[] = [];
 
     if (route.startsWith(KnownRoutes.Demo())) {
-        specialConfigs.push(DemoPageAppFrameConifg);
+        specialConfigs.push(DemoPageAppFrameConfig);
     }
 
     if (specialConfigs.length > 0) {

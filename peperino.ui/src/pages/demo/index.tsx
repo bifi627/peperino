@@ -68,7 +68,7 @@ const SecretPage = observer((p: Props) => {
     );
 });
 
-export const DemoPageAppFrameConifg: AppFrameConfig = {
+export const DemoPageAppFrameConfig: AppFrameConfig = {
     toolbarText: "Demo Page",
     contextMenuActions: [
         {
@@ -97,9 +97,10 @@ export const DemoPageAppFrameConifg: AppFrameConfig = {
             icon: <Add />
         },
         {
-            action: () => {
-                CommonApplicationObject.healthCheckState.checkConnection();
-                return Promise.resolve();
+            action: async () => {
+                await CommonApplicationObject.withLoadingScreen(async () => {
+                    await CommonApplicationObject.healthCheckState.checkConnection();
+                }, "Full");
             },
             text: "TOGGLE HEALTH",
             icon: <Add />
