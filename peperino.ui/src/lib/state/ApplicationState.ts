@@ -9,6 +9,8 @@ export class ApplicationState {
 
     public showLoading: LoadingScope = "None";
 
+    public drawerOpened = false;
+
     constructor() {
         makeAutoObservable(this);
         this.healthCheckState = new HealthCheckState();
@@ -25,9 +27,9 @@ export class ApplicationState {
     }
 }
 
-export const CommonApplicationObject = new ApplicationState();
-export const CommonApplicationContext = React.createContext(CommonApplicationObject);
+export const ApplicationStateObject = new ApplicationState();
+export const ApplicationStateContext = React.createContext(ApplicationStateObject);
 
-export const useCommonApplicationState = () => {
-    return useContext(CommonApplicationContext);
+export const useApplicationState = () => {
+    return useContext(ApplicationStateContext);
 }

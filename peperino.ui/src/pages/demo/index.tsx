@@ -8,7 +8,7 @@ import { UserStoreService } from "../../lib/api";
 import { AppFrameConfig } from "../../lib/appFrame/AppFrameConfig";
 import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
 import { useUserStore } from "../../lib/hooks/useUserStore";
-import { CommonApplicationObject, useCommonApplicationState } from "../../lib/state/ApplicationState";
+import { ApplicationStateObject, useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
     index: number;
@@ -56,7 +56,7 @@ const SecretPage = observer((p: Props) => {
         }
     }, [index, userStore])
 
-    const applicationState = useCommonApplicationState();
+    const applicationState = useApplicationState();
     const health = applicationState.healthCheckState.backendConnection;
 
     return (
@@ -98,8 +98,8 @@ export const DemoPageAppFrameConfig: AppFrameConfig = {
         },
         {
             action: async () => {
-                await CommonApplicationObject.withLoadingScreen(async () => {
-                    await CommonApplicationObject.healthCheckState.checkConnection();
+                await ApplicationStateObject.withLoadingScreen(async () => {
+                    await ApplicationStateObject.healthCheckState.checkConnection();
                 }, "Full");
             },
             text: "TOGGLE HEALTH",

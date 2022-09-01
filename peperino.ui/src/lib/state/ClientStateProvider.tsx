@@ -1,4 +1,4 @@
-import { CommonApplicationContext, CommonApplicationObject } from "./ApplicationState";
+import { ApplicationStateContext, ApplicationStateObject } from "./ApplicationState";
 
 interface Props {
     children: React.ReactNode;
@@ -6,8 +6,8 @@ interface Props {
 
 export const ClientStateProvider = (props: Props) => {
     return (
-        <CommonApplicationContext.Provider value={CommonApplicationObject}>
+        <ApplicationStateContext.Provider value={ApplicationStateObject}>
             {props.children}
-        </CommonApplicationContext.Provider>
+        </ApplicationStateContext.Provider>
     );
 }
