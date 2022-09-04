@@ -204,6 +204,20 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("Demos");
                 });
 
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStoreClient", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("KeyValueStorage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserStores");
+                });
+
             modelBuilder.Entity("UserUserGroup", b =>
                 {
                     b.Property<int>("UserGroupsId")
@@ -300,6 +314,17 @@ namespace Peperino.EntityFramework.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("LastModifiedBy");
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStoreClient", b =>
+                {
+                    b.HasOne("Peperino.Domain.Base.User", "User")
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.UserStoreClient", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("UserUserGroup", b =>

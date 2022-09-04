@@ -1,19 +1,36 @@
 import { EmailAuthProvider, getAuth, GoogleAuthProvider } from "firebase/auth";
+import firebaseui from "firebaseui";
 import { useRouter } from "next/router";
 import StyledFirebaseAuth from "../../components/firebaseui/StyledFirebaseAuth";
+import { registerSessionChangedSignal } from "../../lib/auth/client/firebase";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
+import { GlobalApplicationStateObject, useApplicationState } from "../../lib/state/ApplicationState";
 
 const LoginPage = () => {
     const router = useRouter();
 
     const redirect = router.query["redirect"] as string | undefined;
 
+    const appFrame = useApplicationState().getAppFrame();
+
     const uiConfig: firebaseui.auth.Config = {
         // Popup signin flow rather than redirect flow.
         signInFlow: 'popup',
         callbacks: {
             signInSuccessWithAuthResult: (result) => {
-                setTimeout(() => router.push(redirect ?? KnownRoutes.Root()), 2000);
+                appFrame.withLoadingScreen(() => {
+                    return new Promise<void>(resolve => {
+                        registerSessionChangedSignal(async () => {
+                            GlobalApplicationStateObject.stateLoading = true;
+                            await GlobalApplicationStateObject.init();
+                            await router.replace({
+                                pathname: redirect || KnownRoutes.Root(),
+                            });
+                            resolve();
+                        });
+                    });
+                }, "Full");
+
                 return false;
             },
             signInFailure: (error) => {
@@ -28,9 +45,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div>
-            <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
-        </div>
+        <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
     );
 };
 

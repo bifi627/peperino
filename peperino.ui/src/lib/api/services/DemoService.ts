@@ -42,4 +42,21 @@ export class DemoService {
         });
     }
 
+    /**
+     * @param id 
+     * @returns Demo Success
+     * @throws ApiError
+     */
+    public static getApiDemo1(
+id: number,
+): CancelablePromise<Demo> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/Demo/{id}',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
 }

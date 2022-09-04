@@ -17,7 +17,7 @@ if (getApps().length === 0) {
 }
 
 onAuthStateChanged(getAuth(), async (user) => {
-    await setTokenForUser(user);
+    // await setTokenForUser(user);
 });
 
 onIdTokenChanged(getAuth(), async (user) => {
@@ -27,25 +27,31 @@ onIdTokenChanged(getAuth(), async (user) => {
 export async function setTokenForUser(user: User | null) {
     if (user) {
         const token = await user?.getIdToken();
-        await postUserToken(token);
+        await manageSessionForUser(token);
     }
     else {
-        await postUserToken();
+        await manageSessionForUser();
     }
 }
 
-export async function postUserToken(token?: string) {
-    var path = "api/auth";
-    var url = path;
+let callbacks: (() => void)[] = [];
+export function registerSessionChangedSignal(callback: () => void) {
+    callbacks.push(callback);
+}
+
+export async function manageSessionForUser(token?: string) {
     var data = { token: token }
 
     if (typeof window !== "undefined") {
-        fetch(url, {
+        console.log(token ? "POST USER" : "POST NO USER");
+        await fetch("api/auth", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
+        callbacks.forEach(cb => cb());
+        callbacks = [];
     }
 }

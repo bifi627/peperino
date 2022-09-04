@@ -3,10 +3,11 @@
 /* eslint-disable */
 
 import type { BaseEvent } from './BaseEvent';
+import type { UserGroup } from './UserGroup';
 
 export type User = {
-    id?: number;
+    id?: string | null;
     readonly domainEvents?: Array<BaseEvent> | null;
-    externalId?: string | null;
     userName?: string | null;
+    userGroups?: Array<UserGroup> | null;
 };

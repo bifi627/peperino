@@ -6,5 +6,5 @@ export module KnownRoutes {
         }
         return `/login`;
     };
-    export const Secret = () => `/secret`;
+    export const Demo = () => `/demo`;
 }

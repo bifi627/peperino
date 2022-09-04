@@ -9,5 +9,6 @@ namespace Peperino.EntityFramework
     {
         DatabaseFacade Database { get; }
         DbSet<Demo> Demos { get; }
+        DbSet<UserStoreClient> UserStores { get; }
     }
 }
