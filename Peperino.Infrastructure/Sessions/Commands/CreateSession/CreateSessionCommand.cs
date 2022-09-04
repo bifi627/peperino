@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Peperino.Contracts.DbContexts;
 using Peperino.Domain.Session;
 
@@ -41,7 +41,7 @@ namespace Peperino.Infrastructure.Sessions.Commands.CreateSession
                 // Create new session for user if user exists
                 if (user is not null)
                 {
-                    var newSession = new Session(user, token, sessionCookie, sessionName);
+                    var newSession = new Session(user, sessionCookie, token, sessionName);
                     await _sessionDbContext.Sessions.AddAsync(newSession, cancellationToken);
                 }
             }

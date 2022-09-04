@@ -1,7 +1,7 @@
 import { User } from "@firebase/auth";
 import { AnonymousAppFrameConifg, DefaultAppFrameConifg } from "../../pages";
-import { DemoPageAppFrameConfig } from "../../pages/demo";
 import { KnownRoutes } from "../routing/knownRoutes";
+import { GlobalApplicationStateObject } from "../state/ApplicationState";
 import { AppFrameConfig } from "./AppFrameConfig";
 
 export const getAppFrameConfig = (user: User | null | undefined, route: string) => {
@@ -9,7 +9,10 @@ export const getAppFrameConfig = (user: User | null | undefined, route: string) 
     const specialConfigs: AppFrameConfig[] = [];
 
     if (route.startsWith(KnownRoutes.Demo())) {
-        specialConfigs.push(DemoPageAppFrameConfig);
+        const demoPageConfig = GlobalApplicationStateObject.getDemoState().appFrameConfig;
+        if (demoPageConfig) {
+            specialConfigs.push(demoPageConfig);
+        }
     }
 
     if (specialConfigs.length > 0) {

@@ -1,21 +1,14 @@
-import { Add } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import { observer } from "mobx-react"; // Or "mobx-react".
+import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useTheme } from "next-themes";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { UserStoreService } from "../../lib/api";
-import { AppFrameConfig } from "../../lib/appFrame/AppFrameConfig";
 import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
-import { useUserStore } from "../../lib/hooks/useUserStore";
-import { ApplicationStateObject, useApplicationState } from "../../lib/state/ApplicationState";
+import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
-    index: number;
 }
-
-const COUNTER_STORE_INDEX = "COUNTER";
-
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
     console.log(context.resolvedUrl);
@@ -27,86 +20,34 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
 
     return {
         props: {
-            index: Number.parseInt(JSON.parse(userStore.keyValueStorage[COUNTER_STORE_INDEX]))
         }
     };
 }
 
-let updater: Dispatch<SetStateAction<number>>;
-let themeUpdater: (theme: string) => void;
-let currentTheme: string | undefined;
+const DemoPage = observer((props: Props) => {
+    const { setTheme, resolvedTheme, theme } = useTheme();
 
-const SecretPage = observer((p: Props) => {
-    const [index, setIndex] = useState(p.index);
-    updater = setIndex;
+    const healthState = useApplicationState().getHealthCheck();
 
-    const { setTheme, resolvedTheme } = useTheme();
-    themeUpdater = setTheme;
-    currentTheme = resolvedTheme;
-
-    const userStore = useUserStore();
+    const demoPageState = useApplicationState().getDemoState();
 
     useEffect(() => {
-        if (userStore) {
-            const newValue = JSON.stringify(index)
-            if (userStore.keyValueStorage[COUNTER_STORE_INDEX] !== newValue) {
-                userStore.keyValueStorage[COUNTER_STORE_INDEX] = newValue;
-                UserStoreService.postApiUserStore(userStore);
+        const themeAction = demoPageState.appFrameConfig?.contextMenuActions?.find(f => f.id === "ToggleTheme");
+        if (themeAction) {
+            themeAction.action = () => {
+                setTheme(resolvedTheme === "dark" ? "light" : "dark");
+                return Promise.resolve();
             }
         }
-    }, [index, userStore])
-
-    const applicationState = useApplicationState();
-    const health = applicationState.healthCheckState.backendConnection;
+    }, [demoPageState, resolvedTheme, setTheme])
 
     return (
         <>
-            <p>Secret {health ? "ALIVE" : "DEAD"}</p>
-            {index}
-            <Button onClick={() => setIndex(p => p + 1)}>Increment</Button>
+            <p>Secret {healthState.backendConnection ? "ALIVE" : "DEAD"}</p>
+            {demoPageState.counter}
+            <Button onClick={() => demoPageState.counter++}>Increment</Button>
         </>
     );
 });
 
-export const DemoPageAppFrameConfig: AppFrameConfig = {
-    toolbarText: "Demo Page",
-    contextMenuActions: [
-        {
-            action: () => {
-                updater(p => p + 1);
-                return Promise.resolve();
-            },
-            text: "TEST2",
-            keepMenuOpen: true,
-            icon: <Add />
-        },
-        {
-            action: () => {
-                updater(p => p + 1);
-                return Promise.resolve();
-            },
-            text: "TEST",
-            icon: <Add />
-        },
-        {
-            action: () => {
-                themeUpdater(currentTheme === "dark" ? "light" : "dark");
-                return Promise.resolve();
-            },
-            text: currentTheme ?? "THEME?",
-            icon: <Add />
-        },
-        {
-            action: async () => {
-                await ApplicationStateObject.withLoadingScreen(async () => {
-                    await ApplicationStateObject.healthCheckState.checkConnection();
-                }, "Full");
-            },
-            text: "TOGGLE HEALTH",
-            icon: <Add />
-        }
-    ],
-}
-
-
-export default SecretPage;
+export default DemoPage;

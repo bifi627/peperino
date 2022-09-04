@@ -21,7 +21,7 @@ export const UserAvatarMenu = () => {
 
     return (
         <>
-            <IconButton onClick={handleOpenUserMenu} color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+            <IconButton onClick={handleOpenUserMenu} color="inherit" aria-label="menu">
                 {appFrameConfig.userAvatarIcon}
             </IconButton>
             <Menu

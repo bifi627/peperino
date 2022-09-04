@@ -1,17 +1,19 @@
 import { makeAutoObservable } from "mobx";
 import { toast } from "react-toastify";
-import { HealthCheckService } from "../api";
+import { HealthCheckService } from "../../api";
+import { BaseState } from "../BaseState";
 
-export class HealthCheckState {
-
+export class HealthCheckState implements BaseState {
+    public key = "HealthCheckState";
     public backendConnection = true; // Optimistic
 
     constructor() {
         makeAutoObservable(this);
+    }
 
-        if (typeof window !== "undefined") {
-            setInterval(() => this.checkConnection(), 10 * 1000);
-        }
+    public init() {
+        setInterval(() => this.checkConnection(), 10 * 1000);
+        return Promise.resolve();
     }
 
     public async checkConnection() {

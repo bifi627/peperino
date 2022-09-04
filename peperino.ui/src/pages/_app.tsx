@@ -5,7 +5,7 @@ import { AppFrame } from '../components/appFrame/AppFrame';
 import { AuthProvider } from '../components/appFrame/PageMiddleware/AuthMiddleware';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
-import { ClientStateProvider } from '../lib/state/ClientStateProvider';
+import { ClientStateProvider } from '../lib/state/commonState/ClientStateProvider';
 import PageThemeProvider from '../styles/PageThemeProvider';
 
 
@@ -18,13 +18,13 @@ function MyApp(props: MUIAppProps) {
 
     return (
         <PageThemeProvider emotionCache={emotionCache}>
-            <ClientStateProvider>
-                <AuthProvider>
+            <AuthProvider>
+                <ClientStateProvider>
                     <AppFrame>
                         <Component {...pageProps} />
                     </AppFrame>
-                </AuthProvider>
-            </ClientStateProvider>
+                </ClientStateProvider>
+            </AuthProvider>
         </PageThemeProvider>
     );
 }

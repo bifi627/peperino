@@ -14,7 +14,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
         // if id token was sent, we want to create a new session
         if (idToken) {
-
+            console.log("TRY CREATE SESSION");
             OpenAPI.TOKEN = idToken;
 
             const cookie = await AuthService.postApiAuthCreate(idToken);
@@ -23,15 +23,19 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 console.log("secure:" + !IS_LOCAL_DEV);
                 const options: CookieSerializeOptions = { maxAge: expiresIn, httpOnly: true, secure: !IS_LOCAL_DEV, path: '/' };
                 res.setHeader('Set-Cookie', serialize(AUTH_TOKEN_COOKIE_NAME, cookie, options));
-                res.status(200).end()
+                res.status(200).end();
+                console.log("SESSION CREATED!");
             } else {
                 res.status(401).send('Invalid authentication');
             }
         }
+        // if no id token was sent and there is a session, delete session
         else if (session) {
+            console.log("TRY DELETE SESSION");
             const options: CookieSerializeOptions = { httpOnly: true, secure: !IS_LOCAL_DEV, path: '/', expires: new Date(1970) };
             res.setHeader("Set-Cookie", serialize(AUTH_TOKEN_COOKIE_NAME, "__", options));
             await AuthService.postApiAuthDelete(session);
+            console.log("SESSION DELETED!");
             res.status(200).end();
         }
         else {

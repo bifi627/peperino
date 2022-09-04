@@ -3,7 +3,7 @@ import { AUTH_TOKEN_COOKIE_NAME } from "../../../shared/constants";
 import { OpenAPI } from "../../api/core/OpenAPI";
 import { AuthService } from "../../api/services/AuthService";
 import { KnownRoutes } from "../../routing/knownRoutes";
-import { postUserToken } from "../client/firebase";
+import { manageSessionForUser } from "../client/firebase";
 import { ClaimRequest, verifyClaims } from "../shared/verifyClaims";
 
 export const authPage = async (context: GetServerSidePropsContext, ...claimRequests: ClaimRequest[]) => {
@@ -37,7 +37,7 @@ export const authPage = async (context: GetServerSidePropsContext, ...claimReque
 }
 
 export async function redirectLogin<T>(url: string) {
-    await postUserToken();
+    await manageSessionForUser();
     return {
         props: {} as T,
         redirect: { destination: KnownRoutes.Login(url) },

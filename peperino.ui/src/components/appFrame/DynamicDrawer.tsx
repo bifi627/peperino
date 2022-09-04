@@ -5,7 +5,9 @@ import { useApplicationState } from "../../lib/state/ApplicationState";
 export interface DrawerItemProps {
     text: string;
     icon: React.ReactNode;
-    action: () => Promise<unknown>;
+    action?: () => Promise<unknown>;
+    isSelected?: () => boolean;
+    childItems?: DrawerItemProps[];
 }
 
 interface DynamicDrawerProps {
@@ -14,25 +16,33 @@ interface DynamicDrawerProps {
 
 export const DynamicDrawer = observer((props: DynamicDrawerProps) => {
 
-    const appState = useApplicationState();
+    const appFrame = useApplicationState().getAppFrame();
 
-    const getList = () => (
-        <div style={{ width: 250 }} onClick={() => appState.drawerOpened = false}>
-            {props.items?.map((item, index) => (
-                <ListItem button key={index} onClick={async () => {
-                    await item.action();
-                    appState.drawerOpened = false;
-                }}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
-                </ListItem>
-            ))}
-        </div>
-    );
+    const onItemClicked = async (item: DrawerItemProps) => {
+        await item.action?.();
+        appFrame.drawerOpened = false;
+    }
 
     return (
-        <Drawer PaperProps={{ style: { top: "64px" } }} open={appState.drawerOpened} anchor={"left"} onClose={() => appState.drawerOpened = false}>
-            {getList()}
+        <Drawer PaperProps={{ style: { top: "64px" } }} open={appFrame.drawerOpened} anchor={"left"} onClose={() => appFrame.drawerOpened = false}>
+            <div style={{ width: 250 }}>
+                {props.items?.map((drawerItem, index) => (
+                    <div key={index}>
+                        <ListItem button onClick={async () => onItemClicked(drawerItem)}>
+                            <ListItemIcon>{drawerItem.icon}</ListItemIcon>
+                            <ListItemText primary={drawerItem.text} />
+                        </ListItem>
+                        <>
+                            {drawerItem.childItems?.map((childItem, childIndex) => (
+                                <ListItem button key={childIndex} onClick={async () => onItemClicked(childItem)}>
+                                    <ListItemIcon>{childItem.icon}</ListItemIcon>
+                                    <ListItemText primary={childItem.text} />
+                                </ListItem>
+                            ))}
+                        </>
+                    </div>
+                ))}
+            </div>
         </Drawer>
     );
 });

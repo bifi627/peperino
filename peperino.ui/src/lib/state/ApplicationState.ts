@@ -1,34 +1,61 @@
 import { makeAutoObservable } from "mobx";
 import React, { useContext } from "react";
-import { HealthCheckState } from "./HealthCheckState";
+import { BaseState } from "./BaseState";
+import { AppFrameState } from "./commonState/AppFrameState";
+import { HealthCheckState } from "./commonState/HealthCheckState";
+import { DemoPageState } from "./pageState/DemoPageState";
 
-type LoadingScope = "Full" | "Page" | "None";
+export class ApplicationState implements BaseState {
+    public key = "ApplicationState";
+    private healthCheck: HealthCheckState;
+    private appFrame: AppFrameState;
+    private demoState: DemoPageState;
 
-export class ApplicationState {
-    public healthCheckState!: HealthCheckState;
+    private dynamicState: Map<string, BaseState> = new Map();
 
-    public showLoading: LoadingScope = "None";
+    private get all() {
+        return [this.healthCheck, this.appFrame, this.demoState, ...this.dynamicState.values()];
+    }
 
-    public drawerOpened = false;
+    public stateLoading = true;
 
     constructor() {
         makeAutoObservable(this);
-        this.healthCheckState = new HealthCheckState();
+
+        this.healthCheck = new HealthCheckState();
+        this.appFrame = new AppFrameState();
+        this.demoState = new DemoPageState();
     }
 
-    public async withLoadingScreen(action: () => Promise<unknown>, loadingScope: LoadingScope = "Page") {
-        this.showLoading = loadingScope;
-        try {
-            await action();
-        }
-        finally {
-            this.showLoading = "None";
-        }
+    public async init() {
+        await Promise.all(this.all.map(state => state.init(this)));
+        this.stateLoading = false;
+    }
+
+    public register<T extends BaseState>(state: T) {
+        console.log("Register State: " + state.key);
+        this.dynamicState.set(state.key, state);
+    }
+
+    public getByKey<T extends BaseState>(key: string) {
+        return this.dynamicState.get(key) as T;
+    }
+
+    public getHealthCheck() {
+        return this.healthCheck;
+    }
+
+    public getAppFrame() {
+        return this.appFrame;
+    }
+
+    public getDemoState() {
+        return this.demoState;
     }
 }
 
-export const ApplicationStateObject = new ApplicationState();
-export const ApplicationStateContext = React.createContext(ApplicationStateObject);
+export const GlobalApplicationStateObject = new ApplicationState();
+export const ApplicationStateContext = React.createContext(GlobalApplicationStateObject);
 
 export const useApplicationState = () => {
     return useContext(ApplicationStateContext);

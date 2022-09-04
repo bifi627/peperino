@@ -58,21 +58,27 @@ namespace Peperino.Controllers
         [HttpPost("get")]
         public async Task<ActionResult<SessionResponseDto>> GetSession([FromBody] string sessionCookie)
         {
-            var sessionTokenResponse = await _firebaseAuth.VerifySessionCookieAsync(sessionCookie, true);
-
-            var session = await Mediator.Send(new GetSessionQuery(sessionCookie));
-
-            if (session is not null)
+            try
             {
-                var response = new SessionResponseDto
-                {
-                    IdToken = session.Token,
-                    Claims = sessionTokenResponse.Claims,
-                    UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "",
-                };
-                return response;
-            }
+                var sessionTokenResponse = await _firebaseAuth.VerifySessionCookieAsync(sessionCookie, true);
 
+                var session = await Mediator.Send(new GetSessionQuery(sessionCookie));
+
+                if (session is not null)
+                {
+                    var response = new SessionResponseDto
+                    {
+                        IdToken = session.Token,
+                        Claims = sessionTokenResponse.Claims,
+                        UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "",
+                    };
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                await Mediator.Send(new DeleteSessionCommand(sessionCookie));
+            }
             return BadRequest();
         }
     }
