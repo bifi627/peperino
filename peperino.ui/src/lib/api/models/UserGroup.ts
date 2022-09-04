@@ -13,5 +13,6 @@ export type UserGroup = {
     lastModified?: string | null;
     lastModifiedBy?: User;
     groupName?: string | null;
+    groupNameSlug?: string | null;
     users?: Array<User> | null;
 };

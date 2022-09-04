@@ -7,4 +7,5 @@ export module KnownRoutes {
         return `/login`;
     };
     export const Demo = () => `/demo`;
+    export const Group = (slug?: string) => slug ? `/group/${slug}` : "/group";
 }
