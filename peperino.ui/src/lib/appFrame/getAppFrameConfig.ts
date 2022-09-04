@@ -15,6 +15,21 @@ export const getAppFrameConfig = (user: User | null | undefined, route: string) 
         }
     }
 
+    // First the specific route
+    if (route.startsWith(KnownRoutes.Group()) && route.endsWith(KnownRoutes.Group())) {
+        const groupsPageConfig = GlobalApplicationStateObject.getGroupsState().appFrameConfig;
+        if (groupsPageConfig) {
+            specialConfigs.push(groupsPageConfig);
+        }
+    }
+    else if (route.startsWith(KnownRoutes.Group())) {
+        const groupPageConfig = GlobalApplicationStateObject.getGroupState().appFrameConfig;
+        if (groupPageConfig) {
+            specialConfigs.push(groupPageConfig);
+        }
+    }
+
+
     if (specialConfigs.length > 0) {
         let mergedConfig = initial;
         for (const config of specialConfigs) {

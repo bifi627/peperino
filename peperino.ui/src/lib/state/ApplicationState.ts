@@ -4,17 +4,28 @@ import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { HealthCheckState } from "./commonState/HealthCheckState";
 import { DemoPageState } from "./pageState/DemoPageState";
+import { GroupPageState } from "./pageState/GroupPageState";
+import { GroupsPageState } from "./pageState/GroupsPageState";
 
 export class ApplicationState implements BaseState {
     public key = "ApplicationState";
     private healthCheck: HealthCheckState;
     private appFrame: AppFrameState;
     private demoState: DemoPageState;
+    private groupsState: GroupsPageState;
+    private groupState: GroupPageState;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
     private get all() {
-        return [this.healthCheck, this.appFrame, this.demoState, ...this.dynamicState.values()];
+        return [
+            this.healthCheck,
+            this.appFrame,
+            this.demoState,
+            this.groupsState,
+            this.groupState,
+            ...this.dynamicState.values()
+        ];
     }
 
     public stateLoading = true;
@@ -25,6 +36,8 @@ export class ApplicationState implements BaseState {
         this.healthCheck = new HealthCheckState();
         this.appFrame = new AppFrameState();
         this.demoState = new DemoPageState();
+        this.groupsState = new GroupsPageState();
+        this.groupState = new GroupPageState();
     }
 
     public async init() {
@@ -51,6 +64,14 @@ export class ApplicationState implements BaseState {
 
     public getDemoState() {
         return this.demoState;
+    }
+
+    public getGroupsState() {
+        return this.groupsState;
+    }
+
+    public getGroupState() {
+        return this.groupState;
     }
 }
 
