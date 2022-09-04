@@ -80,6 +80,7 @@ export const DefaultAppFrameConifg = (user: User): AppFrameConfig => {
         contextMenuIcon: <MoreVert />,
         userAvatarIcon: <Avatar src={user.photoURL ?? ""} />,
         userAvatarActions: [{
+            id: "Logout",
             text: "Logout",
             action: async () => {
                 await signOut(getAuth())
@@ -95,6 +96,7 @@ export const AnonymousAppFrameConifg: AppFrameConfig = {
     contextMenuIcon: <MoreVert />,
     userAvatarIcon: <Avatar />,
     userAvatarActions: [{
+        id: "Login",
         text: "Login",
         action: async () => {
             router.push(KnownRoutes.Login(router.asPath));

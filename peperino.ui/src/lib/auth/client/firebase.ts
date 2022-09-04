@@ -41,9 +41,9 @@ export function registerSessionChangedSignal(callback: () => void) {
 
 export async function manageSessionForUser(token?: string) {
     var data = { token: token }
-    console.log(token ? "POST USER" : "POST NO USER");
 
     if (typeof window !== "undefined") {
+        console.log(token ? "POST USER" : "POST NO USER");
         await fetch("api/auth", {
             method: 'POST',
             headers: {

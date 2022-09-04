@@ -3,6 +3,7 @@ import firebaseui from "firebaseui";
 import { useRouter } from "next/router";
 import StyledFirebaseAuth from "../../components/firebaseui/StyledFirebaseAuth";
 import { registerSessionChangedSignal } from "../../lib/auth/client/firebase";
+import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { GlobalApplicationStateObject, useApplicationState } from "../../lib/state/ApplicationState";
 
 const LoginPage = () => {
@@ -22,8 +23,8 @@ const LoginPage = () => {
                         registerSessionChangedSignal(async () => {
                             GlobalApplicationStateObject.stateLoading = true;
                             await GlobalApplicationStateObject.init();
-                            await router.push({
-                                pathname: redirect
+                            await router.replace({
+                                pathname: redirect || KnownRoutes.Root(),
                             });
                             resolve();
                         });
