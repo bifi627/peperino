@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserGroup } from '../models/UserGroup';
 import type { UserGroupInDto } from '../models/UserGroupInDto';
 import type { UserGroupOutDto } from '../models/UserGroupOutDto';
 
@@ -13,12 +12,12 @@ export class UserGroupService {
 
     /**
      * @param requestBody 
-     * @returns UserGroup Success
+     * @returns UserGroupOutDto Success
      * @throws ApiError
      */
     public static create(
 requestBody?: UserGroupInDto,
-): CancelablePromise<UserGroup> {
+): CancelablePromise<UserGroupOutDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/UserGroup',
@@ -48,6 +47,23 @@ slug: string,
 ): CancelablePromise<UserGroupOutDto> {
         return __request(OpenAPI, {
             method: 'GET',
+            url: '/api/UserGroup/{slug}',
+            path: {
+                'slug': slug,
+            },
+        });
+    }
+
+    /**
+     * @param slug 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public static deleteBySlug(
+slug: string,
+): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
             url: '/api/UserGroup/{slug}',
             path: {
                 'slug': slug,

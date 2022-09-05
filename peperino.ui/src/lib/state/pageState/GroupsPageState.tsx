@@ -1,11 +1,20 @@
 import { Add } from "@mui/icons-material";
+import { isObservableArray, makeObservable, observable } from "mobx";
+import { UserGroupOutDto, UserGroupService } from "../../api";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
 
 export class GroupsPageState extends BasePageState {
+    public dialogOpened = false;
+    public groups: UserGroupOutDto[] = [];
 
     constructor() {
         super();
+
+        makeObservable(this, {
+            dialogOpened: observable,
+            groups: observable,
+        })
     }
 
     public override init(applicationState: ApplicationState) {
@@ -14,7 +23,10 @@ export class GroupsPageState extends BasePageState {
             contextMenuActions: [
                 {
                     id: "add",
-                    action: () => Promise.resolve(),
+                    action: () => {
+                        this.dialogOpened = true;
+                        return Promise.resolve();
+                    },
                     icon: <Add />,
                     text: "add",
                 }
@@ -22,5 +34,15 @@ export class GroupsPageState extends BasePageState {
         }
 
         return Promise.resolve();
+    }
+
+    public async reloadGroups() {
+        if (isObservableArray(this.groups)) {
+            this.groups.replace(await UserGroupService.getAll());
+        }
+    }
+
+    public async createGroup(name: string) {
+        await UserGroupService.create({ groupName: name });
     }
 }

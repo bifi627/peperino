@@ -7,5 +7,5 @@ export const useAppFrameConfig = () => {
     const [user, loading, error] = useAuthState(getAuth());
     const router = useRouter();
 
-    return getAppFrameConfig(user, router.asPath);
+    return getAppFrameConfig(user, router.asPath, router.pathname);
 }

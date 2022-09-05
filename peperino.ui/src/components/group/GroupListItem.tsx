@@ -10,12 +10,14 @@ export const GroupListItem = (props: Props) => {
     const router = useRouter();
 
     return (
-        <div onClick={() => {
-            router.push(KnownRoutes.Group(props.group.groupNameSlug));
-        }}>
-            {props.group.groupName}
-            <br />
-            {props.group.groupNameSlug}
-        </div>
+        <>
+            <div onClick={() => {
+                router.push(KnownRoutes.Group(props.group.groupNameSlug));
+            }}>
+                Name: {props.group.groupName}
+                <br />
+                Slug: {props.group.groupNameSlug}
+            </div>
+        </>
     );
 }

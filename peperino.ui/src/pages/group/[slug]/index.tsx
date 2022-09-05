@@ -1,7 +1,9 @@
 import { GetServerSideProps } from "next";
-import { UserGroupOutDto, UserGroupService } from "../../lib/api";
-import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
-import { KnownRoutes } from "../../lib/routing/knownRoutes";
+import { useEffect } from "react";
+import { UserGroupOutDto, UserGroupService } from "../../../lib/api";
+import { authPage, redirectLogin } from "../../../lib/auth/server/authPage";
+import { KnownRoutes } from "../../../lib/routing/knownRoutes";
+import { useApplicationState } from "../../../lib/state/ApplicationState";
 
 interface Props {
     group: UserGroupOutDto;
@@ -36,8 +38,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
 }
 
 const GroupPage = (props: Props) => {
+
+    const groupPageState = useApplicationState().getGroupState();
+
+    useEffect(() => {
+        groupPageState.group = props.group;
+    }, [])
+
     return (
-        <>Group Page {props.group?.groupName}</>
+        <>Group Page {props.group?.groupName} </>
     );
 }
 

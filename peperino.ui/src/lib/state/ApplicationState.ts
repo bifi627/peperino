@@ -4,7 +4,7 @@ import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { HealthCheckState } from "./commonState/HealthCheckState";
 import { DemoPageState } from "./pageState/DemoPageState";
-import { GroupPageState } from "./pageState/GroupPageState";
+import { GroupPageState, GroupSettingsPageState } from "./pageState/GroupPageState";
 import { GroupsPageState } from "./pageState/GroupsPageState";
 
 export class ApplicationState implements BaseState {
@@ -14,6 +14,7 @@ export class ApplicationState implements BaseState {
     private demoState: DemoPageState;
     private groupsState: GroupsPageState;
     private groupState: GroupPageState;
+    private groupSettingState: GroupSettingsPageState;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
@@ -24,6 +25,7 @@ export class ApplicationState implements BaseState {
             this.demoState,
             this.groupsState,
             this.groupState,
+            this.groupSettingState,
             ...this.dynamicState.values()
         ];
     }
@@ -38,6 +40,7 @@ export class ApplicationState implements BaseState {
         this.demoState = new DemoPageState();
         this.groupsState = new GroupsPageState();
         this.groupState = new GroupPageState();
+        this.groupSettingState = new GroupSettingsPageState();
     }
 
     public async init() {
@@ -72,6 +75,10 @@ export class ApplicationState implements BaseState {
 
     public getGroupState() {
         return this.groupState;
+    }
+
+    public getGroupSettingsState() {
+        return this.groupSettingState;
     }
 }
 

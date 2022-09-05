@@ -18,6 +18,7 @@ export type { UserGroup } from './models/UserGroup';
 export type { UserGroupInDto } from './models/UserGroupInDto';
 export type { UserGroupOutDto } from './models/UserGroupOutDto';
 export type { UserInDto } from './models/UserInDto';
+export type { UserOutDto } from './models/UserOutDto';
 export type { UserStoreDto } from './models/UserStoreDto';
 export type { WeatherForecast } from './models/WeatherForecast';
 

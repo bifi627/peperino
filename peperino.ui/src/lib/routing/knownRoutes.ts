@@ -8,4 +8,5 @@ export module KnownRoutes {
     };
     export const Demo = () => `/demo`;
     export const Group = (slug?: string) => slug ? `/group/${slug}` : "/group";
+    export const GroupSettings = (slug: string) => `/group/${slug}/settings`;
 }

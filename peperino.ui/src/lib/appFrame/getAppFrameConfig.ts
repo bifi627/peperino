@@ -4,11 +4,11 @@ import { KnownRoutes } from "../routing/knownRoutes";
 import { GlobalApplicationStateObject } from "../state/ApplicationState";
 import { AppFrameConfig } from "./AppFrameConfig";
 
-export const getAppFrameConfig = (user: User | null | undefined, route: string) => {
+export const getAppFrameConfig = (user: User | null | undefined, resolvedRoute: string, patternRoute: string) => {
     const initial = user ? DefaultAppFrameConifg(user) : AnonymousAppFrameConifg;
     const specialConfigs: AppFrameConfig[] = [];
 
-    if (route.startsWith(KnownRoutes.Demo())) {
+    if (resolvedRoute.startsWith(KnownRoutes.Demo())) {
         const demoPageConfig = GlobalApplicationStateObject.getDemoState().appFrameConfig;
         if (demoPageConfig) {
             specialConfigs.push(demoPageConfig);
@@ -16,19 +16,24 @@ export const getAppFrameConfig = (user: User | null | undefined, route: string) 
     }
 
     // First the specific route
-    if (route.startsWith(KnownRoutes.Group()) && route.endsWith(KnownRoutes.Group())) {
-        const groupsPageConfig = GlobalApplicationStateObject.getGroupsState().appFrameConfig;
-        if (groupsPageConfig) {
-            specialConfigs.push(groupsPageConfig);
+    if (patternRoute.startsWith(KnownRoutes.GroupSettings("[slug]"))) {
+        const groupSettingsPageConifg = GlobalApplicationStateObject.getGroupSettingsState().appFrameConfig;
+        if (groupSettingsPageConifg) {
+            specialConfigs.push(groupSettingsPageConifg);
         }
     }
-    else if (route.startsWith(KnownRoutes.Group())) {
+    else if (patternRoute.startsWith(KnownRoutes.Group("[slug]"))) {
         const groupPageConfig = GlobalApplicationStateObject.getGroupState().appFrameConfig;
         if (groupPageConfig) {
             specialConfigs.push(groupPageConfig);
         }
     }
-
+    else if (patternRoute.startsWith(KnownRoutes.Group())) {
+        const groupsPageConfig = GlobalApplicationStateObject.getGroupsState().appFrameConfig;
+        if (groupsPageConfig) {
+            specialConfigs.push(groupsPageConfig);
+        }
+    }
 
     if (specialConfigs.length > 0) {
         let mergedConfig = initial;
