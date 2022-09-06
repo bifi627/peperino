@@ -16,17 +16,17 @@ namespace Peperino.Domain.Base
             return ownableEntity.Include(x => x.Access.UserAccess).Include(x => x.Access.GroupAccess);
         }
 
-        public static IEnumerable<T> FilterRequireRead<T>(this IEnumerable<T> entities, User user) where T : BaseOwnableEntity
+        public static IEnumerable<T> FilterRequireRead<T>(this IEnumerable<T> entities, User? user) where T : BaseOwnableEntity
         {
             return entities.FilterRequireAccessLevel(user, AccessLevel.Read);
         }
 
-        public static IEnumerable<T> FilterRequireWrite<T>(this IEnumerable<T> entities, User user) where T : BaseOwnableEntity
+        public static IEnumerable<T> FilterRequireWrite<T>(this IEnumerable<T> entities, User? user) where T : BaseOwnableEntity
         {
             return entities.FilterRequireAccessLevel(user, AccessLevel.Write);
         }
 
-        public static IEnumerable<T> FilterRequireAccessLevel<T>(this IEnumerable<T> entities, User user, AccessLevel requestedAccess) where T : BaseOwnableEntity
+        public static IEnumerable<T> FilterRequireAccessLevel<T>(this IEnumerable<T> entities, User? user, AccessLevel requestedAccess) where T : BaseOwnableEntity
         {
             if (user is null)
             {
@@ -42,17 +42,17 @@ namespace Peperino.Domain.Base
             }
         }
 
-        public static bool RequireAccessRead(this BaseOwnableEntity entity, User user, bool throwException = true)
+        public static bool RequireAccessRead(this BaseOwnableEntity entity, User? user, bool throwException = true)
         {
             return entity.RequireAccess(user, AccessLevel.Read, throwException);
         }
 
-        public static bool RequireAccessWrite(this BaseOwnableEntity entity, User user, bool throwException = true)
+        public static bool RequireAccessWrite(this BaseOwnableEntity entity, User? user, bool throwException = true)
         {
             return entity.RequireAccess(user, AccessLevel.Write, throwException);
         }
 
-        public static bool RequireAccess(this BaseOwnableEntity entity, User user, AccessLevel requestedAccess, bool throwException = true)
+        public static bool RequireAccess(this BaseOwnableEntity entity, User? user, AccessLevel requestedAccess, bool throwException = true)
         {
             if (user is null)
             {

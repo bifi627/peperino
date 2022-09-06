@@ -3,6 +3,7 @@ using Peperino;
 using Peperino.EntityFramework;
 using Peperino.Infrastructure.Options;
 using System.Text;
+using System.Text.Json.Serialization;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -15,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
     // Add services to the container.
     builder.Services.AddControllers().AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();

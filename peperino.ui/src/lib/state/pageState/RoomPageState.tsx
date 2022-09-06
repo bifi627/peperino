@@ -1,7 +1,7 @@
 import { Delete, Settings, Share } from "@mui/icons-material";
 import { makeObservable, observable } from "mobx";
 import Router from "next/router";
-import { RoomOutDto, RoomService } from "../../api";
+import { AccessLevel, RoomOutDto, RoomService, SharedLinkService } from "../../api";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
@@ -53,7 +53,14 @@ export class RoomSettingsPageState extends BasePageState {
             contextMenuActions: [
                 {
                     id: "share",
-                    action: () => Promise.resolve(),
+                    action: async () => {
+                        applicationState.getAppFrame().withLoadingScreen(async () => {
+                            if (this.room && confirm("Wirklich teilen?") === true) {
+                                const link = await SharedLinkService.createSharedLink({ entityType: "Room", slug: this.room.slug, grantAccessLevel: AccessLevel.READ });
+                                console.log(link.slug);
+                            }
+                        });
+                    },
                     icon: <Share />,
                     text: "share",
                 },
