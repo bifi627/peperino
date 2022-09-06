@@ -42,7 +42,7 @@ export const AppFrame = observer((props: Props) => {
             text: "Groups",
             icon: <Group />,
             action: async () => {
-                await router.push(KnownRoutes.Group())
+                await router.push(KnownRoutes.Room())
             },
             childItems: [],
         },

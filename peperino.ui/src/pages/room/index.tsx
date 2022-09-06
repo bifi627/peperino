@@ -3,13 +3,13 @@ import { isObservableArray } from "mobx";
 import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
-import { GroupListItem } from "../../components/group/GroupListItem";
-import { UserGroupOutDto, UserGroupService } from "../../lib/api";
+import { GroupListItem as RoomListItem } from "../../components/group/RoomListItem";
+import { RoomOutDto, RoomService } from "../../lib/api";
 import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
-    groups: UserGroupOutDto[]
+    rooms: RoomOutDto[]
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
@@ -18,37 +18,37 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
         return await redirectLogin<Props>(context.resolvedUrl);
     }
 
-    const groups = await UserGroupService.getAll();
+    const rooms = await RoomService.getAll();
 
     return {
         props: {
-            groups: groups
+            rooms: rooms
         }
     };
 }
 
 const GroupsPage = observer((props: Props) => {
-    const groupsState = useApplicationState().getGroupsState();
+    const roomOverviewState = useApplicationState().getRoomsOverviewState();
 
     const [groupName, setGroupName] = useState("");
 
     useEffect(() => {
-        if (isObservableArray(groupsState.groups)) {
-            groupsState.groups.replace(props.groups);
+        if (isObservableArray(roomOverviewState.rooms)) {
+            roomOverviewState.rooms.replace(props.rooms);
         }
     }, [])
 
     return (
         <>
-            <>You have access to {groupsState.groups?.length} groups.</>
+            <>You have access to {roomOverviewState.rooms?.length} groups.</>
             <div>
-                {groupsState.groups.map(group => {
+                {roomOverviewState.rooms.map(room => {
                     return (
-                        <GroupListItem key={group.groupNameSlug} group={group}></GroupListItem>
+                        <RoomListItem key={room.slug} room={room}></RoomListItem>
                     )
                 })}
             </div>
-            <Dialog open={groupsState.dialogOpened} onClose={() => groupsState.dialogOpened = false}>
+            <Dialog open={roomOverviewState.dialogOpened} onClose={() => roomOverviewState.dialogOpened = false}>
                 <DialogTitle>Neue Gruppe erstellen</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -64,11 +64,11 @@ const GroupsPage = observer((props: Props) => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => groupsState.dialogOpened = false}>Abbrechen</Button>
+                    <Button onClick={() => roomOverviewState.dialogOpened = false}>Abbrechen</Button>
                     <Button onClick={async () => {
-                        await groupsState.createGroup(groupName)
-                        await groupsState.reloadGroups();
-                        groupsState.dialogOpened = false;
+                        await roomOverviewState.createGroup(groupName)
+                        await roomOverviewState.reloadGroups();
+                        roomOverviewState.dialogOpened = false;
                     }}>Erstellen</Button>
                 </DialogActions>
             </Dialog>

@@ -1,31 +1,30 @@
 import { Delete, Settings, Share } from "@mui/icons-material";
 import { makeObservable, observable } from "mobx";
 import Router from "next/router";
-import { UserGroupOutDto, UserGroupService } from "../../api";
+import { RoomOutDto, RoomService } from "../../api";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
 
-export class GroupPageState extends BasePageState {
-
-    public group?: UserGroupOutDto = undefined;
+export class RoomPageState extends BasePageState {
+    public room?: RoomOutDto = undefined;
 
     constructor() {
         super();
         makeObservable(this, {
-            group: observable,
+            room: observable,
         });
     }
 
     public override init(applicationState: ApplicationState) {
         this.appFrameConfig = {
-            toolbarText: "Group Page",
+            toolbarText: "Room Page",
             contextMenuActions: [
                 {
                     id: "settings",
                     action: async () => {
-                        if (this.group) {
-                            await Router.push(KnownRoutes.GroupSettings(this.group.groupNameSlug));
+                        if (this.room) {
+                            await Router.push(KnownRoutes.RoomSettings(this.room.slug));
                         }
                     },
                     icon: <Settings />,
@@ -38,13 +37,13 @@ export class GroupPageState extends BasePageState {
     }
 }
 
-export class GroupSettingsPageState extends BasePageState {
-    public group?: UserGroupOutDto = undefined;
+export class RoomSettingsPageState extends BasePageState {
+    public room?: RoomOutDto = undefined;
 
     constructor() {
         super();
         makeObservable(this, {
-            group: observable,
+            room: observable,
         });
     }
 
@@ -62,9 +61,9 @@ export class GroupSettingsPageState extends BasePageState {
                     id: "delete",
                     action: async () => {
                         applicationState.getAppFrame().withLoadingScreen(async () => {
-                            if (this.group && confirm("Wirklich löschen?") === true) {
-                                await UserGroupService.deleteBySlug(this.group?.groupNameSlug);
-                                await Router.push(KnownRoutes.Group());
+                            if (this.room && confirm("Wirklich löschen?") === true) {
+                                await RoomService.deleteBySlug(this.room.slug);
+                                await Router.push(KnownRoutes.Room());
                             }
                         });
                     },

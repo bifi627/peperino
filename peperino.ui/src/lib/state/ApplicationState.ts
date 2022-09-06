@@ -4,17 +4,17 @@ import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { HealthCheckState } from "./commonState/HealthCheckState";
 import { DemoPageState } from "./pageState/DemoPageState";
-import { GroupPageState, GroupSettingsPageState } from "./pageState/GroupPageState";
-import { GroupsPageState } from "./pageState/GroupsPageState";
+import { RoomPageState, RoomSettingsPageState } from "./pageState/RoomPageState";
+import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 
 export class ApplicationState implements BaseState {
     public key = "ApplicationState";
     private healthCheck: HealthCheckState;
     private appFrame: AppFrameState;
     private demoState: DemoPageState;
-    private groupsState: GroupsPageState;
-    private groupState: GroupPageState;
-    private groupSettingState: GroupSettingsPageState;
+    private roomsOverviewState: RoomsOverviewPageState;
+    private roomState: RoomPageState;
+    private roomSettingsState: RoomSettingsPageState;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
@@ -23,9 +23,9 @@ export class ApplicationState implements BaseState {
             this.healthCheck,
             this.appFrame,
             this.demoState,
-            this.groupsState,
-            this.groupState,
-            this.groupSettingState,
+            this.roomsOverviewState,
+            this.roomState,
+            this.roomSettingsState,
             ...this.dynamicState.values()
         ];
     }
@@ -38,9 +38,9 @@ export class ApplicationState implements BaseState {
         this.healthCheck = new HealthCheckState();
         this.appFrame = new AppFrameState();
         this.demoState = new DemoPageState();
-        this.groupsState = new GroupsPageState();
-        this.groupState = new GroupPageState();
-        this.groupSettingState = new GroupSettingsPageState();
+        this.roomsOverviewState = new RoomsOverviewPageState();
+        this.roomState = new RoomPageState();
+        this.roomSettingsState = new RoomSettingsPageState();
     }
 
     public async init() {
@@ -69,16 +69,16 @@ export class ApplicationState implements BaseState {
         return this.demoState;
     }
 
-    public getGroupsState() {
-        return this.groupsState;
+    public getRoomsOverviewState() {
+        return this.roomsOverviewState;
     }
 
-    public getGroupState() {
-        return this.groupState;
+    public getRoomState() {
+        return this.roomState;
     }
 
-    public getGroupSettingsState() {
-        return this.groupSettingState;
+    public getRoomSettingsState() {
+        return this.roomSettingsState;
     }
 }
 

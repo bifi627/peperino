@@ -2,6 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type UserGroupInDto = {
-    groupName: string;
+export type CreateRoomCommand = {
+    roomName: string;
 };

@@ -16,20 +16,20 @@ export const getAppFrameConfig = (user: User | null | undefined, resolvedRoute: 
     }
 
     // First the specific route
-    if (patternRoute.startsWith(KnownRoutes.GroupSettings("[slug]"))) {
-        const groupSettingsPageConifg = GlobalApplicationStateObject.getGroupSettingsState().appFrameConfig;
+    if (patternRoute.startsWith(KnownRoutes.RoomSettings("[slug]"))) {
+        const groupSettingsPageConifg = GlobalApplicationStateObject.getRoomSettingsState().appFrameConfig;
         if (groupSettingsPageConifg) {
             specialConfigs.push(groupSettingsPageConifg);
         }
     }
-    else if (patternRoute.startsWith(KnownRoutes.Group("[slug]"))) {
-        const groupPageConfig = GlobalApplicationStateObject.getGroupState().appFrameConfig;
+    else if (patternRoute.startsWith(KnownRoutes.Room("[slug]"))) {
+        const groupPageConfig = GlobalApplicationStateObject.getRoomState().appFrameConfig;
         if (groupPageConfig) {
             specialConfigs.push(groupPageConfig);
         }
     }
-    else if (patternRoute.startsWith(KnownRoutes.Group())) {
-        const groupsPageConfig = GlobalApplicationStateObject.getGroupsState().appFrameConfig;
+    else if (patternRoute.startsWith(KnownRoutes.Room())) {
+        const groupsPageConfig = GlobalApplicationStateObject.getRoomsOverviewState().appFrameConfig;
         if (groupsPageConfig) {
             specialConfigs.push(groupsPageConfig);
         }

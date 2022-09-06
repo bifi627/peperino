@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
-import { UserGroupOutDto } from "../../lib/api";
+import { RoomOutDto } from "../../lib/api";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 
 interface Props {
-    group: UserGroupOutDto;
+    room: RoomOutDto;
 }
 
 export const GroupListItem = (props: Props) => {
@@ -12,11 +12,11 @@ export const GroupListItem = (props: Props) => {
     return (
         <>
             <div onClick={() => {
-                router.push(KnownRoutes.Group(props.group.groupNameSlug));
+                router.push(KnownRoutes.Room(props.room.slug));
             }}>
-                Name: {props.group.groupName}
+                Name: {props.room.roomName}
                 <br />
-                Slug: {props.group.groupNameSlug}
+                Slug: {props.room.slug}
             </div>
         </>
     );

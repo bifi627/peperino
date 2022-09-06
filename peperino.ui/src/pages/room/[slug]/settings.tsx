@@ -1,12 +1,12 @@
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
-import { UserGroupOutDto, UserGroupService } from "../../../lib/api";
+import { RoomOutDto, RoomService } from "../../../lib/api";
 import { authPage, redirectLogin } from "../../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
 
 interface Props {
-    group: UserGroupOutDto;
+    room: RoomOutDto;
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
@@ -18,10 +18,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
     const slug = context.query["slug"] as string;
 
     try {
-        const group = await UserGroupService.getBySlug(slug);
+        const group = await RoomService.getBySlug(slug);
         return {
             props: {
-                group: group,
+                room: group,
             }
         };
     } catch (error: any) {
@@ -31,21 +31,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
             },
             notFound: true,
             redirect: {
-                destination: KnownRoutes.Group(),
+                destination: KnownRoutes.Room(),
             }
         }
     }
 }
 
 const GroupSettingsPage = (props: Props) => {
-    const groupSettingsState = useApplicationState().getGroupSettingsState();
+    const groupSettingsState = useApplicationState().getRoomSettingsState();
 
     useEffect(() => {
-        groupSettingsState.group = props.group;
+        groupSettingsState.room = props.room;
     }, [])
 
     return (
-        <>GroupSettingsPage FOLDER - {props.group.groupName} - {props.group.createdBy.userName}</>
+        <>GroupSettingsPage FOLDER - {props.room.roomName} - {props.room.createdBy.userName}</>
     );
 }
 

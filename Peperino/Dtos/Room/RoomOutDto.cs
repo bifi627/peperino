@@ -9,13 +9,13 @@ namespace Peperino.Dtos.UserGroup
         Member,
     }
 
-    public class UserGroupOutDto
+    public class RoomOutDto
     {
         [Required]
-        public string GroupName { get; set; } = string.Empty;
+        public string RoomName { get; set; } = string.Empty;
 
         [Required]
-        public string GroupNameSlug { get; set; } = string.Empty;
+        public string Slug { get; set; } = string.Empty;
 
         [Required]
         public UserOutDto CreatedBy { get; set; }

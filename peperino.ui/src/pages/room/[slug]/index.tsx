@@ -1,12 +1,12 @@
 import { GetServerSideProps } from "next";
 import { useEffect } from "react";
-import { UserGroupOutDto, UserGroupService } from "../../../lib/api";
+import { RoomOutDto, RoomService } from "../../../lib/api";
 import { authPage, redirectLogin } from "../../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
 
 interface Props {
-    group: UserGroupOutDto;
+    room: RoomOutDto;
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
@@ -18,10 +18,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
     const slug = context.query["slug"] as string;
 
     try {
-        const group = await UserGroupService.getBySlug(slug);
+        const group = await RoomService.getBySlug(slug);
         return {
             props: {
-                group: group,
+                room: group,
             }
         };
     } catch (error: any) {
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
             },
             notFound: true,
             redirect: {
-                destination: KnownRoutes.Group(),
+                destination: KnownRoutes.Room(),
             }
         }
     }
@@ -39,14 +39,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
 
 const GroupPage = (props: Props) => {
 
-    const groupPageState = useApplicationState().getGroupState();
+    const groupPageState = useApplicationState().getRoomState();
 
     useEffect(() => {
-        groupPageState.group = props.group;
+        groupPageState.room = props.room;
     }, [])
 
     return (
-        <>Group Page {props.group?.groupName} </>
+        <>Group Page {props.room?.roomName} </>
     );
 }
 

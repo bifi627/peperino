@@ -4,8 +4,8 @@
 
 import type { UserOutDto } from './UserOutDto';
 
-export type UserGroupOutDto = {
-    groupName: string;
-    groupNameSlug: string;
+export type RoomOutDto = {
+    roomName: string;
+    slug: string;
     createdBy: UserOutDto;
 };

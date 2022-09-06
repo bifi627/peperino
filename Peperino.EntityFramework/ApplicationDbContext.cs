@@ -34,6 +34,8 @@ namespace Peperino.EntityFramework
 
         public DbSet<UserStoreClient> UserStores => Set<UserStoreClient>();
 
+        public DbSet<Room> Rooms => Set<Room>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql();

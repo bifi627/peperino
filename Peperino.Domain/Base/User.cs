@@ -9,7 +9,6 @@
     public class UserGroup : BaseAuditableEntity
     {
         public string GroupName { get; set; } = string.Empty;
-        public string GroupNameSlug { get; set; } = string.Empty;
         public IList<User> Users { get; set; } = new List<User>();
     }
 }

@@ -12,8 +12,8 @@ using Peperino.EntityFramework;
 namespace Peperino.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220904170235_Add_usergroup_slug")]
-    partial class Add_usergroup_slug
+    [Migration("20220906171400_Add_room")]
+    partial class Add_room
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -128,10 +128,6 @@ namespace Peperino.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("GroupNameSlug")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp with time zone");
 
@@ -208,6 +204,48 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasIndex("LastModifiedById");
 
                     b.ToTable("Demos");
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoomName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("LastModifiedById");
+
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStoreClient", b =>
@@ -316,6 +354,29 @@ namespace Peperino.EntityFramework.Migrations
                         .WithMany()
                         .HasForeignKey("LastModifiedById")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("LastModifiedBy");
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
+                {
+                    b.HasOne("Peperino.Domain.Base.AccessList", "Access")
+                        .WithMany()
+                        .HasForeignKey("AccessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("LastModifiedById");
+
+                    b.Navigation("Access");
 
                     b.Navigation("CreatedBy");
 

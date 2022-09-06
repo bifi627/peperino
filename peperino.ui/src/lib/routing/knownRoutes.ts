@@ -7,6 +7,6 @@ export module KnownRoutes {
         return `/login`;
     };
     export const Demo = () => `/demo`;
-    export const Group = (slug?: string) => slug ? `/group/${slug}` : "/group";
-    export const GroupSettings = (slug: string) => `/group/${slug}/settings`;
+    export const Room = (slug?: string) => slug ? `/room/${slug}` : "/room";
+    export const RoomSettings = (slug: string) => `/room/${slug}/settings`;
 }

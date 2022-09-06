@@ -1,25 +1,25 @@
 import { Add } from "@mui/icons-material";
 import { isObservableArray, makeObservable, observable } from "mobx";
-import { UserGroupOutDto, UserGroupService } from "../../api";
+import { RoomOutDto, RoomService } from "../../api";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
 
-export class GroupsPageState extends BasePageState {
+export class RoomsOverviewPageState extends BasePageState {
     public dialogOpened = false;
-    public groups: UserGroupOutDto[] = [];
+    public rooms: RoomOutDto[] = [];
 
     constructor() {
         super();
 
         makeObservable(this, {
             dialogOpened: observable,
-            groups: observable,
+            rooms: observable,
         })
     }
 
     public override init(applicationState: ApplicationState) {
         this.appFrameConfig = {
-            toolbarText: "Groups Page",
+            toolbarText: "Rooms Overview",
             contextMenuActions: [
                 {
                     id: "add",
@@ -37,12 +37,12 @@ export class GroupsPageState extends BasePageState {
     }
 
     public async reloadGroups() {
-        if (isObservableArray(this.groups)) {
-            this.groups.replace(await UserGroupService.getAll());
+        if (isObservableArray(this.rooms)) {
+            this.rooms.replace(await RoomService.getAll());
         }
     }
 
     public async createGroup(name: string) {
-        await UserGroupService.create({ groupName: name });
+        await RoomService.createRoom({ roomName: name });
     }
 }

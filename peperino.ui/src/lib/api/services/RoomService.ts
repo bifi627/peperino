@@ -1,53 +1,53 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserGroupInDto } from '../models/UserGroupInDto';
-import type { UserGroupOutDto } from '../models/UserGroupOutDto';
+import type { CreateRoomCommand } from '../models/CreateRoomCommand';
+import type { RoomOutDto } from '../models/RoomOutDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
-export class UserGroupService {
+export class RoomService {
 
     /**
      * @param requestBody 
-     * @returns UserGroupOutDto Success
+     * @returns RoomOutDto Success
      * @throws ApiError
      */
-    public static create(
-requestBody?: UserGroupInDto,
-): CancelablePromise<UserGroupOutDto> {
+    public static createRoom(
+requestBody?: CreateRoomCommand,
+): CancelablePromise<RoomOutDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/UserGroup',
+            url: '/api/Room',
             body: requestBody,
             mediaType: 'application/json',
         });
     }
 
     /**
-     * @returns UserGroupOutDto Success
+     * @returns RoomOutDto Success
      * @throws ApiError
      */
-    public static getAll(): CancelablePromise<Array<UserGroupOutDto>> {
+    public static getAll(): CancelablePromise<Array<RoomOutDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/UserGroup',
+            url: '/api/Room',
         });
     }
 
     /**
      * @param slug 
-     * @returns UserGroupOutDto Success
+     * @returns RoomOutDto Success
      * @throws ApiError
      */
     public static getBySlug(
 slug: string,
-): CancelablePromise<UserGroupOutDto> {
+): CancelablePromise<RoomOutDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/UserGroup/{slug}',
+            url: '/api/Room/{slug}',
             path: {
                 'slug': slug,
             },
@@ -64,7 +64,7 @@ slug: string,
 ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/api/UserGroup/{slug}',
+            url: '/api/Room/{slug}',
             path: {
                 'slug': slug,
             },
