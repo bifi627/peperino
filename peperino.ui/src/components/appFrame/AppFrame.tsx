@@ -1,4 +1,4 @@
-import { Group, Home, Login, StreamSharp } from "@mui/icons-material";
+import { Groups, Home, Login, StreamSharp } from "@mui/icons-material";
 import { AppBar, Toolbar, useTheme } from "@mui/material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
@@ -39,8 +39,8 @@ export const AppFrame = observer((props: Props) => {
             childItems: [],
         },
         {
-            text: "Groups",
-            icon: <Group />,
+            text: "Rooms",
+            icon: <Groups />,
             action: async () => {
                 await router.push(KnownRoutes.Room())
             },

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Peperino.Application.Room.Commands.CreateRoom;
 using Peperino.Application.Room.Commands.DeleteRoom;
 using Peperino.Application.Room.Queries.GetRooms;
+using Peperino.Domain.Base;
 using Peperino.Dtos.UserGroup;
 
 namespace Peperino.Controllers
@@ -35,7 +36,13 @@ namespace Peperino.Controllers
         {
             var rooms = await Mediator.Send(new GetRoomsQuery());
 
-            var dto = rooms.Adapt<IEnumerable<RoomOutDto>>();
+            var currentUser = CurrentUser;
+            var dto = rooms.Select(room =>
+            {
+                var roomOut = room.Adapt<RoomOutDto>();
+                roomOut.AccessLevel = room.CalculateAccessLevel(currentUser);
+                return roomOut;
+            });
 
             if (dto is null)
             {
@@ -58,6 +65,7 @@ namespace Peperino.Controllers
             }
 
             var dto = room.Adapt<RoomOutDto>();
+            dto.AccessLevel = room.CalculateAccessLevel(CurrentUser);
 
             if (dto is null)
             {

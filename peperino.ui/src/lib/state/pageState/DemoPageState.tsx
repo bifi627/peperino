@@ -2,6 +2,7 @@ import { Add } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { action, computed, makeObservable, observable, reaction } from "mobx";
 import Router from "next/router";
+
 import { UserStoreService } from "../../api";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
@@ -52,55 +53,45 @@ export class DemoPageState extends BasePageState {
         const store = await UserStoreService.getApiUserStore();
         this.counter = Number.parseInt(store.keyValueStorage[COUNTER_STORE_INDEX]);
 
-        this.appFrameConfig = {
-            toolbarText: "Demo Page",
-            contextMenuActions: [
-                {
-                    id: "IncrementKeepOpen",
-                    action: () => {
-                        this.counter++;
-                        return Promise.resolve();
-                    },
-                    text: "TEST2",
-                    keepMenuOpen: true,
-                    icon: <Add />
+        this.appFrameConfig.toolbarText = "Demo Page";
+        this.appFrameConfig.contextMenuActions = [
+            {
+                id: "IncrementKeepOpen",
+                action: () => {
+                    this.counter++;
+                    return Promise.resolve();
                 },
-                {
-                    id: "Increment",
-                    action: () => {
-                        this.counter++;
-                        return Promise.resolve();
-                    },
-                    text: "TEST",
-                    icon: <Add />
+                text: "TEST2",
+                keepMenuOpen: true,
+                icon: <Add />
+            },
+            {
+                id: "Increment",
+                action: () => {
+                    this.counter++;
+                    return Promise.resolve();
                 },
-                // {
-                //     action: () => {
-                //         themeUpdater(currentTheme === "dark" ? "light" : "dark");
-                //         return Promise.resolve();
-                //     },
-                //     text: currentTheme ?? "THEME?",
-                //     icon: <Add />
-                // },
-                {
-                    id: "ToggleTheme",
-                    action: async () => {
-                        await applicationState.getAppFrame().withLoadingScreen(async () => {
-                            await applicationState.getHealthCheck().checkConnection();
-                        }, "Full");
-                    },
-                    text: "TOGGLE HEALTH",
-                    icon: <Add />
+                text: "TEST",
+                icon: <Add />
+            },
+            {
+                id: "ToggleTheme",
+                action: async () => {
+                    await applicationState.getAppFrame().withLoadingScreen(async () => {
+                        await applicationState.getHealthCheck().checkConnection();
+                    }, "Full");
                 },
-                {
-                    id: "PushRoot",
-                    action: async () => {
-                        await Router.push(KnownRoutes.Root());
-                    },
-                    text: "HOME",
-                    icon: <Add />
-                }
-            ]
-        }
+                text: "TOGGLE HEALTH",
+                icon: <Add />
+            },
+            {
+                id: "PushRoot",
+                action: async () => {
+                    await Router.push(KnownRoutes.Root());
+                },
+                text: "HOME",
+                icon: <Add />
+            }
+        ]
     }
 }

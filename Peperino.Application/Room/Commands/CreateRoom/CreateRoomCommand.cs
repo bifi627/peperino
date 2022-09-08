@@ -52,6 +52,16 @@ namespace Peperino.Application.Room.Commands.CreateRoom
                 Slug = slug,
             };
 
+            var groupAccess = new Domain.Base.GroupAccess
+            {
+                AccessLevel = Domain.Base.AccessLevel.WriteContent
+            };
+
+            groupAccess.UserGroup.GroupName = "Members";
+            groupAccess.UserGroup.Users.Add(currentUser);
+
+            room.Access.GroupAccess.Add(groupAccess);
+
             await _dbContext.Rooms.AddAsync(room, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 

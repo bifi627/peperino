@@ -74,10 +74,18 @@ namespace Peperino.Controllers
                 return NotFound();
             }
 
+            // Remove this specific room stuff later if we want to share more stuff?
+            var resolvedLinkDto = new SharedLinkResolvedOutDto();
+            if (entity is Room roomDto)
+            {
+                resolvedLinkDto.Slug = roomDto.Slug;
+                resolvedLinkDto.EntityType = "Room";
+            }
+
             // check if access level is already granted
             if (entity.RequireAccess(CurrentUser, grantAccessLevel, false))
             {
-                return Ok();
+                return resolvedLinkDto;
             }
 
             // check if lower access level is already granted and elevate if needed
@@ -87,7 +95,23 @@ namespace Peperino.Controllers
                 existingAccess.AccessLevel = grantAccessLevel;
             }
 
+            // Add user to user access
             entity.Access.UserAccess.Add(new UserAccess() { User = CurrentUser, AccessLevel = grantAccessLevel });
+
+            // If this is a room we need to create a user group assigned to this room
+            // this user group can be used to administrate the entities inside this room
+            // Remove this specific room stuff later if we want to share more stuff?
+            if (entity is Room room)
+            {
+                var ids = room.Access.GroupAccess.Select(s => s.Id).ToList();
+
+                var groupAccess = await UserDbContext.GroupAccess.Include(ga => ga.UserGroup).Include(ga => ga.UserGroup.Users).Where(ga => ids.Contains(ga.Id)).Where(ga => ga.UserGroup.GroupName == "Members").FirstOrDefaultAsync();
+
+                if (groupAccess is not null)
+                {
+                    groupAccess.UserGroup.Users.Add(CurrentUser);
+                }
+            }
 
             // if link is single use set duration so it is expired
             if (link.LinkType == LinkType.Single)
@@ -97,9 +121,7 @@ namespace Peperino.Controllers
 
             await DbContext.SaveChangesAsync();
 
-            var dto = link.Adapt<SharedLinkResolvedOutDto>();
-
-            return dto;
+            return resolvedLinkDto;
         }
     }
 }

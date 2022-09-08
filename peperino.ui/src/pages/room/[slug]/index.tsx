@@ -43,6 +43,7 @@ const GroupPage = (props: Props) => {
 
     useEffect(() => {
         groupPageState.room = props.room;
+        groupPageState.updateToolbar();
     }, [])
 
     return (

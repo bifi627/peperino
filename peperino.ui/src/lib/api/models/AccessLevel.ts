@@ -3,9 +3,10 @@
 /* eslint-disable */
 
 export enum AccessLevel {
+    NONE = 'None',
     READ = 'Read',
+    WRITE_CONTENT = 'WriteContent',
     WRITE = 'Write',
     DELETE = 'Delete',
     OWNER = 'Owner',
-    NONE = 'None',
 }

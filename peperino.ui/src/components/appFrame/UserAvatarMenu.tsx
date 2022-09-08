@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useAppFrameConfig } from "../../lib/appFrame/useAppFrameConfig";
+import { useAppFrameConfig } from "../../lib/hooks/useAppFrameConfig";
 
 export const UserAvatarMenu = () => {
     const [user, loading, error] = useAuthState(getAuth());
@@ -22,7 +22,7 @@ export const UserAvatarMenu = () => {
     return (
         <>
             <IconButton onClick={handleOpenUserMenu} color="inherit" aria-label="menu">
-                {appFrameConfig.userAvatarIcon}
+                {appFrameConfig?.userAvatarIcon}
             </IconButton>
             <Menu
                 sx={{ mt: '45px' }}
@@ -40,7 +40,7 @@ export const UserAvatarMenu = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
             >
-                {appFrameConfig.userAvatarActions?.map((action) => (
+                {appFrameConfig?.userAvatarActions?.map((action) => (
                     <MenuItem key={action.text} onClick={async () => {
                         !action.keepMenuOpen && handleCloseUserMenu();
                         await action.action();

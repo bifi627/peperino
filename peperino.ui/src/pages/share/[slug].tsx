@@ -29,25 +29,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
         }
     } catch (error: any) {
         console.error(error);
-        return {
-            props: {
-            },
-            notFound: true,
-            redirect: {
-                destination: KnownRoutes.Room(),
-            }
-        }
     }
 
     return {
         props: {
         },
+        // notFound: true,
+        // redirect: {
+        //     destination: KnownRoutes.Root(),
+        // }
     }
 }
 
 const SharedLinkPage = observer((props: Props) => {
     return (
-        <FullLoadingPage />
+        <FullLoadingPage text="Der Link ist abgelaufen oder existiert nicht..." />
     );
 });
 

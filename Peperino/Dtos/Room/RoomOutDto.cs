@@ -1,4 +1,5 @@
-﻿using Peperino.Dtos.User;
+﻿using Peperino.Domain.Base;
+using Peperino.Dtos.User;
 using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Dtos.UserGroup
@@ -19,5 +20,8 @@ namespace Peperino.Dtos.UserGroup
 
         [Required]
         public UserOutDto CreatedBy { get; set; }
+
+        [Required]
+        public AccessLevel AccessLevel { get; set; }
     }
 }

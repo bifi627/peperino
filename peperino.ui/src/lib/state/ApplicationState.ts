@@ -4,7 +4,8 @@ import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { HealthCheckState } from "./commonState/HealthCheckState";
 import { DemoPageState } from "./pageState/DemoPageState";
-import { RoomPageState, RoomSettingsPageState } from "./pageState/RoomPageState";
+import { RoomPageState } from "./pageState/RoomPageState";
+import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
 import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 
 export class ApplicationState implements BaseState {

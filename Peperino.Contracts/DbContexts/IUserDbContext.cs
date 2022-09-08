@@ -7,5 +7,8 @@ namespace Peperino.Contracts.DbContexts
     {
         DbSet<User> Users { get; }
         DbSet<UserGroup> UserGroups { get; }
+
+        DbSet<GroupAccess> GroupAccess { get; }
+        DbSet<UserAccess> UserAccess { get; }
     }
 }

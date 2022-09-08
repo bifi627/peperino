@@ -18,20 +18,18 @@ export class RoomsOverviewPageState extends BasePageState {
     }
 
     public override init(applicationState: ApplicationState) {
-        this.appFrameConfig = {
-            toolbarText: "Rooms Overview",
-            contextMenuActions: [
-                {
-                    id: "add",
-                    action: () => {
-                        this.dialogOpened = true;
-                        return Promise.resolve();
-                    },
-                    icon: <Add />,
-                    text: "add",
-                }
-            ]
-        }
+        this.appFrameConfig.toolbarText = "Rooms Overview";
+        this.appFrameConfig.contextMenuActions = [
+            {
+                id: "add",
+                action: () => {
+                    this.dialogOpened = true;
+                    return Promise.resolve();
+                },
+                icon: <Add />,
+                text: "add",
+            }
+        ];
 
         return Promise.resolve();
     }

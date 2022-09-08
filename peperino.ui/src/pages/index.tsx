@@ -1,13 +1,11 @@
-import { Login, Logout, MoreVert } from "@mui/icons-material";
-import { Avatar, Switch } from "@mui/material";
-import { getAuth, signOut, User } from "firebase/auth";
+import { Switch } from "@mui/material";
+import { getAuth, signOut } from "firebase/auth";
 import type { NextPage } from 'next';
 import Link from "next/link";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ApiError, UserService, WeatherForecastService } from "../lib/api";
 import { handleError } from "../lib/apiConfig";
-import { AppFrameConfig } from "../lib/appFrame/AppFrameConfig";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
 const Home: NextPage = () => {
@@ -72,37 +70,6 @@ const Home: NextPage = () => {
             </>}
         </>
     );
-}
-
-export const DefaultAppFrameConifg = (user: User): AppFrameConfig => {
-    return {
-        toolbarText: "Peperino",
-        contextMenuIcon: <MoreVert />,
-        userAvatarIcon: <Avatar src={user.photoURL ?? ""} />,
-        userAvatarActions: [{
-            id: "Logout",
-            text: "Logout",
-            action: async () => {
-                await signOut(getAuth())
-                router.push(KnownRoutes.Root());
-            },
-            icon: <Logout />
-        }]
-    }
-}
-
-export const AnonymousAppFrameConifg: AppFrameConfig = {
-    toolbarText: "Peperino",
-    contextMenuIcon: <MoreVert />,
-    userAvatarIcon: <Avatar />,
-    userAvatarActions: [{
-        id: "Login",
-        text: "Login",
-        action: async () => {
-            router.push(KnownRoutes.Login(router.asPath));
-        },
-        icon: <Login />
-    }]
 }
 
 export default Home
