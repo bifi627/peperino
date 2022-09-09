@@ -12,7 +12,7 @@ export class HealthCheckState implements BaseState {
     }
 
     public init() {
-        setInterval(() => this.checkConnection(), 10 * 1000);
+        setInterval(() => this.checkConnection(), 60 * 1000);
         return Promise.resolve();
     }
 
