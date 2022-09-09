@@ -79,7 +79,7 @@ export class DemoPageState extends BasePageState {
                 action: async () => {
                     await applicationState.getAppFrame().withLoadingScreen(async () => {
                         await applicationState.getHealthCheck().checkConnection();
-                    }, "Full");
+                    });
                 },
                 text: "TOGGLE HEALTH",
                 icon: <Add />

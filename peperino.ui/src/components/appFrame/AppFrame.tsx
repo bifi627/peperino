@@ -66,15 +66,13 @@ export const AppFrame = observer((props: Props) => {
 
     return (
         <div style={{ height: "100vh" }}>
-            <LoadingProvider loading={appFrame.showLoading === "Full"}>
+            <LoadingProvider>
                 <AppBar sx={{ zIndex: theme.zIndex.drawer + 1 }} position="fixed">
                     <DynamicToolbar menuClick={() => appFrame.drawerOpened = !appFrame.drawerOpened} />
                 </AppBar>
                 <Toolbar />
                 <DynamicDrawer items={drawerItems} />
-                <LoadingProvider loading={appFrame.showLoading === "Page"}>
-                    {props.children}
-                </LoadingProvider>
+                {props.children}
                 <ToastContainer />
             </LoadingProvider>
         </div>

@@ -19,9 +19,11 @@ export const DynamicDrawer = observer((props: DynamicDrawerProps) => {
     const appFrame = useApplicationState().getAppFrame();
 
     const onItemClicked = async (item: DrawerItemProps) => {
-        await item.action?.();
         appFrame.drawerOpened = false;
-    }
+        await appFrame.withLoadingScreen(async () => {
+            await item.action?.();
+        });
+    };
 
     return (
         <Drawer PaperProps={{ style: { top: "64px" } }} open={appFrame.drawerOpened} anchor={"left"} onClose={() => appFrame.drawerOpened = false}>
