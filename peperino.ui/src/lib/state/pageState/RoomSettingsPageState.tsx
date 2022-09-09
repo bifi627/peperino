@@ -27,8 +27,22 @@ export class RoomSettingsPageState extends BasePageState {
                     applicationState.getAppFrame().withLoadingScreen(async () => {
                         if (this.room && confirm("Wirklich teilen?") === true) {
                             const link = await SharedLinkService.createSharedLink({ entityType: "Room", slug: this.room.slug, grantAccessLevel: AccessLevel.WRITE_CONTENT });
-                            const linkUrl = FRONTEND_URL + KnownRoutes.SharedLink(link.slug);
-                            console.log(linkUrl);
+
+                            const subString = KnownRoutes.SharedLink(link.slug);
+                            const linkWithoutFirstSlash = subString.substring(1, subString.length);
+                            const linkUrl = FRONTEND_URL + linkWithoutFirstSlash;
+
+                            if (linkUrl.startsWith("https")) {
+                                await navigator.share({
+                                    title: "Peperino",
+                                    text: this.room.roomName,
+                                    url: linkUrl,
+                                });
+                            }
+                            else {
+                                prompt(this.room.roomName, linkUrl);
+                            }
+
                         }
                     });
                 },
