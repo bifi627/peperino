@@ -27,12 +27,20 @@ namespace Peperino.EntityFramework
 
         public DbSet<User> Users => Set<User>();
         public DbSet<UserGroup> UserGroups => Set<UserGroup>();
+        public DbSet<GroupAccess> GroupAccess => Set<GroupAccess>();
+        public DbSet<UserAccess> UserAccess => Set<UserAccess>();
+
+        public DbSet<BaseOwnableEntity> BaseOwnableEntity => Set<BaseOwnableEntity>();
 
         public DbSet<Demo> Demos => Set<Demo>();
 
         public DbSet<Session> Sessions => Set<Session>();
 
         public DbSet<UserStoreClient> UserStores => Set<UserStoreClient>();
+
+        public DbSet<Room> Rooms => Set<Room>();
+
+        public DbSet<SharedLink> SharedLinks => Set<SharedLink>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

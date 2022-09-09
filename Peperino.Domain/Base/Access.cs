@@ -2,8 +2,9 @@
 {
     public enum AccessLevel
     {
-        None = -1,
+        None = 0,
         Read,
+        WriteContent,
         Write,
         Delete,
         Owner,
@@ -24,7 +25,7 @@
 
     public class GroupAccess : BaseEntity<int>
     {
-        public UserGroup UserGroup { get; set; }
+        public UserGroup UserGroup { get; set; } = new UserGroup();
         public AccessLevel AccessLevel { get; set; }
     }
 }

@@ -1,8 +1,9 @@
 import { Box, IconButton, Menu, MenuItem, Typography } from "@mui/material";
+import { observer } from "mobx-react";
 import { useState } from "react";
-import { useAppFrameConfig } from "../../lib/appFrame/useAppFrameConfig";
+import { useAppFrameConfig } from "../../lib/hooks/useAppFrameConfig";
 
-export const ContextAction = () => {
+export const ContextAction = observer(() => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -14,8 +15,8 @@ export const ContextAction = () => {
 
     const appFrameConfig = useAppFrameConfig();
 
-    if (appFrameConfig.contextMenuActions?.length === 1) {
-        const contextAction = appFrameConfig.contextMenuActions[0];
+    if (appFrameConfig?.contextMenuActions?.length === 1) {
+        const contextAction = appFrameConfig?.contextMenuActions[0];
         return (
             <IconButton onClick={contextAction.action} color="inherit" aria-label="menu" sx={{ mr: 2 }}>
                 {contextAction.icon}
@@ -26,7 +27,7 @@ export const ContextAction = () => {
     return (
         <>
             <IconButton onClick={handleOpenUserMenu} color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-                {appFrameConfig.contextMenuIcon}
+                {appFrameConfig?.contextMenuIcon}
             </IconButton>
             <Menu
                 sx={{ mt: '45px' }}
@@ -44,7 +45,7 @@ export const ContextAction = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
             >
-                {appFrameConfig.contextMenuActions?.map((action) => (
+                {appFrameConfig?.contextMenuActions?.map((action) => (
                     <MenuItem key={action.text} onClick={async () => {
                         !action.keepMenuOpen && handleCloseUserMenu();
                         await action.action();
@@ -58,4 +59,4 @@ export const ContextAction = () => {
             </Menu>
         </>
     );
-}
+});

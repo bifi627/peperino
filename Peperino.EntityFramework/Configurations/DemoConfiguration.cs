@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Peperino.Domain.Base;
 using Peperino.EntityFramework.Entities;
 
 namespace Peperino.EntityFramework.Configurations
@@ -12,7 +11,9 @@ namespace Peperino.EntityFramework.Configurations
             builder.HasOne(d => d.CreatedBy).WithMany().OnDelete(DeleteBehavior.SetNull);
             builder.HasOne(d => d.LastModifiedBy).WithMany().OnDelete(DeleteBehavior.SetNull);
 
-            builder.HasOne(d => d.Access).WithOne().HasForeignKey<AccessList>(a => a.ParentRelation).OnDelete(DeleteBehavior.Cascade);
+            //builder.HasOne(d => d.Access).WithOne().HasForeignKey<AccessList>(a => a.ParentRelation).OnDelete(DeleteBehavior.Cascade);
+
+            builder.ToTable("Demos");
         }
     }
 }

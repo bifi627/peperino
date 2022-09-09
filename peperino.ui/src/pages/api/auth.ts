@@ -5,7 +5,7 @@ import "../../lib/apiConfig";
 import { AUTH_TOKEN_COOKIE_NAME, IS_LOCAL_DEV } from '../../shared/constants';
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-    const expiresIn = 5 * 60 * 1000;
+    const expiresIn = 60 * 60 * 1000;
 
     if (req.method === 'POST') {
         const idToken = req.body.token;

@@ -17,11 +17,11 @@ if (getApps().length === 0) {
 }
 
 onAuthStateChanged(getAuth(), async (user) => {
-    // await setTokenForUser(user);
+    await setTokenForUser(user);
 });
 
 onIdTokenChanged(getAuth(), async (user) => {
-    await setTokenForUser(user);
+    // await setTokenForUser(user);
 });
 
 export async function setTokenForUser(user: User | null) {

@@ -4,17 +4,31 @@ import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { HealthCheckState } from "./commonState/HealthCheckState";
 import { DemoPageState } from "./pageState/DemoPageState";
+import { RoomPageState } from "./pageState/RoomPageState";
+import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
+import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 
 export class ApplicationState implements BaseState {
     public key = "ApplicationState";
     private healthCheck: HealthCheckState;
     private appFrame: AppFrameState;
     private demoState: DemoPageState;
+    private roomsOverviewState: RoomsOverviewPageState;
+    private roomState: RoomPageState;
+    private roomSettingsState: RoomSettingsPageState;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
     private get all() {
-        return [this.healthCheck, this.appFrame, this.demoState, ...this.dynamicState.values()];
+        return [
+            this.healthCheck,
+            this.appFrame,
+            this.demoState,
+            this.roomsOverviewState,
+            this.roomState,
+            this.roomSettingsState,
+            ...this.dynamicState.values()
+        ];
     }
 
     public stateLoading = true;
@@ -25,6 +39,9 @@ export class ApplicationState implements BaseState {
         this.healthCheck = new HealthCheckState();
         this.appFrame = new AppFrameState();
         this.demoState = new DemoPageState();
+        this.roomsOverviewState = new RoomsOverviewPageState();
+        this.roomState = new RoomPageState();
+        this.roomSettingsState = new RoomSettingsPageState();
     }
 
     public async init() {
@@ -51,6 +68,18 @@ export class ApplicationState implements BaseState {
 
     public getDemoState() {
         return this.demoState;
+    }
+
+    public getRoomsOverviewState() {
+        return this.roomsOverviewState;
+    }
+
+    public getRoomState() {
+        return this.roomState;
+    }
+
+    public getRoomSettingsState() {
+        return this.roomSettingsState;
     }
 }
 

@@ -1,6 +1,7 @@
 import { Menu } from "@mui/icons-material";
 import { IconButton, Toolbar, Typography } from "@mui/material";
-import { useAppFrameConfig } from "../../lib/appFrame/useAppFrameConfig";
+import { observer } from "mobx-react";
+import { useAppFrameConfig } from "../../lib/hooks/useAppFrameConfig";
 import { ContextAction } from "./ContextAction";
 import { UserAvatarMenu } from "./UserAvatarMenu";
 
@@ -8,7 +9,7 @@ interface Props {
     menuClick?: () => void;
 }
 
-export const DynamicToolbar = (props: Props) => {
+export const DynamicToolbar = observer((props: Props) => {
     const appFrameConfig = useAppFrameConfig();
 
     return (
@@ -17,10 +18,10 @@ export const DynamicToolbar = (props: Props) => {
                 <Menu />
             </IconButton>
             <Typography sx={{ flexGrow: 1 }} variant="h6" color="inherit" component="div">
-                {appFrameConfig.toolbarText}
+                {appFrameConfig?.toolbarText}
             </Typography>
-            {appFrameConfig.contextMenuActions && <ContextAction />}
+            {appFrameConfig?.contextMenuActions?.length > 0 && <ContextAction />}
             <UserAvatarMenu />
         </Toolbar>
     );
-}
+});
