@@ -17,7 +17,7 @@ namespace Peperino.Controllers
             BaseOwnableEntity? entity = null;
             if (sharedLinkInDto.EntityType == "Room")
             {
-                entity = await DbContext.Rooms.WithOwnable().WithAuditable().FirstOrDefaultAsync(r => r.Slug == sharedLinkInDto.Slug);
+                entity = await DbContext.Rooms.FirstOrDefaultAsync(r => r.Slug == sharedLinkInDto.Slug);
             }
 
             if (entity is null)
@@ -67,7 +67,7 @@ namespace Peperino.Controllers
             var grantAccessLevel = link.GrantAccessLevel;
 
             // Re-read entity to resolve access lists
-            var entity = await DbContext.BaseOwnableEntity.WithAuditable().WithOwnable().FirstOrDefaultAsync(r => r.Id == link.Entity.Id);
+            var entity = link.Entity;
 
             if (entity is null)
             {

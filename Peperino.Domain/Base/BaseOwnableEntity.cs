@@ -1,20 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Peperino.Domain.Exceptions;
+﻿using Peperino.Domain.Exceptions;
 
 namespace Peperino.Domain.Base
 {
     public abstract class BaseOwnableEntity : BaseAuditableEntity
     {
-        public AccessList Access { get; set; } = new AccessList();
+        public virtual AccessList Access { get; set; } = new AccessList();
     }
 
     public static class OwnableEntityExtensions
     {
-        public static IIncludableQueryable<T, IList<GroupAccess>> WithOwnable<T>(this IQueryable<T> ownableEntity) where T : BaseOwnableEntity
-        {
-            return ownableEntity.Include(x => x.Access.UserAccess).Include(x => x.Access.GroupAccess);
-        }
+        //public static IIncludableQueryable<T, IList<GroupAccess>> WithOwnable<T>(this IQueryable<T> ownableEntity) where T : BaseOwnableEntity
+        //{
+        //    return ownableEntity
+        //        .Include(x => x.Access.UserAccess)
+        //        //.ThenInclude(f => f.User)
+        //        .Include(x => x.Access.GroupAccess);
+        //    //.ThenInclude(ga => ga.UserGroup)
+        //    //.ThenInclude(ug => ug.Users);
+        //}
 
         public static IEnumerable<T> FilterRequireRead<T>(this IEnumerable<T> entities, User? user) where T : BaseOwnableEntity
         {
@@ -33,13 +36,16 @@ namespace Peperino.Domain.Base
                 throw new ArgumentNullException(nameof(user));
             }
 
-            foreach (var entity in entities)
+            return entities.ToArray().Where(e =>
             {
-                if (RequireAccess(entity, user, requestedAccess, false))
+                var hasUserAccess = e.Access.UserAccess.Where(ua => ua.User.Id == user.Id).Any(ua => ua.AccessLevel >= requestedAccess);
+                if (hasUserAccess)
                 {
-                    yield return entity;
+                    return true;
                 }
-            }
+                var hasGroupAccess = e.Access.GroupAccess.Where(ga => ga.UserGroup.Users.Any(u => u.Id == user.Id)).Any(ga => ga.AccessLevel >= requestedAccess);
+                return hasGroupAccess;
+            });
         }
 
         public static bool RequireAccessRead(this BaseOwnableEntity entity, User? user, bool throwException = true)

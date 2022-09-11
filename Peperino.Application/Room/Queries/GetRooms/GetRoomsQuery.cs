@@ -37,8 +37,6 @@ namespace Peperino.Application.Room.Queries.GetRooms
                 allRooms = allRooms.Where(r => r.Slug == request.Slug);
             }
 
-            allRooms = allRooms.WithOwnable().WithAuditable();
-
             var allRoomsWithAccess = allRooms.FilterRequireRead(currentUser);
 
             return allRoomsWithAccess;

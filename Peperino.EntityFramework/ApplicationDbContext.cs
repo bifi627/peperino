@@ -46,6 +46,8 @@ namespace Peperino.EntityFramework
         {
             optionsBuilder.UseNpgsql();
 
+            optionsBuilder.UseLazyLoadingProxies();
+
             optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor, _ownableEntityCreatedInterceptor);
         }
 
