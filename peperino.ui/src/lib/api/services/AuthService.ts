@@ -57,4 +57,20 @@ requestBody?: string,
         });
     }
 
+    /**
+     * @param requestBody 
+     * @returns SessionResponseDto Success
+     * @throws ApiError
+     */
+    public static getTokenInfo(
+requestBody?: string,
+): CancelablePromise<SessionResponseDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/Auth/info',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
 }

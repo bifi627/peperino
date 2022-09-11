@@ -15,7 +15,7 @@ export const authPage = async (context: GetServerSidePropsContext, ...claimReque
     }
 
     try {
-        const response = await AuthService.postApiAuthGet(sessionCookie);
+        const response = await AuthService.getTokenInfo(sessionCookie);
 
         if (!response.idToken || !response.claims) {
             console.log("No idtoken or claims!")

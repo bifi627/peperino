@@ -90,5 +90,19 @@ namespace Peperino.Controllers
             }
             return BadRequest();
         }
+
+        [HttpPost("info", Name = "GetTokenInfo")]
+        public async Task<ActionResult<SessionResponseDto>> GetTokenInfo([FromBody] string idToken)
+        {
+            var verifiedIdToken = await _firebaseAuth.VerifyIdTokenAsync(idToken);
+            var response = new SessionResponseDto
+            {
+                IdToken = idToken,
+                Claims = verifiedIdToken.Claims,
+                UserName = (await _usersDbContext.Users.FindAsync(verifiedIdToken.Uid))?.UserName ?? "",
+            };
+
+            return response;
+        }
     }
 }
