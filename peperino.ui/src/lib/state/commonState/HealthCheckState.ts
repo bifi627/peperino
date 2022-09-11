@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { toast } from "react-toastify";
-import { HealthCheckService } from "../../api";
+import { ClientApi } from "../../auth/client/apiClient";
 import { BaseState } from "../BaseState";
 
 export class HealthCheckState implements BaseState {
@@ -20,7 +20,7 @@ export class HealthCheckState implements BaseState {
     public async checkConnection() {
         let newState: boolean;
         try {
-            newState = await HealthCheckService.getApiHealthCheck();
+            newState = await ClientApi.healthCheck.getApiHealthCheck();
         } catch (error) {
             newState = false;
 

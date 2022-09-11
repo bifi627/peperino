@@ -1,7 +1,8 @@
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { UserStoreDto, UserStoreService } from "../api";
+import { UserStoreDto } from "../api";
+import { ClientApi } from "../auth/client/apiClient";
 
 export const useUserStore = () => {
     const [userStore, setUserStore] = useState<UserStoreDto>();
@@ -9,7 +10,7 @@ export const useUserStore = () => {
 
     useEffect(() => {
         if (user) {
-            UserStoreService.getApiUserStore().then(userStore => {
+            ClientApi.userStore.getApiUserStore().then(userStore => {
                 setUserStore(userStore);
             });
         }

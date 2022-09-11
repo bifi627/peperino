@@ -4,20 +4,21 @@
 import type { SessionResponseDto } from '../models/SessionResponseDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
 export class AuthService {
+
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * @param requestBody 
      * @returns string Success
      * @throws ApiError
      */
-    public static createSession(
+    public createSession(
 requestBody?: string,
 ): CancelablePromise<string> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/Auth/create',
             body: requestBody,
@@ -30,10 +31,10 @@ requestBody?: string,
      * @returns string Success
      * @throws ApiError
      */
-    public static deleteSession(
+    public deleteSession(
 requestBody?: string,
 ): CancelablePromise<string> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/Auth/delete',
             body: requestBody,
@@ -46,10 +47,10 @@ requestBody?: string,
      * @returns SessionResponseDto Success
      * @throws ApiError
      */
-    public static getSession(
+    public getSession(
 requestBody?: string,
 ): CancelablePromise<SessionResponseDto> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/Auth/get',
             body: requestBody,
@@ -62,10 +63,10 @@ requestBody?: string,
      * @returns SessionResponseDto Success
      * @throws ApiError
      */
-    public static getTokenInfo(
+    public getTokenInfo(
 requestBody?: string,
 ): CancelablePromise<SessionResponseDto> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/Auth/info',
             body: requestBody,

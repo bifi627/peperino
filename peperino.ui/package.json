@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "api": "npx openapi-typescript-codegen -i http://localhost:5000/swagger/v1/swagger.json -o ./src/lib/api --client axios"
+    "api": "npx openapi-typescript-codegen -i http://localhost:5000/swagger/v1/swagger.json -o ./src/lib/api --client axios --useUnionTypes --name PeperinoApiClient"
   },
   "dependencies": {
     "@emotion/react": "^11.10.0",

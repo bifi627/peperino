@@ -4,7 +4,7 @@ import type { NextPage } from 'next';
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { WeatherForecastService } from "../lib/api";
+import { ClientApi } from "../lib/auth/client/apiClient";
 import { manageSessionForUser } from "../lib/auth/client/firebase";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
@@ -19,12 +19,12 @@ const Home: NextPage = () => {
                     router.push(KnownRoutes.Demo());
                 }}>Demo Request</button>
                 <button onClick={async () => {
-                    const result = await WeatherForecastService.getWeatherForecast()
+                    const result = await ClientApi.weatherForecast.getWeatherForecast()
                     console.log(result);
                 }}>Weather Request</button>
                 <button onClick={async () => {
                     try {
-                        const result = await WeatherForecastService.getWeatherForecastAuth();
+                        const result = await ClientApi.weatherForecast.getWeatherForecastAuth();
                         console.log(result);
                     } catch (error) {
                         console.error(error);

@@ -1,6 +1,7 @@
 import { Add } from "@mui/icons-material";
 import { isObservableArray, makeObservable, observable } from "mobx";
-import { RoomOutDto, RoomService } from "../../api";
+import { RoomOutDto } from "../../api";
+import { ClientApi } from "../../auth/client/apiClient";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
 
@@ -36,11 +37,11 @@ export class RoomsOverviewPageState extends BasePageState {
 
     public async reloadGroups() {
         if (isObservableArray(this.rooms)) {
-            this.rooms.replace(await RoomService.getAll());
+            this.rooms.replace(await ClientApi.room.getAll());
         }
     }
 
     public async createGroup(name: string) {
-        await RoomService.createRoom({ roomName: name });
+        await ClientApi.room.createRoom({ roomName: name });
     }
 }

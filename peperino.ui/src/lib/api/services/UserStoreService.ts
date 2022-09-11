@@ -4,17 +4,18 @@
 import type { UserStoreDto } from '../models/UserStoreDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
 export class UserStoreService {
+
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * @returns UserStoreDto Success
      * @throws ApiError
      */
-    public static getApiUserStore(): CancelablePromise<UserStoreDto> {
-        return __request(OpenAPI, {
+    public getApiUserStore(): CancelablePromise<UserStoreDto> {
+        return this.httpRequest.request({
             method: 'GET',
             url: '/api/UserStore',
         });
@@ -25,10 +26,10 @@ export class UserStoreService {
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiUserStore(
+    public postApiUserStore(
 requestBody?: UserStoreDto,
 ): CancelablePromise<any> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/UserStore',
             body: requestBody,

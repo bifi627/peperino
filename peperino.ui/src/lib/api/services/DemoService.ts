@@ -4,17 +4,18 @@
 import type { Demo } from '../models/Demo';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
 export class DemoService {
+
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * @returns Demo Success
      * @throws ApiError
      */
-    public static getApiDemo(): CancelablePromise<Array<Demo>> {
-        return __request(OpenAPI, {
+    public getApiDemo(): CancelablePromise<Array<Demo>> {
+        return this.httpRequest.request({
             method: 'GET',
             url: '/api/Demo',
         });
@@ -24,8 +25,8 @@ export class DemoService {
      * @returns any Success
      * @throws ApiError
      */
-    public static postApiDemo(): CancelablePromise<any> {
-        return __request(OpenAPI, {
+    public postApiDemo(): CancelablePromise<any> {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/Demo',
         });
@@ -35,8 +36,8 @@ export class DemoService {
      * @returns any Success
      * @throws ApiError
      */
-    public static deleteApiDemo(): CancelablePromise<any> {
-        return __request(OpenAPI, {
+    public deleteApiDemo(): CancelablePromise<any> {
+        return this.httpRequest.request({
             method: 'DELETE',
             url: '/api/Demo',
         });
@@ -47,10 +48,10 @@ export class DemoService {
      * @returns Demo Success
      * @throws ApiError
      */
-    public static getApiDemo1(
+    public getApiDemo1(
 id: number,
 ): CancelablePromise<Demo> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'GET',
             url: '/api/Demo/{id}',
             path: {

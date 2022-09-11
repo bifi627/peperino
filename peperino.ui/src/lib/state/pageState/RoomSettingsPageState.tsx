@@ -2,7 +2,8 @@ import { Delete, Share } from "@mui/icons-material";
 import { makeObservable, observable } from "mobx";
 import Router from "next/router";
 import { FRONTEND_URL } from "../../../shared/constants";
-import { RoomOutDto, RoomService, SharedLinkService } from "../../api";
+import { RoomOutDto } from "../../api";
+import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
@@ -26,7 +27,7 @@ export class RoomSettingsPageState extends BasePageState {
                 action: async () => {
                     applicationState.getAppFrame().withLoadingScreen(async () => {
                         if (this.room && confirm("Wirklich teilen?") === true) {
-                            const link = await SharedLinkService.createSharedLink({ entityType: "Room", slug: this.room.slug, grantAccessLevel: "WriteContent" });
+                            const link = await ClientApi.sharedLink.createSharedLink({ entityType: "Room", slug: this.room.slug, grantAccessLevel: "WriteContent" });
 
                             const subString = KnownRoutes.SharedLink(link.slug);
                             const linkWithoutFirstSlash = subString.substring(1, subString.length);
@@ -54,7 +55,7 @@ export class RoomSettingsPageState extends BasePageState {
                 action: async () => {
                     applicationState.getAppFrame().withLoadingScreen(async () => {
                         if (this.room && confirm("Wirklich löschen?") === true) {
-                            await RoomService.deleteBySlug(this.room.slug);
+                            await ClientApi.room.deleteBySlug(this.room.slug);
                             await Router.push(KnownRoutes.Room());
                         }
                     });
