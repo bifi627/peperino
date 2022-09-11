@@ -28,7 +28,7 @@ namespace Peperino.Controllers
         }
 
         [Authorize]
-        [HttpPost("create")]
+        [HttpPost("create", Name = "CreateSession")]
         public async Task<ActionResult<string>> CreateSession([FromBody] string idToken)
         {
             var expiresIn = 60 * 60 * 1000;
@@ -54,7 +54,7 @@ namespace Peperino.Controllers
             return BadRequest();
         }
 
-        [HttpPost("delete")]
+        [HttpPost("delete", Name = "DeleteSession")]
         public async Task<ActionResult<string>> DeleteSession([FromBody] string sessionCookie)
         {
             await Mediator.Send(new DeleteSessionCommand(sessionCookie));
@@ -63,9 +63,11 @@ namespace Peperino.Controllers
 
         }
 
-        [HttpPost("get")]
+        [HttpPost("get", Name = "GetSession")]
         public async Task<ActionResult<SessionResponseDto>> GetSession([FromBody] string sessionCookie)
         {
+            var response = new SessionResponseDto();
+
             try
             {
                 var sessionTokenResponse = await _firebaseAuth.VerifySessionCookieAsync(sessionCookie, true);
@@ -74,14 +76,23 @@ namespace Peperino.Controllers
 
                 if (session is not null)
                 {
-                    var response = new SessionResponseDto
-                    {
-                        IdToken = session.Token,
-                        Claims = sessionTokenResponse.Claims,
-                        UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "",
-                    };
+                    response.IdToken = session.Token;
+                    response.Claims = sessionTokenResponse.Claims;
+                    response.UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "";
                     return response;
                 }
+            }
+            catch (FirebaseAuthException ex)
+            {
+                _logger.LogError(ex, "VerifyIdToken failed");
+
+                if (ex.AuthErrorCode == AuthErrorCode.ExpiredSessionCookie)
+                {
+                    response.Expired = true;
+                    return response;
+                }
+
+                throw;
             }
             catch (Exception ex)
             {
@@ -94,13 +105,29 @@ namespace Peperino.Controllers
         [HttpPost("info", Name = "GetTokenInfo")]
         public async Task<ActionResult<SessionResponseDto>> GetTokenInfo([FromBody] string idToken)
         {
-            var verifiedIdToken = await _firebaseAuth.VerifyIdTokenAsync(idToken);
             var response = new SessionResponseDto
             {
                 IdToken = idToken,
-                Claims = verifiedIdToken.Claims,
-                UserName = (await _usersDbContext.Users.FindAsync(verifiedIdToken.Uid))?.UserName ?? "",
             };
+
+            try
+            {
+                var verifiedIdToken = await _firebaseAuth.VerifyIdTokenAsync(idToken);
+                response.Claims = verifiedIdToken.Claims;
+                response.UserName = (await _usersDbContext.Users.FindAsync(verifiedIdToken.Uid))?.UserName ?? "";
+            }
+            catch (FirebaseAuthException ex)
+            {
+                _logger.LogError(ex, "VerifyIdToken failed");
+
+                if (ex.AuthErrorCode == AuthErrorCode.ExpiredIdToken)
+                {
+                    response.Expired = true;
+                    return response;
+                }
+
+                throw;
+            }
 
             return response;
         }

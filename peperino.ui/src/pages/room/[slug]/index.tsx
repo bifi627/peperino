@@ -11,7 +11,7 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
     console.log(context.resolvedUrl);
-    if (await authPage(context) === false) {
+    if (await authPage(context) !== "VALID") {
         return await redirectLogin<Props>(context.resolvedUrl);
     }
 

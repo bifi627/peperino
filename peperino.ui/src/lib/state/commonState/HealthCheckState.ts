@@ -12,7 +12,8 @@ export class HealthCheckState implements BaseState {
     }
 
     public init() {
-        setInterval(() => this.checkConnection(), 60 * 1000);
+        // Health check is annoying during debug and does nothing of use right now
+        // setInterval(() => this.checkConnection(), 60 * 1000);
         return Promise.resolve();
     }
 

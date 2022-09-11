@@ -4,8 +4,8 @@ import type { NextPage } from 'next';
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { ApiError, UserService, WeatherForecastService } from "../lib/api";
-import { handleError } from "../lib/apiConfig";
+import { WeatherForecastService } from "../lib/api";
+import { manageSessionForUser } from "../lib/auth/client/firebase";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
 const Home: NextPage = () => {
@@ -31,15 +31,11 @@ const Home: NextPage = () => {
                     }
                 }}>Weather with Auth Request</button>
                 <button onClick={async () => {
-                    try {
-                        const result = await UserService.postApiUser({ userName: "TESTAAAAAAA" });
-                        console.log(result);
-                    } catch (error) {
-                        const e = error as ApiError;
-                        const m = handleError(e);
-                        console.log(m);
+                    const newToken = await user?.getIdToken(true);
+                    if (newToken) {
+                        await manageSessionForUser(newToken);
                     }
-                }}>Create User</button>
+                }}>Update session</button>
                 <br />
                 <Switch defaultChecked />
                 <Switch />

@@ -14,7 +14,7 @@ export class AuthService {
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiAuthCreate(
+    public static createSession(
 requestBody?: string,
 ): CancelablePromise<string> {
         return __request(OpenAPI, {
@@ -30,7 +30,7 @@ requestBody?: string,
      * @returns string Success
      * @throws ApiError
      */
-    public static postApiAuthDelete(
+    public static deleteSession(
 requestBody?: string,
 ): CancelablePromise<string> {
         return __request(OpenAPI, {
@@ -46,7 +46,7 @@ requestBody?: string,
      * @returns SessionResponseDto Success
      * @throws ApiError
      */
-    public static postApiAuthGet(
+    public static getSession(
 requestBody?: string,
 ): CancelablePromise<SessionResponseDto> {
         return __request(OpenAPI, {
