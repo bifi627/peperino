@@ -2,11 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum AccessLevel {
-    NONE = 'None',
-    READ = 'Read',
-    WRITE_CONTENT = 'WriteContent',
-    WRITE = 'Write',
-    DELETE = 'Delete',
-    OWNER = 'Owner',
-}
+export type AccessLevel = 'None' | 'Read' | 'WriteContent' | 'Write' | 'Delete' | 'Owner';

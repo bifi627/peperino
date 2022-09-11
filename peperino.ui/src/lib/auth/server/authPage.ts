@@ -9,17 +9,15 @@ import { ClaimRequest, verifyClaims } from "../shared/verifyClaims";
 type AuthFlowState = "NONE" | "CRASH" | "DENIED" | "EXPIRED" | "VALID";
 
 export const authPage = async (context: GetServerSidePropsContext, ...claimRequests: ClaimRequest[]): Promise<AuthFlowState> => {
-    const authToken = context.req.cookies[AUTH_TOKEN_COOKIE_NAME];
+    const sessionToken = context.req.cookies[AUTH_TOKEN_COOKIE_NAME];
 
-    if (authToken === undefined || authToken === "") {
+    if (sessionToken === undefined || sessionToken === "") {
         console.log("No session cookie!")
         return "NONE";
     }
 
     try {
-
-        console.log(authToken.substring(authToken.length - 5));
-        const response = await AuthService.getTokenInfo(authToken);
+        const response = await AuthService.getSession(sessionToken);
 
         if (response.expired) {
             console.warn("token expired, try sso next");
@@ -72,8 +70,6 @@ export async function handleSSRAuthPage<T>(context: GetServerSidePropsContext, c
     const url = context.resolvedUrl;
     console.log(url);
     const authState = await authPage(context, ...claimRequests);
-
-    console.log(authState);
 
     // Everything ok...
     if (authState === "VALID") {

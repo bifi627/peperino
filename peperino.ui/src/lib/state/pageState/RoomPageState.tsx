@@ -1,7 +1,7 @@
 import { Settings } from "@mui/icons-material";
 import { makeObservable, observable } from "mobx";
 import Router from "next/router";
-import { AccessLevel, RoomOutDto } from "../../api";
+import { RoomOutDto } from "../../api";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
@@ -28,7 +28,7 @@ export class RoomPageState extends BasePageState {
             text: "settings",
         }
 
-        if (this.room?.accessLevel === AccessLevel.OWNER) {
+        if (this.room?.accessLevel === "Owner") {
             if (!this.appFrameConfig.contextMenuActions.some(a => a.id === settingsAction.id)) {
                 this.appFrameConfig.contextMenuActions.push(settingsAction);
             }
