@@ -8,6 +8,8 @@ namespace Peperino.Application.Room.Commands.CreateRoom
 {
     public class CreateRoomCommand : IRequest<EntityFramework.Entities.Room>
     {
+        public const string SHARED_ROOM_ACCESS = "SHARED_ROOM_ACCESS";
+
         [Required]
         public string RoomName { get; set; }
 
@@ -57,10 +59,10 @@ namespace Peperino.Application.Room.Commands.CreateRoom
                 AccessLevel = Domain.Base.AccessLevel.WriteContent
             };
 
-            groupAccess.UserGroup.GroupName = "Members";
+            groupAccess.UserGroup.GroupName = CreateRoomCommand.SHARED_ROOM_ACCESS;
             groupAccess.UserGroup.Users.Add(currentUser);
 
-            room.Access.GroupAccess.Add(groupAccess);
+            room.GroupAccess.Add(groupAccess);
 
             await _dbContext.Rooms.AddAsync(room, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);

@@ -36,7 +36,7 @@ namespace Peperino.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Demo>> GetById(int id)
         {
-            var demo = await _dbContext.Demos.Include(f => f.CreatedBy).Include(f => f.LastModifiedBy).Include(f => f.Access.UserAccess).Include(f => f.Access.GroupAccess).FirstOrDefaultAsync(demo => demo.Id == id);
+            var demo = await _dbContext.Demos.Include(f => f.CreatedBy).Include(f => f.LastModifiedBy).Include(f => f.UserAccess).Include(f => f.GroupAccess).FirstOrDefaultAsync(demo => demo.Id == id);
             if (demo is not null)
             {
                 demo.RequireAccess(CurrentUser, AccessLevel.Read);

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Peperino.EntityFramework;
@@ -11,9 +12,10 @@ using Peperino.EntityFramework;
 namespace Peperino.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220912200053_Add_Checklists")]
+    partial class Add_Checklists
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,34 +24,20 @@ namespace Peperino.EntityFramework.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BaseOwnableEntityGroupAccess", b =>
+            modelBuilder.Entity("Peperino.Domain.Base.AccessList", b =>
                 {
-                    b.Property<int>("EntitiesId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.Property<int>("GroupAccessId")
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ParentRelation")
                         .HasColumnType("integer");
 
-                    b.HasKey("EntitiesId", "GroupAccessId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("GroupAccessId");
-
-                    b.ToTable("BaseOwnableEntityGroupAccess");
-                });
-
-            modelBuilder.Entity("BaseOwnableEntityUserAccess", b =>
-                {
-                    b.Property<int>("EntitiesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserAccessId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("EntitiesId", "UserAccessId");
-
-                    b.HasIndex("UserAccessId");
-
-                    b.ToTable("BaseOwnableEntityUserAccess");
+                    b.ToTable("AccessList");
                 });
 
             modelBuilder.Entity("Peperino.Domain.Base.BaseOwnableEntity", b =>
@@ -59,6 +47,9 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
@@ -73,6 +64,8 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccessId");
 
                     b.HasIndex("CreatedById");
 
@@ -92,10 +85,15 @@ namespace Peperino.EntityFramework.Migrations
                     b.Property<int>("AccessLevel")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("AccessListId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserGroupId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccessListId");
 
                     b.HasIndex("UserGroupId");
 
@@ -127,10 +125,15 @@ namespace Peperino.EntityFramework.Migrations
                     b.Property<int>("AccessLevel")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("AccessListId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccessListId");
 
                     b.HasIndex("UserId");
 
@@ -208,7 +211,7 @@ namespace Peperino.EntityFramework.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CheckListId")
+                    b.Property<int?>("CheckListId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("Checked")
@@ -366,38 +369,14 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("Rooms", (string)null);
                 });
 
-            modelBuilder.Entity("BaseOwnableEntityGroupAccess", b =>
-                {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
-                        .WithMany()
-                        .HasForeignKey("EntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Peperino.Domain.Base.GroupAccess", null)
-                        .WithMany()
-                        .HasForeignKey("GroupAccessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BaseOwnableEntityUserAccess", b =>
-                {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
-                        .WithMany()
-                        .HasForeignKey("EntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Peperino.Domain.Base.UserAccess", null)
-                        .WithMany()
-                        .HasForeignKey("UserAccessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Peperino.Domain.Base.BaseOwnableEntity", b =>
                 {
+                    b.HasOne("Peperino.Domain.Base.AccessList", "Access")
+                        .WithMany()
+                        .HasForeignKey("AccessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
@@ -408,6 +387,8 @@ namespace Peperino.EntityFramework.Migrations
                         .HasForeignKey("LastModifiedById")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.Navigation("Access");
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("LastModifiedBy");
@@ -415,6 +396,11 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.Domain.Base.GroupAccess", b =>
                 {
+                    b.HasOne("Peperino.Domain.Base.AccessList", null)
+                        .WithMany("GroupAccess")
+                        .HasForeignKey("AccessListId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Peperino.Domain.Base.UserGroup", "UserGroup")
                         .WithMany()
                         .HasForeignKey("UserGroupId")
@@ -426,6 +412,11 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.Domain.Base.UserAccess", b =>
                 {
+                    b.HasOne("Peperino.Domain.Base.AccessList", null)
+                        .WithMany("UserAccess")
+                        .HasForeignKey("AccessListId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Peperino.Domain.Base.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
@@ -461,11 +452,9 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckListItem", b =>
                 {
-                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.CheckList", "CheckList")
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.CheckList", null)
                         .WithMany("Entities")
-                        .HasForeignKey("CheckListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CheckListId");
 
                     b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
                         .WithMany()
@@ -474,8 +463,6 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById");
-
-                    b.Navigation("CheckList");
 
                     b.Navigation("CreatedBy");
 
@@ -564,6 +551,13 @@ namespace Peperino.EntityFramework.Migrations
                         .HasForeignKey("Peperino.EntityFramework.Entities.Room", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Peperino.Domain.Base.AccessList", b =>
+                {
+                    b.Navigation("GroupAccess");
+
+                    b.Navigation("UserAccess");
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckList", b =>

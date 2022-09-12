@@ -1,8 +1,9 @@
-import { Favorite, LocalActivity, Restore } from "@mui/icons-material";
-import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import { Add, List, LocalActivity } from "@mui/icons-material";
+import { BottomNavigation, BottomNavigationAction, Fab } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import { RoomOutDto } from "../../../lib/api";
+import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { withAuth } from "../../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
@@ -53,6 +54,12 @@ const GroupPage = (props: Props) => {
                 <>Group Page {props.room?.roomName} </>
                 {"TEXT"}
                 <>TEXT</>
+                <br></br>
+                <Fab size={"medium"} color={"primary"} sx={{ position: "fixed", bottom: "64px", right: "24px" }} onClick={() => {
+                    ClientApi.checkList.postApiCheckList({ name: "TEST", roomSlug: groupPageState.room?.slug ?? "" });
+                }}>
+                    <Add />
+                </Fab>
             </div>
             <BottomNavigation
                 sx={{
@@ -66,9 +73,9 @@ const GroupPage = (props: Props) => {
                     setBottomNavigation(newValue);
                 }}
             >
-                <BottomNavigationAction label="Recents" icon={<Restore />} />
-                <BottomNavigationAction label="Favorites" icon={<Favorite />} />
-                <BottomNavigationAction label="Nearby" icon={<LocalActivity />} />
+                <BottomNavigationAction label="Listen" icon={<List />} />
+                <BottomNavigationAction label="Placeholder" icon={<LocalActivity />} />
+                <BottomNavigationAction label="Placeholder" icon={<LocalActivity />} />
             </BottomNavigation>
         </>
     );

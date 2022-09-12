@@ -12,6 +12,9 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 export type { AccessLevel } from './models/AccessLevel';
 export type { AccessList } from './models/AccessList';
 export type { BaseEvent } from './models/BaseEvent';
+export type { CheckListItemOutDto } from './models/CheckListItemOutDto';
+export type { CheckListOutDto } from './models/CheckListOutDto';
+export type { CreateCheckListCommand } from './models/CreateCheckListCommand';
 export type { CreateRoomCommand } from './models/CreateRoomCommand';
 export type { Demo } from './models/Demo';
 export type { GroupAccess } from './models/GroupAccess';
@@ -29,6 +32,7 @@ export type { UserStoreDto } from './models/UserStoreDto';
 export type { WeatherForecast } from './models/WeatherForecast';
 
 export { AuthService } from './services/AuthService';
+export { CheckListService } from './services/CheckListService';
 export { DemoService } from './services/DemoService';
 export { HealthCheckService } from './services/HealthCheckService';
 export { RoomService } from './services/RoomService';

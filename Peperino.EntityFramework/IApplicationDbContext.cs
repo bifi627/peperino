@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Peperino.Contracts.DbContexts;
 using Peperino.Domain.Base;
 using Peperino.EntityFramework.Entities;
+using Peperino.EntityFramework.Entities.CheckList;
 
 namespace Peperino.EntityFramework
 {
@@ -14,5 +15,6 @@ namespace Peperino.EntityFramework
         DbSet<UserStoreClient> UserStores { get; }
         DbSet<Room> Rooms { get; }
         DbSet<SharedLink> SharedLinks { get; }
+        DbSet<CheckList> CheckLists { get; }
     }
 }

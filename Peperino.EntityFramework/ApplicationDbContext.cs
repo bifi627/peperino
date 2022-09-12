@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Peperino.Domain.Base;
 using Peperino.Domain.Session;
 using Peperino.EntityFramework.Entities;
+using Peperino.EntityFramework.Entities.CheckList;
 using Peperino.Infrastructure.Persistence.Interceptors;
 using System.Reflection;
 
@@ -41,6 +42,8 @@ namespace Peperino.EntityFramework
         public DbSet<Room> Rooms => Set<Room>();
 
         public DbSet<SharedLink> SharedLinks => Set<SharedLink>();
+
+        public DbSet<CheckList> CheckLists => Set<CheckList>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

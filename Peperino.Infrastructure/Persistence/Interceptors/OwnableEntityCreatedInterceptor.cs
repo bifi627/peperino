@@ -42,9 +42,9 @@ namespace Peperino.Infrastructure.Persistence.Interceptors
 
                 foreach (var entry in context.ChangeTracker.Entries<BaseOwnableEntity>())
                 {
-                    if (entry.State == EntityState.Added && user is not null && entry.Entity.Access.UserAccess.FirstOrDefault(a => a.User.Id == user.Id) is null)
+                    if (entry.State == EntityState.Added && user is not null && entry.Entity.UserAccess.FirstOrDefault(a => a.User.Id == user.Id) is null)
                     {
-                        entry.Entity.Access.UserAccess.Add(new UserAccess() { User = user, AccessLevel = AccessLevel.Owner });
+                        entry.Entity.UserAccess.Add(new UserAccess() { User = user, AccessLevel = AccessLevel.Owner });
                     }
                 }
             }

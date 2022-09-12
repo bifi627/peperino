@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Peperino.EntityFramework;
@@ -11,9 +12,10 @@ using Peperino.EntityFramework;
 namespace Peperino.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220912212206_Add_access_n_m")]
+    partial class Add_access_n_m
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,7 +210,7 @@ namespace Peperino.EntityFramework.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CheckListId")
+                    b.Property<int?>("CheckListId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("Checked")
@@ -461,11 +463,9 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckListItem", b =>
                 {
-                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.CheckList", "CheckList")
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.CheckList", null)
                         .WithMany("Entities")
-                        .HasForeignKey("CheckListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CheckListId");
 
                     b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
                         .WithMany()
@@ -474,8 +474,6 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById");
-
-                    b.Navigation("CheckList");
 
                     b.Navigation("CreatedBy");
 
