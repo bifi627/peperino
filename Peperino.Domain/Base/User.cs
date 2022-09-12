@@ -3,12 +3,12 @@
     public class User : BaseEntity<string>
     {
         public string UserName { get; set; } = string.Empty;
-        public IList<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
+        public virtual IList<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
     }
 
     public class UserGroup : BaseAuditableEntity
     {
         public string GroupName { get; set; } = string.Empty;
-        public IList<User> Users { get; set; } = new List<User>();
+        public virtual IList<User> Users { get; set; } = new List<User>();
     }
 }

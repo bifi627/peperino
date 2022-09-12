@@ -1,45 +1,39 @@
 import { CookieSerializeOptions, serialize } from 'cookie';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { AuthService, OpenAPI } from '../../lib/api';
+import { OpenAPI, PeperinoApiClient } from '../../lib/api';
 import "../../lib/apiConfig";
+import { getApiConfig } from '../../lib/auth/shared/getApiConfig';
 import { AUTH_TOKEN_COOKIE_NAME, IS_LOCAL_DEV } from '../../shared/constants';
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-    const expiresIn = 60 * 60 * 1000;
-
-    if (req.method === 'POST') {
-        const idToken = req.body.token;
+    if (req.method === "POST") {
+        const expiresIn = 60 * 60 * 1000;
+        const newToken = req.body.token as string;
 
         const session = req.cookies[AUTH_TOKEN_COOKIE_NAME];
 
-        // if id token was sent, we want to create a new session
-        if (idToken) {
-            console.log("TRY CREATE SESSION");
-            OpenAPI.TOKEN = idToken;
+        const api = new PeperinoApiClient(getApiConfig(newToken));
 
-            const cookie = await AuthService.postApiAuthCreate(idToken);
+        if (newToken) {
+            console.log("Set new session token");
 
-            if (cookie) {
-                console.log("secure:" + !IS_LOCAL_DEV);
-                const options: CookieSerializeOptions = { maxAge: expiresIn, httpOnly: true, secure: !IS_LOCAL_DEV, path: '/' };
-                res.setHeader('Set-Cookie', serialize(AUTH_TOKEN_COOKIE_NAME, cookie, options));
-                res.status(200).end();
-                console.log("SESSION CREATED!");
-            } else {
-                res.status(401).send('Invalid authentication');
-            }
-        }
-        // if no id token was sent and there is a session, delete session
-        else if (session) {
-            console.log("TRY DELETE SESSION");
-            const options: CookieSerializeOptions = { httpOnly: true, secure: !IS_LOCAL_DEV, path: '/', expires: new Date(1970) };
-            res.setHeader("Set-Cookie", serialize(AUTH_TOKEN_COOKIE_NAME, "__", options));
-            await AuthService.postApiAuthDelete(session);
-            console.log("SESSION DELETED!");
+            OpenAPI.TOKEN = newToken;
+            const sessionToken = await api.auth.createSession(newToken);
+            OpenAPI.TOKEN = "";
+
+            const options: CookieSerializeOptions = { maxAge: expiresIn, httpOnly: true, secure: !IS_LOCAL_DEV, path: '/' };
+            res.setHeader('Set-Cookie', serialize(AUTH_TOKEN_COOKIE_NAME, sessionToken, options));
+            console.log(sessionToken.substring(sessionToken.length - 5));
             res.status(200).end();
         }
-        else {
-            res.status(500).end();
+        else if (session) {
+            console.log("Remove session token");
+
+            await api.auth.deleteSession(session);
+
+            const options: CookieSerializeOptions = { httpOnly: true, secure: !IS_LOCAL_DEV, path: '/', expires: new Date(1970) };
+            res.setHeader('Set-Cookie', serialize(AUTH_TOKEN_COOKIE_NAME, "__", options));
+            res.status(200).end();
         }
     }
 }

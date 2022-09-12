@@ -28,7 +28,7 @@ namespace Peperino.Controllers
         [HttpGet]
         public IEnumerable<Demo> Get()
         {
-            var demos = _dbContext.Demos.WithOwnable().WithAuditable();
+            var demos = _dbContext.Demos;
 
             return demos.FilterRequireRead(CurrentUser);
         }

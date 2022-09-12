@@ -5,20 +5,21 @@ import type { CreateRoomCommand } from '../models/CreateRoomCommand';
 import type { RoomOutDto } from '../models/RoomOutDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
 export class RoomService {
+
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
      * @param requestBody 
      * @returns RoomOutDto Success
      * @throws ApiError
      */
-    public static createRoom(
+    public createRoom(
 requestBody?: CreateRoomCommand,
 ): CancelablePromise<RoomOutDto> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'POST',
             url: '/api/Room',
             body: requestBody,
@@ -30,8 +31,8 @@ requestBody?: CreateRoomCommand,
      * @returns RoomOutDto Success
      * @throws ApiError
      */
-    public static getAll(): CancelablePromise<Array<RoomOutDto>> {
-        return __request(OpenAPI, {
+    public getAll(): CancelablePromise<Array<RoomOutDto>> {
+        return this.httpRequest.request({
             method: 'GET',
             url: '/api/Room',
         });
@@ -42,10 +43,10 @@ requestBody?: CreateRoomCommand,
      * @returns RoomOutDto Success
      * @throws ApiError
      */
-    public static getBySlug(
+    public getBySlug(
 slug: string,
 ): CancelablePromise<RoomOutDto> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'GET',
             url: '/api/Room/{slug}',
             path: {
@@ -59,10 +60,10 @@ slug: string,
      * @returns any Success
      * @throws ApiError
      */
-    public static deleteBySlug(
+    public deleteBySlug(
 slug: string,
 ): CancelablePromise<any> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: 'DELETE',
             url: '/api/Room/{slug}',
             path: {

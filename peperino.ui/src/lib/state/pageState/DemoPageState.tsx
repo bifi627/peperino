@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { action, computed, makeObservable, observable, reaction } from "mobx";
 import Router from "next/router";
 
-import { UserStoreService } from "../../api";
+import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
@@ -39,9 +39,9 @@ export class DemoPageState extends BasePageState {
     }
 
     private async saveCounter() {
-        const store = await UserStoreService.getApiUserStore();
+        const store = await ClientApi.userStore.getApiUserStore();
         store.keyValueStorage[COUNTER_STORE_INDEX] = JSON.stringify(this.counter);
-        await UserStoreService.postApiUserStore(store);
+        await ClientApi.userStore.postApiUserStore(store);
     }
 
     public override async init(applicationState: ApplicationState) {
@@ -50,7 +50,7 @@ export class DemoPageState extends BasePageState {
             return Promise.resolve();
         }
 
-        const store = await UserStoreService.getApiUserStore();
+        const store = await ClientApi.userStore.getApiUserStore();
         this.counter = Number.parseInt(store.keyValueStorage[COUNTER_STORE_INDEX]);
 
         this.appFrameConfig.toolbarText = "Demo Page";

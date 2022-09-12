@@ -3,7 +3,8 @@
 /* eslint-disable */
 
 export type SessionResponseDto = {
-    idToken?: string | null;
-    userName?: string | null;
-    claims?: Record<string, any> | null;
+    idToken: string;
+    userName: string;
+    expired: boolean;
+    claims: Record<string, any>;
 };

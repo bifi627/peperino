@@ -13,19 +13,19 @@
     public class AccessList : BaseEntity<int>
     {
         public int? ParentRelation { get; set; }
-        public IList<UserAccess> UserAccess { get; set; } = new List<UserAccess>();
-        public IList<GroupAccess> GroupAccess { get; set; } = new List<GroupAccess>();
+        public virtual IList<UserAccess> UserAccess { get; set; } = new List<UserAccess>();
+        public virtual IList<GroupAccess> GroupAccess { get; set; } = new List<GroupAccess>();
     }
 
     public class UserAccess : BaseEntity<int>
     {
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public AccessLevel AccessLevel { get; set; }
     }
 
     public class GroupAccess : BaseEntity<int>
     {
-        public UserGroup UserGroup { get; set; } = new UserGroup();
+        public virtual UserGroup UserGroup { get; set; } = new UserGroup();
         public AccessLevel AccessLevel { get; set; }
     }
 }

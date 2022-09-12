@@ -4,7 +4,7 @@ namespace Peperino.EntityFramework.Entities
 {
     public class UserStoreClient : BaseEntity<string>
     {
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public Dictionary<string, string> KeyValueStorage = new();
 
         public UserStoreClient()

@@ -1,12 +1,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+export { PeperinoApiClient } from './PeperinoApiClient';
+
 export { ApiError } from './core/ApiError';
+export { BaseHttpRequest } from './core/BaseHttpRequest';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
-export { AccessLevel } from './models/AccessLevel';
+export type { AccessLevel } from './models/AccessLevel';
 export type { AccessList } from './models/AccessList';
 export type { BaseEvent } from './models/BaseEvent';
 export type { CreateRoomCommand } from './models/CreateRoomCommand';

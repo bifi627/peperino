@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import { GroupListItem as RoomListItem } from "../../components/group/RoomListItem";
-import { RoomOutDto, RoomService } from "../../lib/api";
-import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
+import { RoomOutDto } from "../../lib/api";
+import { withAuth } from "../../lib/auth/server/authPage";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
@@ -13,18 +13,15 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    console.log(context.resolvedUrl);
-    if (await authPage(context) === false) {
-        return await redirectLogin<Props>(context.resolvedUrl);
-    }
+    return withAuth(context, [], async (result) => {
+        const rooms = await result.api.room.getAll();
 
-    const rooms = await RoomService.getAll();
-
-    return {
-        props: {
-            rooms: rooms
-        }
-    };
+        return {
+            props: {
+                rooms: rooms
+            }
+        };
+    });
 }
 
 const GroupsPage = observer((props: Props) => {

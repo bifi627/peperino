@@ -7,7 +7,7 @@ namespace Peperino.Domain.Session
         public string SessionCookie { get; set; } = "";
         public string SessionName { get; set; } = "";
         public string Token { get; set; } = "";
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         public Session()
         {

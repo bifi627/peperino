@@ -10,4 +10,5 @@ export module KnownRoutes {
     export const Room = (slug?: string) => slug ? `/room/${slug}` : "/room";
     export const RoomSettings = (slug: string) => `/room/${slug}/settings`;
     export const SharedLink = (slug: string) => `/share/${slug}`;
+    export const SSO = (redirect: string) => `/login/sso?redirect=${redirect}`;
 }

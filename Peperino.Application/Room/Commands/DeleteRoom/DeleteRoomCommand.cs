@@ -41,7 +41,7 @@ namespace Peperino.Application.Room.Commands.DeleteRoom
                 throw new ArgumentNullException("Current user is null", nameof(currentUser));
             }
 
-            var room = _dbContext.Rooms.Where(r => r.Slug == request.GroupSlug).WithOwnable().WithAuditable().FirstOrDefault();
+            var room = _dbContext.Rooms.Where(r => r.Slug == request.GroupSlug).FirstOrDefault();
 
             if (room is null)
             {

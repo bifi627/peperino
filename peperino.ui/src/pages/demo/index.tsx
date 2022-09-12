@@ -3,25 +3,20 @@ import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
-import { UserStoreService } from "../../lib/api";
-import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
+import { withAuth } from "../../lib/auth/server/authPage";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    console.log(context.resolvedUrl);
-    if (await authPage(context) === false) {
-        return await redirectLogin<Props>(context.resolvedUrl);
-    }
-
-    const userStore = await UserStoreService.getApiUserStore();
-
-    return {
-        props: {
-        }
-    };
+    return await withAuth(context, [], async (result) => {
+        const userStore = await result.api.userStore.getApiUserStore();
+        return {
+            props: {
+            }
+        };
+    });
 }
 
 const DemoPage = observer((props: Props) => {

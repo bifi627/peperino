@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { toast } from "react-toastify";
-import { HealthCheckService } from "../../api";
+import { ClientApi } from "../../auth/client/apiClient";
 import { BaseState } from "../BaseState";
 
 export class HealthCheckState implements BaseState {
@@ -12,14 +12,15 @@ export class HealthCheckState implements BaseState {
     }
 
     public init() {
-        setInterval(() => this.checkConnection(), 60 * 1000);
+        // Health check is annoying during debug and does nothing of use right now
+        // setInterval(() => this.checkConnection(), 60 * 1000);
         return Promise.resolve();
     }
 
     public async checkConnection() {
         let newState: boolean;
         try {
-            newState = await HealthCheckService.getApiHealthCheck();
+            newState = await ClientApi.healthCheck.getApiHealthCheck();
         } catch (error) {
             newState = false;
 
