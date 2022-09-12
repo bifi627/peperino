@@ -2,8 +2,8 @@ import { Favorite, LocalActivity, Restore } from "@mui/icons-material";
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
-import { RoomOutDto, RoomService } from "../../../lib/api";
-import { authPage, redirectLogin } from "../../../lib/auth/server/authPage";
+import { RoomOutDto } from "../../../lib/api";
+import { withAuth } from "../../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
 

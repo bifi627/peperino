@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { GroupListItem as RoomListItem } from "../../components/room/overview/RoomListItem";
 import { RoomOverviewHeader } from "../../components/room/overview/RoomOverviewHeader";
-import { AccessLevel, RoomOutDto, RoomService } from "../../lib/api";
-import { authPage, redirectLogin } from "../../lib/auth/server/authPage";
+import { RoomOutDto } from "../../lib/api";
+import { withAuth } from "../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
@@ -59,7 +59,7 @@ const GroupsPage = observer((props: Props) => {
             <Box>
                 {roomOverviewState.rooms.map(room => {
 
-                    const icon = room.accessLevel === AccessLevel.OWNER ? <Person /> : <Public />;
+                    const icon = room.accessLevel === "Owner" ? <Person /> : <Public />;
 
                     return (
                         <RoomListItem key={room.slug} leftIcon={icon} mainText={room.roomName} subTexts={[room.createdBy.userName ?? ""]} onSelect={() => {
