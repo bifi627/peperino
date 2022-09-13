@@ -6,6 +6,9 @@ namespace Peperino.Dtos.CheckList
     public class CheckListOutDto
     {
         [Required]
+        public int Id { get; set; }
+
+        [Required]
         public RoomOutDto Room { get; set; }
 
         [Required]

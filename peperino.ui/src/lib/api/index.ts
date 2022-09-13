@@ -10,12 +10,13 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AccessLevel } from './models/AccessLevel';
-export type { AccessList } from './models/AccessList';
 export type { BaseEvent } from './models/BaseEvent';
+export type { BaseOwnableEntity } from './models/BaseOwnableEntity';
 export type { CheckListItemOutDto } from './models/CheckListItemOutDto';
 export type { CheckListOutDto } from './models/CheckListOutDto';
 export type { CreateCheckListCommand } from './models/CreateCheckListCommand';
 export type { CreateRoomCommand } from './models/CreateRoomCommand';
+export type { DeleteCheckListCommand } from './models/DeleteCheckListCommand';
 export type { Demo } from './models/Demo';
 export type { GroupAccess } from './models/GroupAccess';
 export type { RoomOutDto } from './models/RoomOutDto';

@@ -61,27 +61,6 @@ namespace Peperino.Application.CheckList.Commands.CreateCheckList
                 Slug = slug
             };
 
-            checkList.Entities.Add(new EntityFramework.Entities.CheckList.CheckListItem()
-            {
-                Checked = false,
-                SortIndex = 0,
-                Text = "TEST"
-            });
-
-            checkList.Entities.Add(new EntityFramework.Entities.CheckList.CheckListItem()
-            {
-                Checked = false,
-                SortIndex = 1,
-                Text = "TEST"
-            });
-
-            checkList.Entities.Add(new EntityFramework.Entities.CheckList.CheckListItem()
-            {
-                Checked = false,
-                SortIndex = 2,
-                Text = "TEST"
-            });
-
             // Every room has a specific user group for easeier managing the access
             // The entity inside the group (CheckList in this case) should reference this user group
             // Once applied we dont need the reference to the actual group but is this even necessary

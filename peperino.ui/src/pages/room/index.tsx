@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { GroupListItem as RoomListItem } from "../../components/room/overview/RoomListItem";
+import { CardListItem } from "../../components/room/overview/CardListItem";
 import { RoomOverviewHeader } from "../../components/room/overview/RoomOverviewHeader";
 import { RoomOutDto } from "../../lib/api";
 import { withAuth } from "../../lib/auth/server/authPage";
@@ -62,11 +62,11 @@ const GroupsPage = observer((props: Props) => {
                     const icon = room.accessLevel === "Owner" ? <Person /> : <Public />;
 
                     return (
-                        <RoomListItem key={room.slug} leftIcon={icon} mainText={room.roomName} subTexts={[room.createdBy.userName ?? ""]} onSelect={() => {
+                        <CardListItem key={room.slug} leftIcon={icon} mainText={room.roomName} subTexts={[room.createdBy.userName ?? ""]} onSelect={() => {
                             appFrame.withLoadingScreen(async () => {
                                 await router.push(KnownRoutes.Room(room.slug));
                             });
-                        }}></RoomListItem>
+                        }}></CardListItem>
                     )
                 })}
             </Box>
@@ -96,9 +96,9 @@ const GroupsPage = observer((props: Props) => {
                     <Button onClick={() => roomOverviewState.dialogOpened = false}>Abbrechen</Button>
                     <Button onClick={async () => {
                         await appFrame.withLoadingScreen(async () => {
+                            roomOverviewState.dialogOpened = false;
                             await roomOverviewState.createGroup(roomName);
                             await roomOverviewState.reloadGroups();
-                            roomOverviewState.dialogOpened = false;
                             setRoomName("");
                         });
                     }}>Erstellen</Button>

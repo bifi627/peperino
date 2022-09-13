@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { HealthCheckState } from "./commonState/HealthCheckState";
+import { CheckListPageState } from "./pageState/CheckListPageState";
 import { DemoPageState } from "./pageState/DemoPageState";
 import { RoomPageState } from "./pageState/RoomPageState";
 import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
@@ -16,6 +17,7 @@ export class ApplicationState implements BaseState {
     private roomsOverviewState: RoomsOverviewPageState;
     private roomState: RoomPageState;
     private roomSettingsState: RoomSettingsPageState;
+    private checklistState: CheckListPageState;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
@@ -27,6 +29,7 @@ export class ApplicationState implements BaseState {
             this.roomsOverviewState,
             this.roomState,
             this.roomSettingsState,
+            this.checklistState,
             ...this.dynamicState.values()
         ];
     }
@@ -42,6 +45,7 @@ export class ApplicationState implements BaseState {
         this.roomsOverviewState = new RoomsOverviewPageState();
         this.roomState = new RoomPageState();
         this.roomSettingsState = new RoomSettingsPageState();
+        this.checklistState = new CheckListPageState();
     }
 
     public async init() {
@@ -80,6 +84,10 @@ export class ApplicationState implements BaseState {
 
     public getRoomSettingsState() {
         return this.roomSettingsState;
+    }
+
+    public getChecklistState() {
+        return this.checklistState;
     }
 }
 

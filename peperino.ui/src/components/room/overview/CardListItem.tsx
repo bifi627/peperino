@@ -8,11 +8,11 @@ interface Props {
     leftIcon?: React.ReactNode;
 }
 
-export const GroupListItem = (props: Props) => {
+export const CardListItem = (props: Props) => {
     return (
         <Stack padding={1.5}>
             <Paper elevation={2}>
-                <Box padding={2} display={"flex"} gap={2} onClick={() => props.onSelect?.()}>
+                <Box padding={2} display={"flex"} justifyContent={"space-between"} gap={2} onClick={() => props.onSelect?.()}>
                     {props.leftIcon && <IconButton>
                         {props.leftIcon}
                     </IconButton>}

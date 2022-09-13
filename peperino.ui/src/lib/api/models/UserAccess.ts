@@ -4,6 +4,7 @@
 
 import type { AccessLevel } from './AccessLevel';
 import type { BaseEvent } from './BaseEvent';
+import type { BaseOwnableEntity } from './BaseOwnableEntity';
 import type { User } from './User';
 
 export type UserAccess = {
@@ -11,4 +12,5 @@ export type UserAccess = {
     readonly domainEvents?: Array<BaseEvent> | null;
     user?: User;
     accessLevel?: AccessLevel;
+    entities?: Array<BaseOwnableEntity> | null;
 };

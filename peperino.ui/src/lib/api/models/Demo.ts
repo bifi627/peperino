@@ -2,9 +2,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AccessList } from './AccessList';
 import type { BaseEvent } from './BaseEvent';
+import type { GroupAccess } from './GroupAccess';
 import type { User } from './User';
+import type { UserAccess } from './UserAccess';
 
 export type Demo = {
     id?: number;
@@ -13,6 +14,7 @@ export type Demo = {
     createdBy?: User;
     lastModified?: string | null;
     lastModifiedBy?: User;
-    access?: AccessList;
+    userAccess?: Array<UserAccess> | null;
+    groupAccess?: Array<GroupAccess> | null;
     value?: string | null;
 };
