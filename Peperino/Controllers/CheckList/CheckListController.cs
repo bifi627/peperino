@@ -161,9 +161,10 @@ namespace Peperino.Controllers.CheckList
             return dto;
         }
 
-        [HttpPost("arrange", Name = nameof(ArrangeSortIndex))]
-        public async Task<ActionResult> ArrangeSortIndex(string slug, List<CheckListItemOutDto> ipdateItems)
+        [HttpPost("{slug}/arrange", Name = nameof(ArrangeSortIndex))]
+        public async Task<ActionResult> ArrangeSortIndex(string slug, RearrangeCheckListItemsInDto rearrangeRequest)
         {
+            var updateItems = rearrangeRequest.Items;
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(l => l.Slug == slug);
 
             if (checklist is null)
@@ -175,7 +176,7 @@ namespace Peperino.Controllers.CheckList
 
             var toUpdateItems = new List<CheckListItemOutDto>();
 
-            foreach (var updateItem in ipdateItems)
+            foreach (var updateItem in updateItems)
             {
                 var originalItem = originalItems.FirstOrDefault(i => i.Id == updateItem.Id);
                 if (originalItem is not null && originalItem.SortIndex != updateItem.SortIndex)

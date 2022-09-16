@@ -19,6 +19,7 @@ export type { CreateRoomCommand } from './models/CreateRoomCommand';
 export type { DeleteCheckListCommand } from './models/DeleteCheckListCommand';
 export type { Demo } from './models/Demo';
 export type { GroupAccess } from './models/GroupAccess';
+export type { RearrangeCheckListItemsInDto } from './models/RearrangeCheckListItemsInDto';
 export type { RoomOutDto } from './models/RoomOutDto';
 export type { SessionResponseDto } from './models/SessionResponseDto';
 export type { SharedLinkInDto } from './models/SharedLinkInDto';

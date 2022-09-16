@@ -2,10 +2,10 @@ import { Box, TextField } from "@mui/material";
 import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useEffect, useRef } from "react";
-import { DragDropContext, Draggable, Droppable, resetServerContext } from "react-beautiful-dnd";
+import { DropResult, resetServerContext } from "react-beautiful-dnd";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
+import { SortableList } from "../../components/sortables/SortableList";
 import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
-import { ClientApi } from "../../lib/auth/client/apiClient";
 import { withAuth } from "../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
@@ -60,48 +60,30 @@ const CheckListPage = observer((props: Props) => {
     }
 
     const moveItems = async (sourceArray: CheckListItemOutDto[], from: number, to: number) => {
-        const tempList = [...sourceArray];
-        arrayMoveMutable(tempList, from, to);
-        tempList.forEach((item, i) => {
-            item.sortIndex = i;
-        });
         await appFrame.withLoadingScreen(async () => {
-            await ClientApi.checkList.arrangeSortIndex(props.checkList.slug, checklistState.checkList.entities);
+            await checklistState.moveItems(sourceArray, from, to);
         });
+    }
+
+    const onUncheckedDragEnd = (result: DropResult) => {
+        if (result.destination) {
+            moveItems(unCheckedItems, result.source.index, result.destination.index)
+        }
+    }
+
+    const onCheckedDragEnd = (result: DropResult) => {
+        if (result.destination) {
+            moveItems(unCheckedItems, result.source.index, result.destination.index)
+        }
     }
 
     return (
         <Box display="flex" flexDirection="column" gap={1}>
-            <DragDropContext onDragEnd={(result) => {
-                if (result.destination) {
-                    moveItems(unCheckedItems, result.source.index, result.destination.index)
-                }
-            }}>
-                <Droppable direction="vertical" droppableId="droppable">
-                    {(provided, snapshot) => (
-                        <div
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                        >
-                            {unCheckedItems.map((item, index) => (
-                                <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            style={{ backgroundColor: "rebeccapurple", width: "50px", height: "50px" }}
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                        >
-                                            <div {...provided.dragHandleProps}>DragHandle</div>
-                                            <CheckListItem checkList={checklistState.checkList} item={item}></CheckListItem>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
+            <SortableList
+                data={unCheckedItems}
+                onDragEnd={onUncheckedDragEnd}
+                renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
+            />
 
             <TextField inputRef={inputRef} fullWidth onKeyDown={(e) => {
                 if (inputRef.current && e.key === "Enter") {
@@ -114,49 +96,15 @@ const CheckListPage = observer((props: Props) => {
                     });
                 }
             }} size="small" />
-            <DragDropContext onDragEnd={(result) => {
-                if (result.destination) {
-                    moveItems(checkedItems, result.source.index, result.destination.index)
-                }
-            }}>
-                <Droppable droppableId="droppable">
-                    {(provided, snapshot) => (
-                        <div
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                        >
-                            {checkedItems.map((item, index) => (
-                                <Draggable key={item.id} draggableId={item.id.toString()} index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            style={{ backgroundColor: "rebeccapurple", width: "50px", height: "50px" }}
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                        >
-                                            <div {...provided.dragHandleProps}>DragHandle</div>
-                                            <CheckListItem checkList={checklistState.checkList} item={item}></CheckListItem>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
+
+            <SortableList
+                data={checkedItems}
+                onDragEnd={onCheckedDragEnd}
+                renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
+            />
         </Box>
     );
 });
 
 export default CheckListPage;
 
-function arrayMoveMutable(array: any[], fromIndex: number, toIndex: number) {
-    const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
-
-    if (startIndex >= 0 && startIndex < array.length) {
-        const endIndex = toIndex < 0 ? array.length + toIndex : toIndex;
-
-        const [item] = array.splice(fromIndex, 1);
-        array.splice(endIndex, 0, item);
-    }
-}

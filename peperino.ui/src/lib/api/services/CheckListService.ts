@@ -5,6 +5,7 @@ import type { CheckListItemOutDto } from '../models/CheckListItemOutDto';
 import type { CheckListOutDto } from '../models/CheckListOutDto';
 import type { CreateCheckListCommand } from '../models/CreateCheckListCommand';
 import type { DeleteCheckListCommand } from '../models/DeleteCheckListCommand';
+import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -151,13 +152,13 @@ requestBody?: CheckListItemOutDto,
      * @throws ApiError
      */
     public arrangeSortIndex(
-slug?: string,
-requestBody?: Array<CheckListItemOutDto>,
+slug: string,
+requestBody?: RearrangeCheckListItemsInDto,
 ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/api/CheckList/arrange',
-            query: {
+            url: '/api/CheckList/{slug}/arrange',
+            path: {
                 'slug': slug,
             },
             body: requestBody,
