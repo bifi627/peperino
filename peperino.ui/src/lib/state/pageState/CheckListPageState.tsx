@@ -12,6 +12,14 @@ export class CheckListPageState extends BasePageState {
         return this._checkList!;
     }
 
+    public get checkedItems() {
+        return this._checkList?.entities.filter(i => i.checked === true);
+    }
+
+    public get uncheckedItems() {
+        return this._checkList?.entities.filter(i => i.checked === false);
+    }
+
     public set checkList(value: CheckListOutDto) {
         if (!isObservable(value)) {
             makeAutoObservable(value);
@@ -42,6 +50,7 @@ export class CheckListPageState extends BasePageState {
     }
 
     public async addItem(text: string) {
+        console.log(text);
         await ClientApi.checkList.addCheckListItem(this.checkList.slug, text);
     }
 

@@ -15,7 +15,6 @@ export interface MUIAppProps extends AppProps {
 
 function MyApp(props: MUIAppProps) {
     const { Component, pageProps, emotionCache } = props;
-
     return (
         <PageThemeProvider emotionCache={emotionCache}>
             <AuthProvider>

@@ -74,13 +74,16 @@ namespace Peperino.Controllers
 
                 var session = await Mediator.Send(new GetSessionQuery(sessionCookie));
 
-                if (session is not null)
+                if (session is null)
                 {
-                    response.IdToken = session.Token;
-                    response.Claims = sessionTokenResponse.Claims;
-                    response.UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "";
+                    response.Expired = true;
                     return response;
                 }
+
+                response.IdToken = session.Token;
+                response.Claims = sessionTokenResponse.Claims;
+                response.UserName = (await _usersDbContext.Users.FindAsync(sessionTokenResponse.Uid))?.UserName ?? "";
+                return response;
             }
             catch (FirebaseAuthException ex)
             {

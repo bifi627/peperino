@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Peperino.Contracts.DbContexts;
 using Peperino.Domain.Session;
 
@@ -21,7 +22,7 @@ namespace Peperino.Infrastructure.Sessions.Commands.CreateSession
             request.Deconstruct(out string userId, out string sessionCookie, out string token, out string sessionName);
 
             // Get first existing session
-            var existingSession = _sessionDbContext.Sessions.FirstOrDefault(session => session.User.Id == userId && session.SessionName == sessionName);
+            var existingSession = _sessionDbContext.Sessions.Include(x => x.User).FirstOrDefault(session => session.User.Id == userId && session.SessionName == sessionName);
 
             if (existingSession is not null)
             {

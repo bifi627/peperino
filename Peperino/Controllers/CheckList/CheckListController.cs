@@ -91,8 +91,13 @@ namespace Peperino.Controllers.CheckList
             var checkListItem = new CheckListItem
             {
                 Text = text,
-                SortIndex = checklist.Entities.Max(e => e.SortIndex) + 1,
+                SortIndex = 0,
             };
+
+            if (checklist.Entities.Any())
+            {
+                checkListItem.SortIndex = checklist.Entities.Max(e => e.SortIndex) + 1;
+            }
 
             checklist.Entities.Add(checkListItem);
             await DbContext.SaveChangesAsync();
@@ -154,6 +159,34 @@ namespace Peperino.Controllers.CheckList
             var dto = checkListItem.Adapt<CheckListItemOutDto>();
 
             return dto;
+        }
+
+        [HttpPost("arrange", Name = nameof(ArrangeSortIndex))]
+        public async Task<ActionResult> ArrangeSortIndex(string slug, List<CheckListItemOutDto> ipdateItems)
+        {
+            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(l => l.Slug == slug);
+
+            if (checklist is null)
+            {
+                return NotFound();
+            }
+
+            var originalItems = checklist.Entities.ToArray();
+
+            var toUpdateItems = new List<CheckListItemOutDto>();
+
+            foreach (var updateItem in ipdateItems)
+            {
+                var originalItem = originalItems.FirstOrDefault(i => i.Id == updateItem.Id);
+                if (originalItem is not null && originalItem.SortIndex != updateItem.SortIndex)
+                {
+                    originalItem.SortIndex = updateItem.SortIndex;
+                    toUpdateItems.Add(updateItem);
+                }
+            }
+
+            await DbContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

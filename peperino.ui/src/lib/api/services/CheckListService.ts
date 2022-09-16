@@ -144,4 +144,25 @@ requestBody?: CheckListItemOutDto,
         });
     }
 
+    /**
+     * @param slug 
+     * @param requestBody 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public arrangeSortIndex(
+slug?: string,
+requestBody?: Array<CheckListItemOutDto>,
+): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/api/CheckList/arrange',
+            query: {
+                'slug': slug,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
 }
