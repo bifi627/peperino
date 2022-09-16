@@ -22,6 +22,9 @@ export const useCurrentPageState = (): BasePageState | undefined => {
     else if (patternRoute.startsWith(KnownRoutes.Room())) {
         return GlobalApplicationStateObject.getRoomsOverviewState();
     }
+    else if (patternRoute.startsWith(KnownRoutes.CheckList("[slug]"))) {
+        return GlobalApplicationStateObject.getChecklistState();
+    }
 
     return undefined;
 }

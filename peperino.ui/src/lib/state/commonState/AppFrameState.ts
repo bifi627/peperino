@@ -16,11 +16,14 @@ export class AppFrameState implements BaseState {
     }
 
     public async withLoadingScreen(action: () => Promise<unknown>) {
-        this.showLoading = true;
+        const t = setTimeout(() => {
+            this.showLoading = true;
+        }, 200);
         try {
             await action();
         }
         finally {
+            clearTimeout(t);
             this.showLoading = false;
         }
     }

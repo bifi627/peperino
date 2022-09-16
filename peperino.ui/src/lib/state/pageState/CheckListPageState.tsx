@@ -1,3 +1,4 @@
+import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
@@ -42,6 +43,18 @@ export class CheckListPageState extends BasePageState {
         }
 
         this.appFrameConfig.toolbarText = "Check List Page";
+        this.appFrameConfig.contextMenuActions = [
+            {
+                id: "refresh",
+                text: "Refresh",
+                icon: <Refresh />,
+                action: async () => {
+                    await applicationState.getAppFrame().withLoadingScreen(async () => {
+                        await this.reloadList();
+                    });
+                }
+            }
+        ];
     }
 
     public async reloadList() {
