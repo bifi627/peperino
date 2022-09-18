@@ -1,6 +1,7 @@
 import { Box, SxProps } from "@mui/material";
-import { DragDropContext, Draggable, Droppable, DropResult, ResponderProvided } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, DropResult, ResponderProvided } from "react-beautiful-dnd";
 import { SortableItem } from "./SortableItem";
+import { StrictModeDroppable } from "./StrictModeDroppable";
 
 interface Data {
     id: string | number;
@@ -15,9 +16,10 @@ interface Props<T> {
 }
 
 export function SortableList<T extends Data>(props: Props<T>) {
+
     return (
         <DragDropContext onDragEnd={props.onDragEnd}>
-            <Droppable direction="vertical" droppableId="droppable">
+            <StrictModeDroppable direction="vertical" droppableId="droppable">
                 {(provided, snapshot) => (
                     <Box
                         sx={{ display: "flex", flexDirection: "column", gap: "8px", padding: "8px", ...props.listBoxStyle }}
@@ -42,7 +44,7 @@ export function SortableList<T extends Data>(props: Props<T>) {
                         {provided.placeholder}
                     </Box>
                 )}
-            </Droppable>
+            </StrictModeDroppable>
         </DragDropContext>
     );
 }

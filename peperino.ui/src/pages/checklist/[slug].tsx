@@ -49,6 +49,10 @@ const CheckListPage = observer((props: Props) => {
 
     useEffect(() => {
         checklistState.checkList = props.checkList;
+        checklistState.connectSignalR();
+        return () => {
+            checklistState.disconnectSignalR();
+        }
     }, [])
 
     const inputRef = useRef<HTMLInputElement>();

@@ -1,8 +1,10 @@
+import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
+import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
 
@@ -34,6 +36,7 @@ export class CheckListPageState extends BasePageState {
 
         makeObservable(this as CheckListPageState & { _checkList: CheckListOutDto }, {
             _checkList: observable,
+            _connectionState: observable,
         });
     }
 
@@ -56,6 +59,65 @@ export class CheckListPageState extends BasePageState {
                 }
             }
         ];
+    }
+
+    private notificationHubConnection!: HubConnection;
+    private _connectionState: HubConnectionState = HubConnectionState.Disconnected;
+    public get ConnectionState() {
+        return this._connectionState;
+    }
+
+    public async connectSignalR() {
+        const url = KnownRoutes.SignalR.CheckList();
+        console.log(url);
+        this.notificationHubConnection = new HubConnectionBuilder().withUrl(url,
+            {
+                skipNegotiation: true,
+                transport: HttpTransportType.WebSockets,
+                accessTokenFactory: () => getAuth().currentUser?.getIdToken() ?? "",
+            }).withAutomaticReconnect().build();
+
+        this.registerWebSocketEvents();
+
+        this.notificationHubConnection.on("Update", async (sender: string) => {
+            // if ( user !== sender )
+            {
+                await this.reloadList();
+                this._connectionState = this.notificationHubConnection.state;
+                console.log("UPDATE");
+            }
+        });
+
+        await this.notificationHubConnection.start();
+        try {
+            await this.notificationHubConnection.send("JoinList", this.checkList.slug);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    public async disconnectSignalR() {
+        this.notificationHubConnection.state === HubConnectionState.Connected && this.notificationHubConnection.send("LeaveList", this.checkList.slug).then(() => {
+            this.notificationHubConnection.stop();
+        });
+    }
+
+    private registerWebSocketEvents() {
+        this.notificationHubConnection.onclose(() => {
+            this._connectionState = this.notificationHubConnection.state;
+        });
+
+        this.notificationHubConnection.onreconnected(() => {
+            this._connectionState = this.notificationHubConnection.state;
+        })
+        this.notificationHubConnection.onreconnecting(() => {
+            this._connectionState = this.notificationHubConnection.state;
+        })
+
+        this.notificationHubConnection.on("connected", () => {
+            this._connectionState = this.notificationHubConnection.state;
+        });
     }
 
     public async reloadList() {
