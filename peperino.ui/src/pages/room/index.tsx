@@ -1,4 +1,4 @@
-import { Add, Person, Public } from "@mui/icons-material";
+import { Add, GroupAdd, Person, Public } from "@mui/icons-material";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@mui/material";
 import { isObservableArray } from "mobx";
 import { observer } from "mobx-react";
@@ -6,7 +6,6 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { CardListItem } from "../../components/room/overview/CardListItem";
-import { RoomOverviewHeader } from "../../components/room/overview/RoomOverviewHeader";
 import { RoomOutDto } from "../../lib/api";
 import { withAuth } from "../../lib/auth/server/authPage";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
@@ -55,7 +54,11 @@ const GroupsPage = observer((props: Props) => {
 
     return (
         <>
-            <RoomOverviewHeader count={roomOverviewState.rooms.length} />
+            {roomOverviewState.rooms.length === 0 &&
+                <CardListItem key={"new"} leftIcon={<GroupAdd />} mainText={"Neuen Raum erstellen"} subTexts={[""]} onSelect={() => {
+                    roomOverviewState.dialogOpened = true;
+                }}></CardListItem>
+            }
             <Box>
                 {roomOverviewState.rooms.map(room => {
 

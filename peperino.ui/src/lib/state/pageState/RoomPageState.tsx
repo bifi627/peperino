@@ -24,6 +24,9 @@ export class RoomPageState extends BasePageState {
     }
 
     public updateToolbar() {
+
+        this.appFrameConfig.toolbarText = "Room: " + this.room?.roomName;
+
         const settingsAction = {
             id: "settings",
             action: async () => {

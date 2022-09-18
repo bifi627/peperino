@@ -1,4 +1,5 @@
-import { Drawer, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { ChevronLeft } from "@mui/icons-material";
+import { Divider, Drawer, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { observer } from "mobx-react";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
@@ -26,8 +27,13 @@ export const DynamicDrawer = observer((props: DynamicDrawerProps) => {
     };
 
     return (
-        <Drawer PaperProps={{ style: { top: "64px" } }} open={appFrame.drawerOpened} anchor={"left"} onClose={() => appFrame.drawerOpened = false}>
+        <Drawer open={appFrame.drawerOpened} anchor={"left"} onClose={() => appFrame.drawerOpened = false}>
             <div style={{ width: 250 }}>
+                <ListItem button onClick={() => appFrame.drawerOpened = false}>
+                    <ListItemIcon><ChevronLeft /></ListItemIcon>
+                    <ListItemText primary={"Close Menu"} />
+                </ListItem>
+                <Divider />
                 {props.items?.map((drawerItem, index) => (
                     <div key={index}>
                         <ListItem button onClick={async () => onItemClicked(drawerItem)}>

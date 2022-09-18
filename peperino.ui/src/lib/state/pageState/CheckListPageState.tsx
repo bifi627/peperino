@@ -26,6 +26,7 @@ export class CheckListPageState extends BasePageState {
             makeAutoObservable(value);
         }
         this._checkList = value;
+        this.appFrameConfig.toolbarText = value.name;
     }
 
     constructor() {
@@ -109,8 +110,6 @@ export class CheckListPageState extends BasePageState {
                 item.sortIndex = Math.max(...this.uncheckedItems.map(i => i.sortIndex)) + 1;
             }
         }
-
-        console.log(item.sortIndex);
 
         await this.arrangeItems();
 

@@ -6,6 +6,7 @@ interface Props {
     mainText: string;
     subTexts?: string[];
     leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
 }
 
 export const CardListItem = (props: Props) => {
@@ -26,7 +27,7 @@ export const CardListItem = (props: Props) => {
                         props.onSelect?.();
                     }}>
                         <Paper elevation={3} sx={{ borderRadius: 20, padding: 1, display: "flex" }}>
-                            <ChevronRight />
+                            {props.rightIcon ?? <ChevronRight />}
                         </Paper>
                     </IconButton>}
                 </Box>

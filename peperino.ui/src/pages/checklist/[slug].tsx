@@ -1,4 +1,5 @@
-import { Box, TextField } from "@mui/material";
+import { Send } from "@mui/icons-material";
+import { Box, Button, TextField } from "@mui/material";
 import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useEffect, useRef } from "react";
@@ -85,8 +86,10 @@ const CheckListPage = observer((props: Props) => {
                 renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
             />
 
-            <TextField inputRef={inputRef} fullWidth onKeyDown={(e) => {
-                if (inputRef.current && e.key === "Enter") {
+            <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (inputRef.current && inputRef.current.value !== "") {
                     const text = inputRef.current.value;
                     const ref = inputRef.current;
                     appFrame.withLoadingScreen(async () => {
@@ -95,7 +98,12 @@ const CheckListPage = observer((props: Props) => {
                         ref.value = "";
                     });
                 }
-            }} size="small" />
+            }}>
+                <TextField sx={{ paddingLeft: 2 }} inputRef={inputRef} fullWidth size="small" />
+                <Button type="submit">
+                    <Send />
+                </Button>
+            </form>
 
             <SortableList
                 data={checkedItems}

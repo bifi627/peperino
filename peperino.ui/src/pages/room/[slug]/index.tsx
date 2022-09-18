@@ -59,13 +59,11 @@ const GroupPage = observer((props: Props) => {
 
     const [listName, setListName] = useState("");
 
+    const fabButtonOffset = 64;
+
     return (
         <>
-            <div style={{ minHeight: "calc(100% - 60px - 56px)", paddingBottom: "60px" }}>
-                <>Group Page {props.room?.roomName} </>
-                {"TEXT"}
-                <>TEXT</>
-                <br></br>
+            <div style={{ minHeight: `calc(100% - ${(fabButtonOffset - 4) * 2}px)`, paddingBottom: `${fabButtonOffset - 4}px` }}>
                 <Box>
                     {roomPageState.checkLists?.map(list => {
                         return (
@@ -77,7 +75,7 @@ const GroupPage = observer((props: Props) => {
                         )
                     })}
                 </Box>
-                <Fab size={"medium"} color={"primary"} sx={{ position: "fixed", bottom: "64px", right: "24px" }} onClick={() => {
+                <Fab size={"medium"} color={"primary"} sx={{ position: "fixed", bottom: `${fabButtonOffset}px`, right: "24px" }} onClick={() => {
                     roomPageState.addCheckListDialogOpened = true;
                 }}>
                     <Add />
