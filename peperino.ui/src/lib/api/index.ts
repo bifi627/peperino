@@ -10,6 +10,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AccessLevel } from './models/AccessLevel';
+export type { AddCheckListItem } from './models/AddCheckListItem';
 export type { BaseEvent } from './models/BaseEvent';
 export type { BaseOwnableEntity } from './models/BaseOwnableEntity';
 export type { CheckListItemOutDto } from './models/CheckListItemOutDto';

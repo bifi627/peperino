@@ -64,7 +64,7 @@ export class CheckListPageState extends BasePageState {
     }
 
     public async addItem(text: string) {
-        await ClientApi.checkList.addCheckListItem(this.checkList.slug, text);
+        await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
     }
 
     public async deleteItem(item: CheckListItemOutDto) {

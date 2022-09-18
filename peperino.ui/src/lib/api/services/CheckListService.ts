@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AddCheckListItem } from '../models/AddCheckListItem';
 import type { CheckListItemOutDto } from '../models/CheckListItemOutDto';
 import type { CheckListOutDto } from '../models/CheckListOutDto';
 import type { CreateCheckListCommand } from '../models/CreateCheckListCommand';
@@ -88,7 +89,7 @@ requestBody?: DeleteCheckListCommand,
      */
     public addCheckListItem(
 slug: string,
-requestBody: string,
+requestBody: AddCheckListItem,
 ): CancelablePromise<CheckListItemOutDto> {
         return this.httpRequest.request({
             method: 'POST',

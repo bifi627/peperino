@@ -77,7 +77,7 @@ namespace Peperino.Controllers.CheckList
         }
 
         [HttpPost("{slug}/add", Name = "AddCheckListItem")]
-        public async Task<ActionResult<CheckListItemOutDto>> AddCheckListItem(string slug, [FromBody][Required] string text)
+        public async Task<ActionResult<CheckListItemOutDto>> AddCheckListItem(string slug, [FromBody][Required] AddCheckListItem item)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
 
@@ -90,7 +90,7 @@ namespace Peperino.Controllers.CheckList
 
             var checkListItem = new CheckListItem
             {
-                Text = text,
+                Text = item.Text,
                 SortIndex = 0,
             };
 
