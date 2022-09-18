@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Peperino.Application.Room.Commands.CreateRoom;
 using Peperino.Domain.Base;
 using Peperino.Dtos.SharedLink;
 using Peperino.EntityFramework.Entities;
@@ -51,7 +52,7 @@ namespace Peperino.Controllers
                 return BadRequest();
             }
 
-            var link = DbContext.SharedLinks.Where(l => l.Slug == slug).Include(l => l.Entity).Include(l => l.Entity.Access.UserAccess).Include(l => l.Entity.Access.GroupAccess).FirstOrDefault();
+            var link = DbContext.SharedLinks.Where(l => l.Slug == slug).Include(l => l.Entity).Include(l => l.Entity.UserAccess).Include(l => l.Entity.GroupAccess).FirstOrDefault();
 
             if (link is null)
             {
@@ -89,23 +90,26 @@ namespace Peperino.Controllers
             }
 
             // check if lower access level is already granted and elevate if needed
-            var existingAccess = entity.Access.UserAccess.FirstOrDefault(a => a.User.Id == CurrentUser.Id);
+            var existingAccess = entity.UserAccess.FirstOrDefault(a => a.User.Id == CurrentUser.Id);
             if (existingAccess is not null)
             {
                 existingAccess.AccessLevel = grantAccessLevel;
             }
 
             // Add user to user access
-            entity.Access.UserAccess.Add(new UserAccess() { User = CurrentUser, AccessLevel = grantAccessLevel });
+            entity.UserAccess.Add(new UserAccess() { User = CurrentUser, AccessLevel = grantAccessLevel });
 
             // If this is a room we need to create a user group assigned to this room
             // this user group can be used to administrate the entities inside this room
             // Remove this specific room stuff later if we want to share more stuff?
             if (entity is Room room)
             {
-                var ids = room.Access.GroupAccess.Select(s => s.Id).ToList();
+                var ids = room.GroupAccess.Select(s => s.Id).ToList();
 
-                var groupAccess = await UserDbContext.GroupAccess.Include(ga => ga.UserGroup).Include(ga => ga.UserGroup.Users).Where(ga => ids.Contains(ga.Id)).Where(ga => ga.UserGroup.GroupName == "Members").FirstOrDefaultAsync();
+                var groupAccess = await UserDbContext.GroupAccess.Include(ga => ga.UserGroup).Include(ga => ga.UserGroup.Users)
+                    .Where(ga => ids.Contains(ga.Id))
+                    .Where(ga => ga.UserGroup.GroupName == CreateRoomCommand.SHARED_ROOM_ACCESS)
+                    .FirstOrDefaultAsync();
 
                 if (groupAccess is not null)
                 {

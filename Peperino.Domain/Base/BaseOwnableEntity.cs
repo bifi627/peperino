@@ -4,7 +4,8 @@ namespace Peperino.Domain.Base
 {
     public abstract class BaseOwnableEntity : BaseAuditableEntity
     {
-        public virtual AccessList Access { get; set; } = new AccessList();
+        public virtual IList<UserAccess> UserAccess { get; set; } = new List<UserAccess>();
+        public virtual IList<GroupAccess> GroupAccess { get; set; } = new List<GroupAccess>();
     }
 
     public static class OwnableEntityExtensions
@@ -38,12 +39,12 @@ namespace Peperino.Domain.Base
 
             return entities.ToArray().Where(e =>
             {
-                var hasUserAccess = e.Access.UserAccess.Where(ua => ua.User.Id == user.Id).Any(ua => ua.AccessLevel >= requestedAccess);
+                var hasUserAccess = e.UserAccess.Where(ua => ua.User.Id == user.Id).Any(ua => ua.AccessLevel >= requestedAccess);
                 if (hasUserAccess)
                 {
                     return true;
                 }
-                var hasGroupAccess = e.Access.GroupAccess.Where(ga => ga.UserGroup.Users.Any(u => u.Id == user.Id)).Any(ga => ga.AccessLevel >= requestedAccess);
+                var hasGroupAccess = e.GroupAccess.Where(ga => ga.UserGroup.Users.Any(u => u.Id == user.Id)).Any(ga => ga.AccessLevel >= requestedAccess);
                 return hasGroupAccess;
             });
         }
@@ -67,13 +68,13 @@ namespace Peperino.Domain.Base
 
             AccessLevel accessLevel = AccessLevel.None;
 
-            var userAccess = entity.Access.UserAccess.FirstOrDefault(access => access.User.Id == user.Id);
+            var userAccess = entity.UserAccess.FirstOrDefault(access => access.User.Id == user.Id);
             if (userAccess?.AccessLevel > accessLevel)
             {
                 accessLevel = userAccess.AccessLevel;
             }
 
-            var groupAccess = entity.Access.GroupAccess.FirstOrDefault(ug => ug.UserGroup.Users.FirstOrDefault(u => u.Id == user.Id) is not null);
+            var groupAccess = entity.GroupAccess.FirstOrDefault(ug => ug.UserGroup.Users.FirstOrDefault(u => u.Id == user.Id) is not null);
             if (groupAccess?.AccessLevel > accessLevel)
             {
                 accessLevel = groupAccess.AccessLevel;
@@ -89,7 +90,7 @@ namespace Peperino.Domain.Base
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var userAccess = entity.Access.UserAccess.FirstOrDefault(access => access.User.Id == user.Id);
+            var userAccess = entity.UserAccess.FirstOrDefault(access => access.User.Id == user.Id);
             AccessLevel? existingAccessLevel = null;
             if (userAccess is not null)
             {
@@ -100,7 +101,7 @@ namespace Peperino.Domain.Base
                 existingAccessLevel = userAccess.AccessLevel;
             }
 
-            var groupAccess = entity.Access.GroupAccess.FirstOrDefault(ug => ug.UserGroup.Users.FirstOrDefault(u => u.Id == user.Id) is not null);
+            var groupAccess = entity.GroupAccess.FirstOrDefault(ug => ug.UserGroup.Users.FirstOrDefault(u => u.Id == user.Id) is not null);
             if (groupAccess is not null)
             {
                 if (groupAccess.AccessLevel >= requestedAccess)

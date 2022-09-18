@@ -1,5 +1,5 @@
 import { Groups, Home, Login, StreamSharp } from "@mui/icons-material";
-import { AppBar, Toolbar, useTheme } from "@mui/material";
+import { AppBar, useTheme } from "@mui/material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { ToastContainer } from 'react-toastify';
@@ -66,15 +66,13 @@ export const AppFrame = observer((props: Props) => {
 
     return (
         <div style={{ height: "100vh" }}>
-            <LoadingProvider loading={appFrame.showLoading === "Full"}>
-                <AppBar sx={{ zIndex: theme.zIndex.drawer + 1 }} position="fixed">
+            <LoadingProvider>
+                <AppBar position="sticky">
                     <DynamicToolbar menuClick={() => appFrame.drawerOpened = !appFrame.drawerOpened} />
                 </AppBar>
-                <Toolbar />
+                {/* <Toolbar /> */}
                 <DynamicDrawer items={drawerItems} />
-                <LoadingProvider loading={appFrame.showLoading === "Page"}>
-                    {props.children}
-                </LoadingProvider>
+                {props.children}
                 <ToastContainer />
             </LoadingProvider>
         </div>

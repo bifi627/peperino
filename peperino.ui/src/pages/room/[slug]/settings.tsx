@@ -31,8 +31,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
                 }
             }
         }
-    })
-
+    });
 }
 
 const GroupSettingsPage = (props: Props) => {

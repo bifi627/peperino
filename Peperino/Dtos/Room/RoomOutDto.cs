@@ -13,6 +13,9 @@ namespace Peperino.Dtos.UserGroup
     public class RoomOutDto
     {
         [Required]
+        public int Id { get; set; }
+
+        [Required]
         public string RoomName { get; set; } = string.Empty;
 
         [Required]
@@ -23,5 +26,8 @@ namespace Peperino.Dtos.UserGroup
 
         [Required]
         public AccessLevel AccessLevel { get; set; }
+
+        [Required]
+        public List<CheckList.CheckListOutDto> CheckLists { get; set; } = new();
     }
 }

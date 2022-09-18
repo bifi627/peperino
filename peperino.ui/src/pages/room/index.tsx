@@ -1,11 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Add, GroupAdd, Person, Public } from "@mui/icons-material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@mui/material";
 import { isObservableArray } from "mobx";
 import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
-import { GroupListItem as RoomListItem } from "../../components/group/RoomListItem";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { CardListItem } from "../../components/room/overview/CardListItem";
 import { RoomOutDto } from "../../lib/api";
 import { withAuth } from "../../lib/auth/server/authPage";
+import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
@@ -25,32 +28,64 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
 }
 
 const GroupsPage = observer((props: Props) => {
+    const router = useRouter();
     const roomOverviewState = useApplicationState().getRoomsOverviewState();
+    const appFrame = useApplicationState().getAppFrame();
 
-    const [groupName, setGroupName] = useState("");
-
+    // Set the server sided loaded room to current state
     useEffect(() => {
         if (isObservableArray(roomOverviewState.rooms)) {
             roomOverviewState.rooms.replace(props.rooms);
         }
-    }, [])
+    }, [props.rooms, roomOverviewState.rooms]);
+
+    // GroupName for input in dialog
+    const [roomName, setRoomName] = useState("");
+
+    // Set focus after opening dialog with delay
+    const inputRef = useRef<HTMLInputElement>();
+    useEffect(() => {
+        if (roomOverviewState.dialogOpened === true) {
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 222)
+        }
+    }, [roomOverviewState.dialogOpened]);
 
     return (
         <>
-            <>You have access to {roomOverviewState.rooms?.length} groups.</>
-            <div>
+            {roomOverviewState.rooms.length === 0 &&
+                <CardListItem key={"new"} leftIcon={<GroupAdd />} mainText={"Neuen Raum erstellen"} subTexts={[""]} onSelect={() => {
+                    roomOverviewState.dialogOpened = true;
+                }}></CardListItem>
+            }
+            <Box>
                 {roomOverviewState.rooms.map(room => {
+
+                    const icon = room.accessLevel === "Owner" ? <Person /> : <Public />;
+
                     return (
-                        <RoomListItem key={room.slug} room={room}></RoomListItem>
+                        <CardListItem key={room.slug} leftIcon={icon} mainText={room.roomName} subTexts={[room.createdBy.userName ?? ""]} onSelect={() => {
+                            appFrame.withLoadingScreen(async () => {
+                                await router.push(KnownRoutes.Room(room.slug));
+                            });
+                        }}></CardListItem>
                     )
                 })}
-            </div>
+            </Box>
+            <Fab size={"medium"} color={"primary"} sx={{ position: "fixed", bottom: "24px", right: "24px" }} onClick={() => {
+                roomOverviewState.dialogOpened = true;
+            }}>
+                <Add />
+            </Fab>
             <Dialog open={roomOverviewState.dialogOpened} onClose={() => roomOverviewState.dialogOpened = false}>
                 <DialogTitle>Neue Gruppe erstellen</DialogTitle>
                 <DialogContent>
                     <TextField
-                        value={groupName}
-                        onChange={(s) => { setGroupName(s.target.value) }}
+                        inputMode="text"
+                        inputRef={inputRef}
+                        value={roomName}
+                        onChange={(s) => { setRoomName(s.target.value) }}
                         autoComplete="off"
                         autoFocus
                         margin="dense"
@@ -63,9 +98,12 @@ const GroupsPage = observer((props: Props) => {
                 <DialogActions>
                     <Button onClick={() => roomOverviewState.dialogOpened = false}>Abbrechen</Button>
                     <Button onClick={async () => {
-                        await roomOverviewState.createGroup(groupName)
-                        await roomOverviewState.reloadGroups();
-                        roomOverviewState.dialogOpened = false;
+                        await appFrame.withLoadingScreen(async () => {
+                            roomOverviewState.dialogOpened = false;
+                            await roomOverviewState.createGroup(roomName);
+                            await roomOverviewState.reloadGroups();
+                            setRoomName("");
+                        });
                     }}>Erstellen</Button>
                 </DialogActions>
             </Dialog>

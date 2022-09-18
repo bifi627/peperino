@@ -29,7 +29,7 @@ const LoginPage = () => {
                             resolve();
                         });
                     });
-                }, "Full");
+                });
 
                 return false;
             },
