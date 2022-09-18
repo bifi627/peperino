@@ -1,14 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   swcMinify: true,
   env: {
     // theme: fs.readFileSync('./public/theme.js').toString(),
   }
 }
 
+const cacheStrategies = require("./src/lib/pwa/cacheStrategy");
+
 const withPWA = require('next-pwa')({
-  dest: 'public'
+  dest: 'public',
+  runtimeCaching: cacheStrategies,
 })
 
 module.exports = withPWA(nextConfig);
