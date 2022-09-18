@@ -73,7 +73,7 @@ const CheckListPage = observer((props: Props) => {
 
     const onCheckedDragEnd = (result: DropResult) => {
         if (result.destination) {
-            moveItems(unCheckedItems, result.source.index, result.destination.index)
+            moveItems(checkedItems, result.source.index, result.destination.index)
         }
     }
 
