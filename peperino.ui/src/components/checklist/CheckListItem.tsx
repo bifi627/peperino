@@ -25,7 +25,7 @@ export const CheckListItem = observer((props: Props) => {
         // Put focus off after delay so the click on delete can register
         setTimeout(() => {
             setInputFocused(false);
-        }, 1)
+        }, 100)
         if (isInputChanged) {
             await appFrame.withLoadingScreen(async () => {
                 await checkListPageState.updateItem(props.item);

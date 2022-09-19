@@ -14,7 +14,6 @@ namespace Peperino
             services.AddEntityFramework(configuration);
             services.AddInfrastructure(configuration);
 
-
             services.AddTransient<Middleware.InitialConnectionMiddleware>();
 
             return services;

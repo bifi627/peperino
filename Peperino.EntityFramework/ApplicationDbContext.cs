@@ -5,6 +5,7 @@ using Peperino.Domain.Session;
 using Peperino.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities.CheckList;
 using Peperino.Infrastructure.Persistence.Interceptors;
+using Peperino.Interceptors.CheckList;
 using System.Reflection;
 
 namespace Peperino.EntityFramework
@@ -14,16 +15,19 @@ namespace Peperino.EntityFramework
         private readonly IMediator _mediator;
         private readonly AuditableEntitySaveChangesInterceptor _auditableEntitySaveChangesInterceptor;
         private readonly OwnableEntityCreatedInterceptor _ownableEntityCreatedInterceptor;
+        private readonly ICheckListItemsChangedInterceptor _checkListItemsChangedInterceptor;
 
         public ApplicationDbContext(DbContextOptions options,
                                     IMediator mediator,
                                     AuditableEntitySaveChangesInterceptor auditableEntitySaveChangesInterceptor,
-                                    OwnableEntityCreatedInterceptor ownableEntityCreatedInterceptor)
+                                    OwnableEntityCreatedInterceptor ownableEntityCreatedInterceptor,
+                                    ICheckListItemsChangedInterceptor checkListItemsChangedInterceptor)
             : base(options)
         {
             _mediator = mediator;
             _auditableEntitySaveChangesInterceptor = auditableEntitySaveChangesInterceptor;
             _ownableEntityCreatedInterceptor = ownableEntityCreatedInterceptor;
+            _checkListItemsChangedInterceptor = checkListItemsChangedInterceptor;
         }
 
         public DbSet<User> Users => Set<User>();
@@ -51,7 +55,10 @@ namespace Peperino.EntityFramework
 
             optionsBuilder.UseLazyLoadingProxies();
 
-            optionsBuilder.AddInterceptors(_auditableEntitySaveChangesInterceptor, _ownableEntityCreatedInterceptor);
+            optionsBuilder.AddInterceptors(
+                _auditableEntitySaveChangesInterceptor,
+                _ownableEntityCreatedInterceptor,
+                _checkListItemsChangedInterceptor);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

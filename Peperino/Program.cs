@@ -1,6 +1,7 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Peperino;
+using Peperino.Application.CheckList;
 using Peperino.EntityFramework;
 using Peperino.Infrastructure.Options;
 using System.Text;
@@ -20,6 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+    builder.Services.AddSignalR();
 
     TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
 
@@ -46,6 +49,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    app.UseWebSockets();
+    app.MapHub<CheckListHub>("/signalr/checkListHub");
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {

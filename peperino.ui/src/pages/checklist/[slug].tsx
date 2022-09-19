@@ -49,6 +49,10 @@ const CheckListPage = observer((props: Props) => {
 
     useEffect(() => {
         checklistState.checkList = props.checkList;
+        checklistState.connectSignalR();
+        return () => {
+            checklistState.disconnectSignalR();
+        }
     }, [])
 
     const inputRef = useRef<HTMLInputElement>();
@@ -79,38 +83,48 @@ const CheckListPage = observer((props: Props) => {
     }
 
     return (
-        <Box display="flex" flexDirection="column" gap={1}>
-            <SortableList
-                data={unCheckedItems}
-                onDragEnd={onUncheckedDragEnd}
-                renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
-            />
+        <>
+            <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
+                <SortableList
+                    data={unCheckedItems}
+                    onDragEnd={onUncheckedDragEnd}
+                    renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
+                />
 
-            <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (inputRef.current && inputRef.current.value !== "") {
-                    const text = inputRef.current.value;
-                    const ref = inputRef.current;
-                    appFrame.withLoadingScreen(async () => {
-                        await checklistState.addItem(text);
-                        await checklistState.reloadList();
-                        ref.value = "";
-                    });
-                }
+                <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (inputRef.current && inputRef.current.value !== "") {
+                        const text = inputRef.current.value;
+                        const ref = inputRef.current;
+                        appFrame.withLoadingScreen(async () => {
+                            await checklistState.addItem(text);
+                            await checklistState.reloadList();
+                            ref.value = "";
+                        });
+                    }
+                }}>
+                    <TextField sx={{ paddingLeft: 2 }} inputRef={inputRef} fullWidth size="small" />
+                    <Button type="submit">
+                        <Send />
+                    </Button>
+                </form>
+
+                <SortableList
+                    data={checkedItems}
+                    onDragEnd={onCheckedDragEnd}
+                    renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
+                />
+            </Box>
+            <Box sx={{
+                position: "sticky",
+                bottom: "0px",
+                width: "100%"
             }}>
-                <TextField sx={{ paddingLeft: 2 }} inputRef={inputRef} fullWidth size="small" />
-                <Button type="submit">
-                    <Send />
-                </Button>
-            </form>
+                {checklistState.ConnectionState}
+            </Box>
+        </>
 
-            <SortableList
-                data={checkedItems}
-                onDragEnd={onCheckedDragEnd}
-                renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
-            />
-        </Box>
     );
 });
 

@@ -22,7 +22,9 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "next.config.js",
+    "src/lib/pwa/cacheStrategy.js"
   ],
   "exclude": [
     "node_modules"
