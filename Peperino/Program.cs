@@ -49,10 +49,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
-    // TODO: Check if this settings are necessary
-    var webSocketOptions = new WebSocketOptions();
-    webSocketOptions.AllowedOrigins.Add("*");
-    app.UseWebSockets(webSocketOptions);
+    app.UseWebSockets();
+    app.MapHub<CheckListHub>("/signalr/checkListHub");
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -60,14 +59,12 @@ var app = builder.Build();
         app.UseSwaggerUI();
 
         app.UseCors("DEV");
-        app.MapHub<CheckListHub>("/signalr/checkListHub").RequireCors("DEV"); ;
     }
     else
     {
         app.UseHttpsRedirection();
 
         app.UseCors("PROD");
-        app.MapHub<CheckListHub>("/signalr/checkListHub").RequireCors("PROD"); ;
     }
 
     using (var scope = app.Services.CreateScope())

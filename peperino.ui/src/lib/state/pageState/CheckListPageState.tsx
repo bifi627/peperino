@@ -2,6 +2,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSt
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
+import { toast } from "react-toastify";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
@@ -117,6 +118,10 @@ export class CheckListPageState extends BasePageState {
 
         this.notificationHubConnection.on("connected", () => {
             this._connectionState = this.notificationHubConnection.state;
+        });
+
+        this.notificationHubConnection.on("ListJoined", async () => {
+            toast("Joined", { type: "success", autoClose: 500 });
         });
 
         this.notificationHubConnection.on("Update", async () => {
