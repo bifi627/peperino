@@ -118,6 +118,10 @@ export class CheckListPageState extends BasePageState {
         this.notificationHubConnection.on("connected", () => {
             this._connectionState = this.notificationHubConnection.state;
         });
+
+        this.notificationHubConnection.on("Update", async () => {
+            await this.reloadList();
+        });
     }
 
     public async reloadList() {
