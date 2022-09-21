@@ -80,8 +80,7 @@ export class CheckListPageState extends BasePageState {
 
         this.registerWebSocketEvents();
 
-        this.notificationHubConnection.on("Update", async (sender: string) => {
-            // if ( user !== sender )
+        this.notificationHubConnection.on("Update", async () => {
             {
                 await this.reloadList();
                 this._connectionState = this.notificationHubConnection.state;
