@@ -1,9 +1,9 @@
-import { Send } from "@mui/icons-material";
-import { Box, Button, TextField, useTheme } from "@mui/material";
+import { MoveUp, Send } from "@mui/icons-material";
+import { Autocomplete, Box, Button, TextField, useTheme } from "@mui/material";
 import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
-import { useEffect, useRef } from "react";
-import { DropResult, resetServerContext } from "react-beautiful-dnd";
+import { useEffect } from "react";
+import { DropResult } from "react-beautiful-dnd";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
@@ -40,8 +40,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
     });
 }
 
-resetServerContext();
-
 const CheckListPage = observer((props: Props) => {
 
     const theme = useTheme();
@@ -55,14 +53,9 @@ const CheckListPage = observer((props: Props) => {
         return () => {
             checklistState.disconnectSignalR();
         }
-    }, [])
+    }, []);
 
-    const inputRef = useRef<HTMLInputElement>();
-
-    const checkedItems = checklistState.checkList?.entities.slice().filter(e => e.checked === true).sort((a, b) => a.sortIndex - b.sortIndex);
-    const unCheckedItems = checklistState.checkList?.entities.slice().filter(e => e.checked === false).sort((a, b) => a.sortIndex - b.sortIndex);
-
-    if (!checkedItems || !unCheckedItems) {
+    if (!checklistState.checkList) {
         return <></>;
     }
 
@@ -74,21 +67,31 @@ const CheckListPage = observer((props: Props) => {
 
     const onUncheckedDragEnd = (result: DropResult) => {
         if (result.destination) {
-            moveItems(unCheckedItems, result.source.index, result.destination.index)
+            moveItems(checklistState.uncheckedItems, result.source.index, result.destination.index)
         }
     }
 
     const onCheckedDragEnd = (result: DropResult) => {
         if (result.destination) {
-            moveItems(checkedItems, result.source.index, result.destination.index)
+            moveItems(checklistState.checkedItems, result.source.index, result.destination.index)
         }
+    }
+
+    const getAutoCompleteOptions = () => {
+        if (checklistState.inputValue.length < 3) {
+            return [];
+        }
+
+        const uniqueItems = new Set(checklistState.checkList?.entities.map(e => e.text));
+        const result = [...uniqueItems.values()]
+        return result;
     }
 
     return (
         <>
             <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
                 <SortableList
-                    data={unCheckedItems}
+                    data={checklistState.uncheckedItems}
                     onDragEnd={onUncheckedDragEnd}
                     renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
                 />
@@ -96,24 +99,24 @@ const CheckListPage = observer((props: Props) => {
                 <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (inputRef.current && inputRef.current.value !== "") {
-                        const text = inputRef.current.value;
-                        const ref = inputRef.current;
+                    if (checklistState.inputValue !== "") {
                         appFrame.withLoadingScreen(async () => {
-                            await checklistState.addItem(text);
+                            await checklistState.addItem(checklistState.inputValue);
                             await checklistState.reloadList();
-                            ref.value = "";
+                            checklistState.inputValue = "";
                         });
                     }
                 }}>
-                    <TextField sx={{ paddingLeft: 2 }} inputRef={inputRef} fullWidth size="small" />
+                    <Autocomplete inputValue={checklistState.inputValue} onInputChange={(_, value) => checklistState.inputValue = value} inputMode="search" options={getAutoCompleteOptions()} freeSolo fullWidth renderInput={params =>
+                        <TextField {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
+                    }></Autocomplete>
                     <Button type="submit">
-                        <Send />
+                        {checklistState.checkList.entities.find(e => e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}
                     </Button>
                 </form>
 
                 <SortableList
-                    data={checkedItems}
+                    data={checklistState.checkedItems}
                     onDragEnd={onCheckedDragEnd}
                     renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
                 />
