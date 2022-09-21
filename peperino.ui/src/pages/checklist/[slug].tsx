@@ -1,5 +1,5 @@
 import { Send } from "@mui/icons-material";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, useTheme } from "@mui/material";
 import { observer } from "mobx-react";
 import { GetServerSideProps } from "next";
 import { useEffect, useRef } from "react";
@@ -43,6 +43,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
 resetServerContext();
 
 const CheckListPage = observer((props: Props) => {
+
+    const theme = useTheme();
 
     const checklistState = useApplicationState().getChecklistState();
     const appFrame = useApplicationState().getAppFrame();
@@ -118,10 +120,12 @@ const CheckListPage = observer((props: Props) => {
             </Box>
             <Box sx={{
                 position: "sticky",
-                bottom: "0px",
+                bottom: "8px",
                 width: "100%"
             }}>
-                {checklistState.ConnectionState}
+                {checklistState.ConnectionState !== "Connected" && (
+                    <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
+                )}
             </Box>
         </>
 

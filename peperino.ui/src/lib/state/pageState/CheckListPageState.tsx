@@ -2,7 +2,6 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSt
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
-import { toast } from "react-toastify";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
@@ -78,7 +77,7 @@ export class CheckListPageState extends BasePageState {
                 accessTokenFactory: () => getAuth().currentUser?.getIdToken() ?? "",
             }).withAutomaticReconnect().build();
 
-        this.registerWebSocketEvents();
+        this.subscribeWebSocketEvents();
 
         this.notificationHubConnection.on("Update", async () => {
             {
@@ -103,7 +102,7 @@ export class CheckListPageState extends BasePageState {
         });
     }
 
-    private registerWebSocketEvents() {
+    private subscribeWebSocketEvents() {
         this.notificationHubConnection.onclose(() => {
             this._connectionState = this.notificationHubConnection.state;
         });
@@ -120,10 +119,11 @@ export class CheckListPageState extends BasePageState {
         });
 
         this.notificationHubConnection.on("ListJoined", async () => {
-            toast("Joined", { type: "success", autoClose: 500 });
+            console.log("HubConnection: ListJoined");
         });
 
         this.notificationHubConnection.on("Update", async () => {
+            console.log("HubConnection: Update");
             await this.reloadList();
         });
     }
