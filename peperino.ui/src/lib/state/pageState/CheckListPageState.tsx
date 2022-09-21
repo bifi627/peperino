@@ -1,8 +1,7 @@
 import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
-import { isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
-import { toast } from "react-toastify";
+import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
@@ -17,11 +16,11 @@ export class CheckListPageState extends BasePageState {
     }
 
     public get checkedItems() {
-        return this.checkList.entities.filter(i => i.checked === true);
+        return this.checkList.entities.slice().filter(e => e.checked === true).sort((a, b) => a.sortIndex - b.sortIndex);
     }
 
     public get uncheckedItems() {
-        return this.checkList.entities.filter(i => i.checked === false);
+        return this.checkList.entities.slice().filter(e => e.checked === false).sort((a, b) => a.sortIndex - b.sortIndex);
     }
 
     public set checkList(value: CheckListOutDto) {
@@ -32,12 +31,16 @@ export class CheckListPageState extends BasePageState {
         this.appFrameConfig.toolbarText = value.name;
     }
 
+    public inputValue = "";
+
     constructor() {
         super();
 
         makeObservable(this as CheckListPageState & { _checkList: CheckListOutDto }, {
             _checkList: observable,
             _connectionState: observable,
+            inputValue: observable,
+            addItem: action,
         });
     }
 
@@ -78,10 +81,9 @@ export class CheckListPageState extends BasePageState {
                 accessTokenFactory: () => getAuth().currentUser?.getIdToken() ?? "",
             }).withAutomaticReconnect().build();
 
-        this.registerWebSocketEvents();
+        this.subscribeWebSocketEvents();
 
-        this.notificationHubConnection.on("Update", async (sender: string) => {
-            // if ( user !== sender )
+        this.notificationHubConnection.on("Update", async () => {
             {
                 await this.reloadList();
                 this._connectionState = this.notificationHubConnection.state;
@@ -104,7 +106,7 @@ export class CheckListPageState extends BasePageState {
         });
     }
 
-    private registerWebSocketEvents() {
+    private subscribeWebSocketEvents() {
         this.notificationHubConnection.onclose(() => {
             this._connectionState = this.notificationHubConnection.state;
         });
@@ -121,10 +123,11 @@ export class CheckListPageState extends BasePageState {
         });
 
         this.notificationHubConnection.on("ListJoined", async () => {
-            toast("Joined", { type: "success", autoClose: 500 });
+            console.log("HubConnection: ListJoined");
         });
 
         this.notificationHubConnection.on("Update", async () => {
+            console.log("HubConnection: Update");
             await this.reloadList();
         });
     }
@@ -135,7 +138,25 @@ export class CheckListPageState extends BasePageState {
     }
 
     public async addItem(text: string) {
-        await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
+
+        const existing = this.checkList.entities.find(e => e.text === text);
+
+        // If this text already exists, we want to move it to the latest unchecked element
+        if (existing && existing.text.length >= 3) {
+            if (existing.checked === true) {
+                await this.toggleItemCheck(existing);
+            }
+            else {
+                const sorted = this.uncheckedItems.sort(i => i.sortIndex);
+                const from = sorted.indexOf(existing);
+                const to = sorted.length + 1;
+
+                await this.moveItems(sorted, from, to);
+            }
+        }
+        else {
+            await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
+        }
     }
 
     public async deleteItem(item: CheckListItemOutDto) {

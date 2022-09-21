@@ -26,12 +26,16 @@ export const CheckListItem = observer((props: Props) => {
         setTimeout(() => {
             setInputFocused(false);
         }, 100)
+        await saveInput();
+        setInputChanged(false);
+    }
+
+    const saveInput = async () => {
         if (isInputChanged) {
             await appFrame.withLoadingScreen(async () => {
                 await checkListPageState.updateItem(props.item);
             });
         }
-        setInputChanged(false);
     }
 
     const onCheckChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +56,15 @@ export const CheckListItem = observer((props: Props) => {
     return (
         <Box display="flex" flexDirection="row" width={"100%"} alignItems="center" gap="6px">
             <Checkbox onChange={onCheckChange} checked={props.item.checked === true} size="small"></Checkbox>
-            <TextField onFocus={() => setInputFocused(true)} inputRef={inputRef} fullWidth value={props.item.text} onChange={onInputChange} onBlur={onInputBlur} size="small"></TextField>
+            <form style={{ width: "100%" }} onSubmit={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                saveInput();
+                setInputFocused(false);
+                inputRef.current?.blur();
+            }}>
+                <TextField onFocus={() => setInputFocused(true)} inputRef={inputRef} fullWidth value={props.item.text} onChange={onInputChange} onBlur={onInputBlur} size="small"></TextField>
+            </form>
 
             {isInputFocused && <Delete onClick={onDeleteClick} />}
         </Box>
