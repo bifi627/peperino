@@ -7,9 +7,9 @@ namespace Peperino.Controllers
     public class HealthCheckController : ApiControllerBase
     {
         [HttpGet]
-        public ActionResult<bool> Get()
+        public ActionResult<int> Get()
         {
-            return true;
+            return DbContext.Users.Count();
         }
     }
 }
