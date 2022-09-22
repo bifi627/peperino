@@ -14,4 +14,6 @@ const withPWA = require('next-pwa')({
   runtimeCaching: cacheStrategies,
 })
 
-module.exports = withPWA(nextConfig);
+const { withAxiom } = require('next-axiom')
+
+module.exports = withAxiom(withPWA(nextConfig));
