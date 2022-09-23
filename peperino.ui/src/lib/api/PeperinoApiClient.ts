@@ -5,7 +5,6 @@ import type { BaseHttpRequest } from './core/BaseHttpRequest';
 import type { OpenAPIConfig } from './core/OpenAPI';
 import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
-import { AuthService } from './services/AuthService';
 import { CheckListService } from './services/CheckListService';
 import { DemoService } from './services/DemoService';
 import { HealthCheckService } from './services/HealthCheckService';
@@ -19,7 +18,6 @@ type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
 export class PeperinoApiClient {
 
-    public readonly auth: AuthService;
     public readonly checkList: CheckListService;
     public readonly demo: DemoService;
     public readonly healthCheck: HealthCheckService;
@@ -44,7 +42,6 @@ export class PeperinoApiClient {
             ENCODE_PATH: config?.ENCODE_PATH,
         });
 
-        this.auth = new AuthService(this.request);
         this.checkList = new CheckListService(this.request);
         this.demo = new DemoService(this.request);
         this.healthCheck = new HealthCheckService(this.request);

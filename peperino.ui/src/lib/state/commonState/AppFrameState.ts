@@ -1,16 +1,21 @@
-import { makeAutoObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { BaseState } from "../BaseState";
 
-export class AppFrameState implements BaseState {
+export class AppFrameState extends BaseState {
     public key = "AppFrameState";
     public showLoading = true;
     public drawerOpened = false;
 
     constructor() {
-        makeAutoObservable(this);
+        super();
+
+        makeObservable(this, {
+            showLoading: observable,
+            drawerOpened: observable,
+        });
     }
 
-    public init() {
+    public applicationInit() {
         this.showLoading = false;
         return Promise.resolve();
     }

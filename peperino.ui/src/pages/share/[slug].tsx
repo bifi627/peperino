@@ -1,41 +1,33 @@
 import { observer } from "mobx-react";
-import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { FullLoadingPage } from "../../components/loadingScreen/FullLoadingPage";
-import { withAuth } from "../../lib/auth/server/authPage";
+import { ClientApi } from "../../lib/auth/client/apiClient";
+import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
+import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    return withAuth(context, [], async (result) => {
-        const slug = context.query["slug"] as string;
-
-        try {
-            const sharedLinkResponse = await result.api.sharedLink.executeSharedLink(slug);
-            if (sharedLinkResponse.entityType === "Room") {
-                return {
-                    props: {
-                    },
-                    redirect: {
-                        destination: KnownRoutes.Room(sharedLinkResponse.slug),
-                    }
-                };
-            }
-        } catch (error: any) {
-            console.error(error);
-        }
-
-        return {
-            props: {
-            },
-        }
-    });
-}
-
 const SharedLinkPage = observer((props: Props) => {
+    useAuthGuard();
+
+    const router = useRouter();
+    const appFrame = useApplicationState().getAppFrame();
+
+    useEffect(() => {
+        appFrame.withLoadingScreen(async () => {
+            const slug = router.query["slug"] as string ?? "";
+            const response = await ClientApi.sharedLink.executeSharedLink(slug);
+            if (response.entityType === "Room") {
+                router.replace(KnownRoutes.Room(response.slug));
+            }
+        })
+    }, []);
+
     return (
-        <FullLoadingPage text="Der Link ist abgelaufen oder existiert nicht..." />
+        <FullLoadingPage text="" />
     );
 });
 

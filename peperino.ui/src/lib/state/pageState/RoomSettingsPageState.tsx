@@ -18,7 +18,7 @@ export class RoomSettingsPageState extends BasePageState {
         });
     }
 
-    public override init(applicationState: ApplicationState) {
+    public override applicationInit(applicationState: ApplicationState) {
         this.appFrameConfig.toolbarText = "Settings Page";
 
         this.appFrameConfig.contextMenuActions = [

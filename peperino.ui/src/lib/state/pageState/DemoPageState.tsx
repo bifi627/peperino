@@ -1,6 +1,6 @@
 import { Add } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
-import { action, computed, makeObservable, observable, reaction } from "mobx";
+import { computed, makeObservable, observable, reaction } from "mobx";
 import Router from "next/router";
 
 import { ClientApi } from "../../auth/client/apiClient";
@@ -26,7 +26,6 @@ export class DemoPageState extends BasePageState {
     constructor() {
         super();
         makeObservable(this as DemoPageState & { _counter: number }, {
-            init: action,
             counter: computed,
             _counter: observable,
         });
@@ -44,7 +43,7 @@ export class DemoPageState extends BasePageState {
         await ClientApi.userStore.postApiUserStore(store);
     }
 
-    public override async init(applicationState: ApplicationState) {
+    public override async applicationInit(applicationState: ApplicationState) {
 
         if (!getAuth().currentUser) {
             return Promise.resolve();
@@ -78,7 +77,6 @@ export class DemoPageState extends BasePageState {
                 id: "ToggleTheme",
                 action: async () => {
                     await applicationState.getAppFrame().withLoadingScreen(async () => {
-                        await applicationState.getHealthCheck().checkConnection();
                     });
                 },
                 text: "TOGGLE HEALTH",

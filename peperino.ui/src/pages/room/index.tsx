@@ -1,43 +1,31 @@
 import { Add, GroupAdd, Person, Public } from "@mui/icons-material";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@mui/material";
-import { isObservableArray } from "mobx";
 import { observer } from "mobx-react";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { CardListItem } from "../../components/room/overview/CardListItem";
-import { RoomOutDto } from "../../lib/api";
-import { withAuth } from "../../lib/auth/server/authPage";
+import { ClientApi } from "../../lib/auth/client/apiClient";
+import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
-    rooms: RoomOutDto[]
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    return withAuth(context, [], async (result) => {
-        const rooms = await result.api.room.getAll();
-
-        return {
-            props: {
-                rooms: rooms
-            }
-        };
-    });
 }
 
 const GroupsPage = observer((props: Props) => {
+    useAuthGuard();
     const router = useRouter();
     const roomOverviewState = useApplicationState().getRoomsOverviewState();
     const appFrame = useApplicationState().getAppFrame();
 
+    const initRooms = async () => {
+        roomOverviewState.rooms = await ClientApi.room.getAll()
+    }
+
     // Set the server sided loaded room to current state
     useEffect(() => {
-        if (isObservableArray(roomOverviewState.rooms)) {
-            roomOverviewState.rooms.replace(props.rooms);
-        }
-    }, [props.rooms, roomOverviewState.rooms]);
+        initRooms();
+    }, []);
 
     // GroupName for input in dialog
     const [roomName, setRoomName] = useState("");

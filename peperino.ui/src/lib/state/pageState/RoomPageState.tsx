@@ -45,7 +45,7 @@ export class RoomPageState extends BasePageState {
         }
     }
 
-    public override init(applicationState: ApplicationState) {
+    public override applicationInit(applicationState: ApplicationState) {
 
         this.appFrameConfig.toolbarText = "Room";
 

@@ -1,49 +1,34 @@
-import { GetServerSideProps } from "next";
+import { observer } from "mobx-react";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { RoomOutDto } from "../../../lib/api";
-import { withAuth } from "../../../lib/auth/server/authPage";
-import { KnownRoutes } from "../../../lib/routing/knownRoutes";
+import { ClientApi } from "../../../lib/auth/client/apiClient";
+import { useAuthGuard } from "../../../lib/auth/client/useAuthGuard";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
 
 interface Props {
-    room: RoomOutDto;
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    console.log(context.resolvedUrl);
-    return withAuth(context, [], async (result) => {
-        const slug = context.query["slug"] as string;
-        try {
-            const group = await result.api.room.getBySlug(slug);
-            return {
-                props: {
-                    room: group,
-                }
-            };
-        } catch (error: any) {
-            console.error(error);
-            return {
-                props: {
-                },
-                notFound: true,
-                redirect: {
-                    destination: KnownRoutes.Room(),
-                }
-            }
-        }
-    });
-}
+const GroupSettingsPage = observer((props: Props) => {
+    useAuthGuard();
 
-const GroupSettingsPage = (props: Props) => {
     const groupSettingsState = useApplicationState().getRoomSettingsState();
 
+    const router = useRouter();
+
+    const init = async () => {
+        console.log(router.query);
+        const slug = router.query["slug"] as string ?? "";
+        console.log(slug);
+        groupSettingsState.room = await ClientApi.room.getBySlug(slug);
+    }
+
     useEffect(() => {
-        groupSettingsState.room = props.room;
+        init();
     }, [])
 
     return (
-        <>GroupSettingsPage FOLDER - {props.room.roomName} - {props.room.createdBy.userName}</>
+        <>GroupSettingsPage FOLDER - {groupSettingsState.room?.roomName} - {groupSettingsState.room?.createdBy.userName}</>
     );
-}
+});
 
 export default GroupSettingsPage;

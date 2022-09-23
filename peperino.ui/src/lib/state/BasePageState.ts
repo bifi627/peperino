@@ -11,4 +11,11 @@ export class BasePageState extends BaseState {
             appFrameConfig: observable,
         });
     }
+
+    /**
+     * pageInit will be called when the page is mounted
+     */
+    public async pageInit() {
+        return Promise.resolve();
+    }
 }

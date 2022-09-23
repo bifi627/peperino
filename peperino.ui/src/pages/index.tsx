@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ClientApi } from "../lib/auth/client/apiClient";
-import { manageSessionForUser } from "../lib/auth/client/firebase";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
 const Home: NextPage = () => {
@@ -30,12 +29,6 @@ const Home: NextPage = () => {
                         console.error(error);
                     }
                 }}>Weather with Auth Request</button>
-                <button onClick={async () => {
-                    const newToken = await user?.getIdToken(true);
-                    if (newToken) {
-                        await manageSessionForUser(newToken);
-                    }
-                }}>Update session</button>
                 <br />
                 <Switch defaultChecked />
                 <Switch />

@@ -1,55 +1,38 @@
 import { MoveUp, Send } from "@mui/icons-material";
 import { Autocomplete, Box, Button, TextField, useTheme } from "@mui/material";
 import { observer } from "mobx-react";
-import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
-import { withAuth } from "../../lib/auth/server/authPage";
-import { KnownRoutes } from "../../lib/routing/knownRoutes";
+import { ClientApi } from "../../lib/auth/client/apiClient";
+import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
     checkList: CheckListOutDto;
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    return withAuth(context, [], async (result) => {
-        const slug = context.query["slug"] as string;
-
-        try {
-            const checkList = await result.api.checkList.getCheckListBySlug(slug)
-            return {
-                props: {
-                    checkList: checkList,
-                }
-            };
-        } catch (error: any) {
-            console.error(error);
-            return {
-                props: {
-                },
-                notFound: true,
-                redirect: {
-                    destination: KnownRoutes.Root(),
-                }
-            }
-        }
-    });
-}
-
 const CheckListPage = observer((props: Props) => {
+    useAuthGuard();
+
+    const router = useRouter();
 
     const theme = useTheme();
 
     const checklistState = useApplicationState().getChecklistState();
     const appFrame = useApplicationState().getAppFrame();
 
+    const initCheckList = async () => {
+        const slug = router.query["slug"] as string ?? "";
+        checklistState.checkList = await ClientApi.checkList.getCheckListBySlug(slug)
+        await checklistState.connectSignalR();
+    }
+
     useEffect(() => {
-        checklistState.checkList = props.checkList;
-        checklistState.connectSignalR();
+        initCheckList();
         return () => {
             checklistState.disconnectSignalR();
         }

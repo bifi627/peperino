@@ -44,7 +44,7 @@ export class CheckListPageState extends BasePageState {
         });
     }
 
-    public override async init(applicationState: ApplicationState) {
+    public override async applicationInit(applicationState: ApplicationState) {
 
         if (!getAuth().currentUser) {
             return Promise.resolve();
@@ -65,7 +65,7 @@ export class CheckListPageState extends BasePageState {
         ];
     }
 
-    private notificationHubConnection!: HubConnection;
+    private notificationHubConnection?: HubConnection;
     private _connectionState: HubConnectionState = HubConnectionState.Disconnected;
     public get ConnectionState() {
         return this._connectionState;
@@ -86,7 +86,7 @@ export class CheckListPageState extends BasePageState {
         this.notificationHubConnection.on("Update", async () => {
             {
                 await this.reloadList();
-                this._connectionState = this.notificationHubConnection.state;
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected;
                 console.log("UPDATE");
             }
         });
@@ -101,35 +101,39 @@ export class CheckListPageState extends BasePageState {
     }
 
     public async disconnectSignalR() {
-        this.notificationHubConnection.state === HubConnectionState.Connected && this.notificationHubConnection.send("LeaveList", this.checkList.slug).then(() => {
-            this.notificationHubConnection.stop();
-        });
+        if (this.notificationHubConnection) {
+            this.notificationHubConnection.state === HubConnectionState.Connected && this.notificationHubConnection.send("LeaveList", this.checkList.slug).then(() => {
+                this.notificationHubConnection?.stop();
+            });
+        }
     }
 
     private subscribeWebSocketEvents() {
-        this.notificationHubConnection.onclose(() => {
-            this._connectionState = this.notificationHubConnection.state;
-        });
+        if (this.notificationHubConnection) {
+            this.notificationHubConnection.onclose(() => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected;
+            });
 
-        this.notificationHubConnection.onreconnected(() => {
-            this._connectionState = this.notificationHubConnection.state;
-        })
-        this.notificationHubConnection.onreconnecting(() => {
-            this._connectionState = this.notificationHubConnection.state;
-        })
+            this.notificationHubConnection.onreconnected(() => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected
+            })
+            this.notificationHubConnection.onreconnecting(() => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected
+            })
 
-        this.notificationHubConnection.on("connected", () => {
-            this._connectionState = this.notificationHubConnection.state;
-        });
+            this.notificationHubConnection.on("connected", () => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected
+            });
 
-        this.notificationHubConnection.on("ListJoined", async () => {
-            console.log("HubConnection: ListJoined");
-        });
+            this.notificationHubConnection.on("ListJoined", async () => {
+                console.log("HubConnection: ListJoined");
+            });
 
-        this.notificationHubConnection.on("Update", async () => {
-            console.log("HubConnection: Update");
-            await this.reloadList();
-        });
+            this.notificationHubConnection.on("Update", async () => {
+                console.log("HubConnection: Update");
+                await this.reloadList();
+            });
+        }
     }
 
     public async reloadList() {
