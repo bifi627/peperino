@@ -53,9 +53,7 @@ const CheckListPage = observer((props: Props) => {
     }
 
     const moveItems = async (sourceArray: CheckListItemOutDto[], from: number, to: number) => {
-        await appFrame.withLoadingScreen(async () => {
-            await checklistState.moveItems(sourceArray, from, to);
-        }, 1000);
+        await checklistState.moveItems(sourceArray, from, to);
     }
 
     const onUncheckedDragEnd = (result: DropResult) => {
@@ -91,19 +89,18 @@ const CheckListPage = observer((props: Props) => {
                             renderData={item => <CheckListItem checkList={checklistState.checkList!} item={item} />}
                         />
 
-                        <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
+                        <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={async (e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             if (checklistState.inputValue !== "") {
-                                appFrame.withLoadingScreen(async () => {
-                                    await checklistState.addItem(checklistState.inputValue);
-                                    await checklistState.reloadList();
-                                    checklistState.inputValue = "";
-                                }, 1000);
+                                const text = checklistState.inputValue;
+                                checklistState.inputValue = "";
+                                await checklistState.addItem(text);
+                                await checklistState.reloadList();
                             }
                         }}>
                             <Autocomplete inputValue={checklistState.inputValue} onInputChange={(_, value) => checklistState.inputValue = value} inputMode="search" options={getAutoCompleteOptions()} freeSolo fullWidth renderInput={params =>
-                                <TextField {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
+                                <TextField autoFocus {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
                             }></Autocomplete>
                             <Button type="submit">
                                 {checklistState.checkList.entities.find(e => e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}

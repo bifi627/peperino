@@ -105,14 +105,15 @@ export class CheckListPageState extends BasePageState {
             }
         }
         else {
+            this.checkList.entities.push({ text: text, id: 0, checked: false, sortIndex: 999 });
             await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
         }
     }
 
     public async deleteItem(item: CheckListItemOutDto) {
         if (this.checkList) {
-            await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
             this.checkList.entities.splice(this.checkList.entities.indexOf(item), 1);
+            await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
         }
     }
 
@@ -163,10 +164,9 @@ export class CheckListPageState extends BasePageState {
             }
         }
 
-        await this.arrangeItems();
-
         item.checked = !item.checked;
 
+        await this.arrangeItems();
         await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
     }
 
