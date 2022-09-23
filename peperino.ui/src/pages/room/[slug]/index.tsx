@@ -3,6 +3,7 @@ import { BottomNavigation, BottomNavigationAction, Box, Button, Dialog, DialogAc
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { CardListItem } from "../../../components/room/overview/CardListItem";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useAuthGuard } from "../../../lib/auth/client/useAuthGuard";
@@ -16,17 +17,28 @@ const GroupPage = observer((props: Props) => {
     useAuthGuard();
 
     const router = useRouter();
+    const appFrame = useApplicationState().getAppFrame();
 
     const initRooms = async () => {
-        const slug = router.query["slug"] as string ?? "";
-        const room = await ClientApi.room.getBySlug(slug);
-        roomPageState.room = room;
-        roomPageState.checkLists = room.checkLists;
-        roomPageState.updateToolbar();
+        await appFrame.withLoadingScreen(async () => {
+            try {
+                const slug = router.query["slug"] as string ?? "";
+                const room = await ClientApi.room.getBySlug(slug);
+                roomPageState.room = room;
+                roomPageState.checkLists = room.checkLists;
+                roomPageState.updateToolbar();
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast.error(error.message, { autoClose: 1000 });
+                    setTimeout(() => {
+                        router.push(KnownRoutes.Root());
+                    }, 1000);
+                }
+            }
+        }, 0);
     }
 
     const roomPageState = useApplicationState().getRoomState();
-    const appFrame = useApplicationState().getAppFrame();
 
     useEffect(() => {
         initRooms();

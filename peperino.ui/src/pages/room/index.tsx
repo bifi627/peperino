@@ -19,7 +19,9 @@ const GroupsPage = observer((props: Props) => {
     const appFrame = useApplicationState().getAppFrame();
 
     const initRooms = async () => {
-        roomOverviewState.rooms = await ClientApi.room.getAll()
+        await appFrame.withLoadingScreen(async () => {
+            roomOverviewState.rooms = await ClientApi.room.getAll()
+        }, 0);
     }
 
     // Set the server sided loaded room to current state

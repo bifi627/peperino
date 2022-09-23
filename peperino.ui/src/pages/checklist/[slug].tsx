@@ -4,10 +4,12 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { DropResult } from "react-beautiful-dnd";
+import { toast } from "react-toastify";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
 import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
+import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
@@ -25,9 +27,18 @@ const CheckListPage = observer((props: Props) => {
     const appFrame = useApplicationState().getAppFrame();
 
     const initCheckList = async () => {
-        const slug = router.query["slug"] as string ?? "";
-        await checklistState.pageInit(slug);
-        await checklistState.connectSignalR();
+        try {
+            const slug = router.query["slug"] as string ?? "";
+            await checklistState.pageInit(slug);
+            await checklistState.connectSignalR();
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message, { autoClose: 1000 });
+                setTimeout(() => {
+                    router.push(KnownRoutes.Root());
+                }, 1000);
+            }
+        }
     }
 
     useEffect(() => {
