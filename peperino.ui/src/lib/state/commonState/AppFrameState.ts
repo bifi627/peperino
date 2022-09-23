@@ -20,10 +20,10 @@ export class AppFrameState extends BaseState {
         return Promise.resolve();
     }
 
-    public async withLoadingScreen(action: () => Promise<unknown>) {
+    public async withLoadingScreen(action: () => Promise<unknown>, delay = 200) {
         const t = setTimeout(() => {
             this.showLoading = true;
-        }, 200);
+        }, delay);
         try {
             await action();
         }

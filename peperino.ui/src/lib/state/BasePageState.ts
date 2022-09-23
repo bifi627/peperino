@@ -15,7 +15,7 @@ export class BasePageState extends BaseState {
     /**
      * pageInit will be called when the page is mounted
      */
-    public async pageInit() {
+    public async pageInit(...params: unknown[]) {
         return Promise.resolve();
     }
 }

@@ -34,20 +34,20 @@ export const CheckListItem = observer((props: Props) => {
         if (isInputChanged) {
             await appFrame.withLoadingScreen(async () => {
                 await checkListPageState.updateItem(props.item);
-            });
+            }, 1000);
         }
     }
 
     const onCheckChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         await appFrame.withLoadingScreen(async () => {
             await checkListPageState.toggleItemCheck(props.item);
-        });
+        }, 1000);
     }
 
     const onDeleteClick = async () => {
         await appFrame.withLoadingScreen(async () => {
             await checkListPageState.deleteItem(props.item);
-        });
+        }, 1000);
     }
 
     const [isInputFocused, setInputFocused] = useState(false);

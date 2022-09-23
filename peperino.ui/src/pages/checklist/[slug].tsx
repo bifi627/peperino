@@ -7,7 +7,6 @@ import { DropResult } from "react-beautiful-dnd";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
-import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
@@ -27,7 +26,7 @@ const CheckListPage = observer((props: Props) => {
 
     const initCheckList = async () => {
         const slug = router.query["slug"] as string ?? "";
-        checklistState.checkList = await ClientApi.checkList.getCheckListBySlug(slug)
+        await checklistState.pageInit(slug);
         await checklistState.connectSignalR();
     }
 
@@ -45,7 +44,7 @@ const CheckListPage = observer((props: Props) => {
     const moveItems = async (sourceArray: CheckListItemOutDto[], from: number, to: number) => {
         await appFrame.withLoadingScreen(async () => {
             await checklistState.moveItems(sourceArray, from, to);
-        });
+        }, 1000);
     }
 
     const onUncheckedDragEnd = (result: DropResult) => {
@@ -72,49 +71,52 @@ const CheckListPage = observer((props: Props) => {
 
     return (
         <>
-            <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
-                <SortableList
-                    data={checklistState.uncheckedItems}
-                    onDragEnd={onUncheckedDragEnd}
-                    renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
-                />
+            {checklistState.checkList &&
+                <>
+                    <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
+                        <SortableList
+                            data={checklistState.uncheckedItems}
+                            onDragEnd={onUncheckedDragEnd}
+                            renderData={item => <CheckListItem checkList={checklistState.checkList!} item={item} />}
+                        />
 
-                <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (checklistState.inputValue !== "") {
-                        appFrame.withLoadingScreen(async () => {
-                            await checklistState.addItem(checklistState.inputValue);
-                            await checklistState.reloadList();
-                            checklistState.inputValue = "";
-                        });
-                    }
-                }}>
-                    <Autocomplete inputValue={checklistState.inputValue} onInputChange={(_, value) => checklistState.inputValue = value} inputMode="search" options={getAutoCompleteOptions()} freeSolo fullWidth renderInput={params =>
-                        <TextField {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
-                    }></Autocomplete>
-                    <Button type="submit">
-                        {checklistState.checkList.entities.find(e => e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}
-                    </Button>
-                </form>
+                        <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (checklistState.inputValue !== "") {
+                                appFrame.withLoadingScreen(async () => {
+                                    await checklistState.addItem(checklistState.inputValue);
+                                    await checklistState.reloadList();
+                                    checklistState.inputValue = "";
+                                }, 1000);
+                            }
+                        }}>
+                            <Autocomplete inputValue={checklistState.inputValue} onInputChange={(_, value) => checklistState.inputValue = value} inputMode="search" options={getAutoCompleteOptions()} freeSolo fullWidth renderInput={params =>
+                                <TextField {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
+                            }></Autocomplete>
+                            <Button type="submit">
+                                {checklistState.checkList.entities.find(e => e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}
+                            </Button>
+                        </form>
 
-                <SortableList
-                    data={checklistState.checkedItems}
-                    onDragEnd={onCheckedDragEnd}
-                    renderData={item => <CheckListItem checkList={checklistState.checkList} item={item} />}
-                />
-            </Box>
-            <Box sx={{
-                position: "sticky",
-                bottom: "8px",
-                width: "100%"
-            }}>
-                {checklistState.ConnectionState !== "Connected" && (
-                    <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
-                )}
-            </Box>
+                        <SortableList
+                            data={checklistState.checkedItems}
+                            onDragEnd={onCheckedDragEnd}
+                            renderData={item => <CheckListItem checkList={checklistState.checkList!} item={item} />}
+                        />
+                    </Box>
+                    <Box sx={{
+                        position: "sticky",
+                        bottom: "8px",
+                        width: "100%"
+                    }}>
+                        {checklistState.ConnectionState !== "Connected" && (
+                            <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
+                        )}
+                    </Box>
+                </>
+            }
         </>
-
     );
 });
 
