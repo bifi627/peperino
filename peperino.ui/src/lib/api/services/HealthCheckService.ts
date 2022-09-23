@@ -9,10 +9,10 @@ export class HealthCheckService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
-     * @returns boolean Success
+     * @returns number Success
      * @throws ApiError
      */
-    public getApiHealthCheck(): CancelablePromise<boolean> {
+    public getApiHealthCheck(): CancelablePromise<number> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/api/HealthCheck',

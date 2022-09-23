@@ -1,17 +1,15 @@
-import { makeAutoObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import React, { useContext } from "react";
 import { BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
-import { HealthCheckState } from "./commonState/HealthCheckState";
 import { CheckListPageState } from "./pageState/CheckListPageState";
 import { DemoPageState } from "./pageState/DemoPageState";
 import { RoomPageState } from "./pageState/RoomPageState";
 import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
 import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 
-export class ApplicationState implements BaseState {
+export class ApplicationState extends BaseState {
     public key = "ApplicationState";
-    private healthCheck: HealthCheckState;
     private appFrame: AppFrameState;
     private demoState: DemoPageState;
     private roomsOverviewState: RoomsOverviewPageState;
@@ -23,7 +21,6 @@ export class ApplicationState implements BaseState {
 
     private get all() {
         return [
-            this.healthCheck,
             this.appFrame,
             this.demoState,
             this.roomsOverviewState,
@@ -37,19 +34,22 @@ export class ApplicationState implements BaseState {
     public stateLoading = true;
 
     constructor() {
-        makeAutoObservable(this);
+        super();
 
-        this.healthCheck = new HealthCheckState();
         this.appFrame = new AppFrameState();
         this.demoState = new DemoPageState();
         this.roomsOverviewState = new RoomsOverviewPageState();
         this.roomState = new RoomPageState();
         this.roomSettingsState = new RoomSettingsPageState();
         this.checklistState = new CheckListPageState();
+
+        makeObservable(this, {
+            stateLoading: observable,
+        });
     }
 
-    public async init() {
-        await Promise.all(this.all.map(state => state.init(this)));
+    public async applicationInit() {
+        await Promise.all(this.all.map(state => state.applicationInit(this)));
         this.stateLoading = false;
     }
 
@@ -60,10 +60,6 @@ export class ApplicationState implements BaseState {
 
     public getByKey<T extends BaseState>(key: string) {
         return this.dynamicState.get(key) as T;
-    }
-
-    public getHealthCheck() {
-        return this.healthCheck;
     }
 
     public getAppFrame() {

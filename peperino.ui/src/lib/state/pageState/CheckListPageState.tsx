@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
+import { arrayMoveMutable } from "../../helper/arrayHelper";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
@@ -12,23 +13,23 @@ export class CheckListPageState extends BasePageState {
     private _checkList?: CheckListOutDto = undefined;
 
     public get checkList() {
-        return this._checkList!;
+        return this._checkList;
     }
 
     public get checkedItems() {
-        return this.checkList.entities.slice().filter(e => e.checked === true).sort((a, b) => a.sortIndex - b.sortIndex);
+        return this.checkList?.entities.slice().filter(e => e.checked === true).sort((a, b) => a.sortIndex - b.sortIndex) ?? [];
     }
 
     public get uncheckedItems() {
-        return this.checkList.entities.slice().filter(e => e.checked === false).sort((a, b) => a.sortIndex - b.sortIndex);
+        return this.checkList?.entities.slice().filter(e => e.checked === false).sort((a, b) => a.sortIndex - b.sortIndex) ?? [];
     }
 
-    public set checkList(value: CheckListOutDto) {
-        if (!isObservable(value)) {
+    public set checkList(value: CheckListOutDto | undefined) {
+        if (value && !isObservable(value)) {
             makeAutoObservable(value);
         }
         this._checkList = value;
-        this.appFrameConfig.toolbarText = value.name;
+        this.appFrameConfig.toolbarText = value?.name ?? "Check List Page";
     }
 
     public inputValue = "";
@@ -44,8 +45,7 @@ export class CheckListPageState extends BasePageState {
         });
     }
 
-    public override async init(applicationState: ApplicationState) {
-
+    public override async applicationInit(applicationState: ApplicationState) {
         if (!getAuth().currentUser) {
             return Promise.resolve();
         }
@@ -59,85 +59,35 @@ export class CheckListPageState extends BasePageState {
                 action: async () => {
                     await applicationState.getAppFrame().withLoadingScreen(async () => {
                         await this.reloadList();
-                    });
+                    }, 0);
                 }
             }
         ];
     }
 
-    private notificationHubConnection!: HubConnection;
-    private _connectionState: HubConnectionState = HubConnectionState.Disconnected;
-    public get ConnectionState() {
-        return this._connectionState;
+    public override async userInit(): Promise<void> {
+        this.checkList = undefined;
     }
 
-    public async connectSignalR() {
-        const url = KnownRoutes.SignalR.CheckList();
-        console.log(url);
-        this.notificationHubConnection = new HubConnectionBuilder().withUrl(url,
-            {
-                skipNegotiation: true,
-                transport: HttpTransportType.WebSockets,
-                accessTokenFactory: () => getAuth().currentUser?.getIdToken() ?? "",
-            }).withAutomaticReconnect().build();
-
-        this.subscribeWebSocketEvents();
-
-        this.notificationHubConnection.on("Update", async () => {
-            {
-                await this.reloadList();
-                this._connectionState = this.notificationHubConnection.state;
-                console.log("UPDATE");
-            }
-        });
-
-        await this.notificationHubConnection.start();
-        try {
-            await this.notificationHubConnection.send("JoinList", this.checkList.slug);
+    public override async pageInit(slug: string): Promise<void>
+    public override async pageInit(...params: unknown[]): Promise<void> {
+        const slug = params[0];
+        if (typeof slug === "string") {
+            this.checkList = await ClientApi.checkList.getCheckListBySlug(slug);
         }
-        catch (error) {
-            console.error(error);
-        }
-    }
-
-    public async disconnectSignalR() {
-        this.notificationHubConnection.state === HubConnectionState.Connected && this.notificationHubConnection.send("LeaveList", this.checkList.slug).then(() => {
-            this.notificationHubConnection.stop();
-        });
-    }
-
-    private subscribeWebSocketEvents() {
-        this.notificationHubConnection.onclose(() => {
-            this._connectionState = this.notificationHubConnection.state;
-        });
-
-        this.notificationHubConnection.onreconnected(() => {
-            this._connectionState = this.notificationHubConnection.state;
-        })
-        this.notificationHubConnection.onreconnecting(() => {
-            this._connectionState = this.notificationHubConnection.state;
-        })
-
-        this.notificationHubConnection.on("connected", () => {
-            this._connectionState = this.notificationHubConnection.state;
-        });
-
-        this.notificationHubConnection.on("ListJoined", async () => {
-            console.log("HubConnection: ListJoined");
-        });
-
-        this.notificationHubConnection.on("Update", async () => {
-            console.log("HubConnection: Update");
-            await this.reloadList();
-        });
     }
 
     public async reloadList() {
-        const list = await ClientApi.checkList.getCheckListBySlug(this.checkList.slug);
-        this.checkList = list;
+        if (this.checkList) {
+            const list = await ClientApi.checkList.getCheckListBySlug(this.checkList.slug);
+            this.checkList = list;
+        }
     }
 
     public async addItem(text: string) {
+        if (!this.checkList) {
+            return;
+        }
 
         const existing = this.checkList.entities.find(e => e.text === text);
 
@@ -160,16 +110,22 @@ export class CheckListPageState extends BasePageState {
     }
 
     public async deleteItem(item: CheckListItemOutDto) {
-        await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
-        this.checkList.entities.splice(this.checkList.entities.indexOf(item), 1);
+        if (this.checkList) {
+            await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
+            this.checkList.entities.splice(this.checkList.entities.indexOf(item), 1);
+        }
     }
 
     public async arrangeItems() {
-        await ClientApi.checkList.arrangeSortIndex(this.checkList.slug, { items: this.checkList.entities });
+        if (this.checkList) {
+            await ClientApi.checkList.arrangeSortIndex(this.checkList.slug, { items: this.checkList.entities });
+        }
     }
 
     public async updateItem(item: CheckListItemOutDto) {
-        await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
+        if (this.checkList) {
+            await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
+        }
     }
 
     public async moveItems(sourceArray: CheckListItemOutDto[], from: number, to: number) {
@@ -183,6 +139,10 @@ export class CheckListPageState extends BasePageState {
     }
 
     public async toggleItemCheck(item: CheckListItemOutDto) {
+        if (!this.checkList) {
+            return;
+        }
+
         if (item.checked === false) {
             if (this.checkedItems.length === 0) {
                 item.sortIndex = 0;
@@ -209,15 +169,78 @@ export class CheckListPageState extends BasePageState {
 
         await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
     }
-}
 
-function arrayMoveMutable(array: any[], fromIndex: number, toIndex: number) {
-    const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
+    private notificationHubConnection?: HubConnection;
+    private _connectionState: HubConnectionState = HubConnectionState.Disconnected;
+    public get ConnectionState() {
+        return this._connectionState;
+    }
 
-    if (startIndex >= 0 && startIndex < array.length) {
-        const endIndex = toIndex < 0 ? array.length + toIndex : toIndex;
+    public async connectSignalR() {
+        if (!this.checkList) {
+            return;
+        }
+        const url = KnownRoutes.SignalR.CheckList();
+        console.log(url);
+        this.notificationHubConnection = new HubConnectionBuilder().withUrl(url,
+            {
+                skipNegotiation: true,
+                transport: HttpTransportType.WebSockets,
+                accessTokenFactory: () => getAuth().currentUser?.getIdToken() ?? "",
+            }).withAutomaticReconnect().build();
 
-        const [item] = array.splice(fromIndex, 1);
-        array.splice(endIndex, 0, item);
+        this.subscribeWebSocketEvents();
+
+        this.notificationHubConnection.on("Update", async () => {
+            {
+                await this.reloadList();
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected;
+                console.log("UPDATE");
+            }
+        });
+
+        await this.notificationHubConnection.start();
+        try {
+            await this.notificationHubConnection.send("JoinList", this.checkList.slug);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+
+    public async disconnectSignalR() {
+        if (this.notificationHubConnection) {
+            this.notificationHubConnection.state === HubConnectionState.Connected && this.notificationHubConnection.send("LeaveList", this.checkList?.slug).then(() => {
+                this.notificationHubConnection?.stop();
+            });
+        }
+    }
+
+    private subscribeWebSocketEvents() {
+        if (this.notificationHubConnection) {
+            this.notificationHubConnection.onclose(() => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected;
+            });
+
+            this.notificationHubConnection.onreconnected(() => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected
+            })
+            this.notificationHubConnection.onreconnecting(() => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected
+            })
+
+            this.notificationHubConnection.on("connected", () => {
+                this._connectionState = this.notificationHubConnection?.state ?? HubConnectionState.Disconnected
+            });
+
+            this.notificationHubConnection.on("ListJoined", async () => {
+                console.log("HubConnection: ListJoined");
+            });
+
+            this.notificationHubConnection.on("Update", async () => {
+                console.log("HubConnection: Update");
+                await this.reloadList();
+            });
+        }
     }
 }

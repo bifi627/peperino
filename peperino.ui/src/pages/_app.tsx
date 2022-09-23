@@ -7,7 +7,6 @@ import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
 import { ClientStateProvider } from '../lib/state/commonState/ClientStateProvider';
 import PageThemeProvider from '../styles/PageThemeProvider';
-export { reportWebVitals } from 'next-axiom';
 
 export interface MUIAppProps extends AppProps {
     emotionCache?: EmotionCache;

@@ -1,56 +1,47 @@
 import { Add, List, LocalActivity } from "@mui/icons-material";
 import { BottomNavigation, BottomNavigationAction, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@mui/material";
 import { observer } from "mobx-react";
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { CardListItem } from "../../../components/room/overview/CardListItem";
-import { RoomOutDto } from "../../../lib/api";
-import { withAuth } from "../../../lib/auth/server/authPage";
+import { ClientApi } from "../../../lib/auth/client/apiClient";
+import { useAuthGuard } from "../../../lib/auth/client/useAuthGuard";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
 
 interface Props {
-    room: RoomOutDto;
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-    return withAuth(context, [], async (result) => {
-        const slug = context.query["slug"] as string;
-
-        try {
-            const group = await result.api.room.getBySlug(slug);
-            return {
-                props: {
-                    room: group,
-                }
-            };
-        } catch (error: any) {
-            console.error(error);
-            return {
-                props: {
-                },
-                notFound: true,
-                redirect: {
-                    destination: KnownRoutes.Room(),
-                }
-            }
-        }
-    });
 }
 
 const GroupPage = observer((props: Props) => {
+    useAuthGuard();
 
     const router = useRouter();
-
-    const roomPageState = useApplicationState().getRoomState();
     const appFrame = useApplicationState().getAppFrame();
 
-    useEffect(() => {
-        roomPageState.room = props.room;
-        roomPageState.checkLists = props.room.checkLists;
+    const initRooms = async () => {
+        await appFrame.withLoadingScreen(async () => {
+            try {
+                const slug = router.query["slug"] as string ?? "";
+                const room = await ClientApi.room.getBySlug(slug);
+                roomPageState.room = room;
+                roomPageState.checkLists = room.checkLists;
+                roomPageState.updateToolbar();
+            } catch (error) {
+                if (error instanceof Error) {
+                    toast.error(error.message, { autoClose: 1000 });
+                    setTimeout(() => {
+                        router.push(KnownRoutes.Root());
+                    }, 1000);
+                }
+            }
+        }, 0);
+    }
 
-        roomPageState.updateToolbar();
+    const roomPageState = useApplicationState().getRoomState();
+
+    useEffect(() => {
+        initRooms();
     }, [])
 
     const [bottomNavigation, setBottomNavigation] = useState(0);

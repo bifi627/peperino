@@ -1,14 +1,11 @@
-import { NextApiResponse } from 'next';
-import { withAxiom } from 'next-axiom';
-import { AxiomRequest } from 'next-axiom/dist/withAxiom';
+import { NextApiRequest, NextApiResponse } from 'next';
 import "../../lib/apiConfig";
 
-async function healthCheck(req: AxiomRequest, res: NextApiResponse) {
+async function healthCheck(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "GET") {
-        req.log.info("healthCheck")
         res.json(JSON.stringify("ok"));
         res.status(200);
     }
 }
 
-export default withAxiom(healthCheck);
+export default healthCheck;

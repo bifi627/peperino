@@ -10,7 +10,7 @@ interface Props {
 export const ClientStateProvider = observer((props: Props) => {
 
     useEffect(() => {
-        GlobalApplicationStateObject.init();
+        GlobalApplicationStateObject.applicationInit();
     }, [])
 
     return (

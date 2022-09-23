@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Domain.Base;
-using Peperino.Domain.Session;
 using Peperino.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities.CheckList;
 using Peperino.Infrastructure.Persistence.Interceptors;
@@ -38,8 +37,6 @@ namespace Peperino.EntityFramework
         public DbSet<BaseOwnableEntity> BaseOwnableEntity => Set<BaseOwnableEntity>();
 
         public DbSet<Demo> Demos => Set<Demo>();
-
-        public DbSet<Session> Sessions => Set<Session>();
 
         public DbSet<UserStoreClient> UserStores => Set<UserStoreClient>();
 

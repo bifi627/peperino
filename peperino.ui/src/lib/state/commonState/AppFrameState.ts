@@ -1,24 +1,29 @@
-import { makeAutoObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { BaseState } from "../BaseState";
 
-export class AppFrameState implements BaseState {
+export class AppFrameState extends BaseState {
     public key = "AppFrameState";
     public showLoading = true;
     public drawerOpened = false;
 
     constructor() {
-        makeAutoObservable(this);
+        super();
+
+        makeObservable(this, {
+            showLoading: observable,
+            drawerOpened: observable,
+        });
     }
 
-    public init() {
+    public applicationInit() {
         this.showLoading = false;
         return Promise.resolve();
     }
 
-    public async withLoadingScreen(action: () => Promise<unknown>) {
+    public async withLoadingScreen(action: () => Promise<unknown>, delay = 200) {
         const t = setTimeout(() => {
             this.showLoading = true;
-        }, 200);
+        }, delay);
         try {
             await action();
         }

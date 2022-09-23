@@ -7,7 +7,7 @@ using Peperino.EntityFramework.Entities.CheckList;
 
 namespace Peperino.EntityFramework
 {
-    public interface IApplicationDbContext : IUsersDbContext, ISessionDbContext, IBaseDbContext
+    public interface IApplicationDbContext : IUsersDbContext, IBaseDbContext
     {
         DatabaseFacade Database { get; }
         DbSet<BaseOwnableEntity> BaseOwnableEntity { get; }

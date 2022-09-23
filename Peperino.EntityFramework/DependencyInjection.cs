@@ -21,7 +21,6 @@ namespace Peperino.EntityFramework
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
             services.AddScoped<IUsersDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-            services.AddScoped<ISessionDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
             return services;
         }

@@ -22,7 +22,6 @@ export type { Demo } from './models/Demo';
 export type { GroupAccess } from './models/GroupAccess';
 export type { RearrangeCheckListItemsInDto } from './models/RearrangeCheckListItemsInDto';
 export type { RoomOutDto } from './models/RoomOutDto';
-export type { SessionResponseDto } from './models/SessionResponseDto';
 export type { SharedLinkInDto } from './models/SharedLinkInDto';
 export type { SharedLinkOutDto } from './models/SharedLinkOutDto';
 export type { SharedLinkResolvedOutDto } from './models/SharedLinkResolvedOutDto';
@@ -34,7 +33,6 @@ export type { UserOutDto } from './models/UserOutDto';
 export type { UserStoreDto } from './models/UserStoreDto';
 export type { WeatherForecast } from './models/WeatherForecast';
 
-export { AuthService } from './services/AuthService';
 export { CheckListService } from './services/CheckListService';
 export { DemoService } from './services/DemoService';
 export { HealthCheckService } from './services/HealthCheckService';
