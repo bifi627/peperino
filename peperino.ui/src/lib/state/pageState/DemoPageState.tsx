@@ -5,8 +5,8 @@ import Router from "next/router";
 
 import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
-import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
+import { ApplicationInitOptions } from "../BaseState";
 
 export const COUNTER_STORE_INDEX = "COUNTER";
 
@@ -43,7 +43,8 @@ export class DemoPageState extends BasePageState {
         await ClientApi.userStore.postApiUserStore(store);
     }
 
-    public override async applicationInit(applicationState: ApplicationState) {
+    public override async applicationInit(options: ApplicationInitOptions) {
+        super.applicationInit(options);
 
         if (!getAuth().currentUser) {
             return Promise.resolve();
@@ -76,7 +77,7 @@ export class DemoPageState extends BasePageState {
             {
                 id: "ToggleTheme",
                 action: async () => {
-                    await applicationState.getAppFrame().withLoadingScreen(async () => {
+                    await options.state?.getAppFrame().withLoadingScreen(async () => {
                     });
                 },
                 text: "TOGGLE HEALTH",

@@ -5,8 +5,8 @@ import { FRONTEND_URL } from "../../../shared/constants";
 import { RoomOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
-import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
+import { ApplicationInitOptions } from "../BaseState";
 
 export class RoomSettingsPageState extends BasePageState {
     public room?: RoomOutDto = undefined;
@@ -18,14 +18,15 @@ export class RoomSettingsPageState extends BasePageState {
         });
     }
 
-    public override applicationInit(applicationState: ApplicationState) {
-        this.appFrameConfig.toolbarText = "Settings Page";
+    public override applicationInit(options: ApplicationInitOptions) {
+        super.applicationInit(options);
 
+        this.appFrameConfig.toolbarText = "Settings Page";
         this.appFrameConfig.contextMenuActions = [
             {
                 id: "share",
                 action: async () => {
-                    applicationState.getAppFrame().withLoadingScreen(async () => {
+                    options.state?.getAppFrame().withLoadingScreen(async () => {
                         if (this.room && confirm("Wirklich teilen?") === true) {
                             const link = await ClientApi.sharedLink.createSharedLink({ entityType: "Room", slug: this.room.slug, grantAccessLevel: "WriteContent" });
 
@@ -53,7 +54,7 @@ export class RoomSettingsPageState extends BasePageState {
             {
                 id: "delete",
                 action: async () => {
-                    applicationState.getAppFrame().withLoadingScreen(async () => {
+                    options.state?.getAppFrame().withLoadingScreen(async () => {
                         if (this.room && confirm("Wirklich löschen?") === true) {
                             await ClientApi.room.deleteBySlug(this.room.slug);
                             await Router.push(KnownRoutes.Room());

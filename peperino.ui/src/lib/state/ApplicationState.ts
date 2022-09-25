@@ -1,6 +1,8 @@
 import { makeObservable, observable } from "mobx";
+import { NextRouter } from "next/router";
 import React, { useContext } from "react";
-import { BaseState } from "./BaseState";
+import { toast } from "react-toastify";
+import { ApplicationInitOptions, BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { CheckListPageState } from "./pageState/CheckListPageState";
 import { DemoPageState } from "./pageState/DemoPageState";
@@ -48,9 +50,29 @@ export class ApplicationState extends BaseState {
         });
     }
 
-    public async applicationInit() {
-        await Promise.all(this.all.map(state => state.applicationInit(this)));
-        this.stateLoading = false;
+    public async initState(router: NextRouter) {
+        try {
+            GlobalApplicationStateObject.stateLoading = true;
+            await GlobalApplicationStateObject.applicationInit({ router: router, state: GlobalApplicationStateObject });
+            await GlobalApplicationStateObject.userInit();
+        }
+        catch (error) {
+            console.error(error);
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+        finally {
+            GlobalApplicationStateObject.stateLoading = false;
+        }
+    }
+
+    public override async applicationInit(options: ApplicationInitOptions) {
+        await Promise.all(this.all.map(state => state.applicationInit(options)));
+    }
+
+    public override async userInit() {
+        await Promise.all(this.all.map(state => state.userInit()));
     }
 
     public register<T extends BaseState>(state: T) {

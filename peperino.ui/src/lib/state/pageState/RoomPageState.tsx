@@ -4,8 +4,8 @@ import Router from "next/router";
 import { CheckListOutDto, RoomOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
 import { KnownRoutes } from "../../routing/knownRoutes";
-import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
+import { ApplicationInitOptions } from "../BaseState";
 
 export class RoomPageState extends BasePageState {
     public room?: RoomOutDto = undefined;
@@ -45,7 +45,8 @@ export class RoomPageState extends BasePageState {
         }
     }
 
-    public override applicationInit(applicationState: ApplicationState) {
+    public override applicationInit(options: ApplicationInitOptions) {
+        super.applicationInit(options);
 
         this.appFrameConfig.toolbarText = "Room";
 

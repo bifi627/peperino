@@ -1,25 +1,18 @@
 import { ChevronLeft } from "@mui/icons-material";
 import { Divider, Drawer, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { observer } from "mobx-react";
-import { useApplicationState } from "../../lib/state/ApplicationState";
-
-export interface DrawerItemProps {
-    text: string;
-    icon: React.ReactNode;
-    action?: () => Promise<unknown>;
-    isSelected?: () => boolean;
-    childItems?: DrawerItemProps[];
-}
+import { useApplicationState } from "../../../lib/state/ApplicationState";
+import { DrawerItemInterface } from "./DrawerItem";
 
 interface DynamicDrawerProps {
-    items?: DrawerItemProps[];
+    items?: DrawerItemInterface[];
 }
 
 export const DynamicDrawer = observer((props: DynamicDrawerProps) => {
 
     const appFrame = useApplicationState().getAppFrame();
 
-    const onItemClicked = async (item: DrawerItemProps) => {
+    const onItemClicked = async (item: DrawerItemInterface) => {
         appFrame.drawerOpened = false;
         await appFrame.withLoadingScreen(async () => {
             await item.action?.();

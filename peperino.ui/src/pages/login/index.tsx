@@ -18,8 +18,7 @@ const LoginPage = () => {
         callbacks: {
             signInSuccessWithAuthResult: (result) => {
                 appFrame.withLoadingScreen(async () => {
-                    GlobalApplicationStateObject.stateLoading = true;
-                    await GlobalApplicationStateObject.applicationInit();
+                    await GlobalApplicationStateObject.initState(router);
                     await router.replace({
                         pathname: redirect || KnownRoutes.Root(),
                     });
