@@ -28,4 +28,8 @@ export class BaseState {
     public async userInit() {
         return Promise.resolve();
     }
+
+    public updateRouter(router: NextRouter) {
+        this.router = router;
+    }
 }

@@ -50,10 +50,11 @@ export class ApplicationState extends BaseState {
         });
     }
 
-    public async initState(router: NextRouter) {
+
+    public async initState() {
         try {
             GlobalApplicationStateObject.stateLoading = true;
-            await GlobalApplicationStateObject.applicationInit({ router: router, state: GlobalApplicationStateObject });
+            await GlobalApplicationStateObject.applicationInit({ state: GlobalApplicationStateObject });
             await GlobalApplicationStateObject.userInit();
         }
         catch (error) {
@@ -65,6 +66,10 @@ export class ApplicationState extends BaseState {
         finally {
             GlobalApplicationStateObject.stateLoading = false;
         }
+    }
+
+    public override updateRouter(router: NextRouter) {
+        this.all.forEach(state => state.updateRouter(router));
     }
 
     public override async applicationInit(options: ApplicationInitOptions) {
