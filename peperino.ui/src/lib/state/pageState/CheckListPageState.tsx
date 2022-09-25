@@ -6,8 +6,8 @@ import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
 import { arrayMoveMutable } from "../../helper/arrayHelper";
 import { KnownRoutes } from "../../routing/knownRoutes";
-import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
+import { ApplicationInitOptions } from "../BaseState";
 
 export class CheckListPageState extends BasePageState {
     private _checkList?: CheckListOutDto = undefined;
@@ -45,7 +45,9 @@ export class CheckListPageState extends BasePageState {
         });
     }
 
-    public override async applicationInit(applicationState: ApplicationState) {
+    public override async applicationInit(options: ApplicationInitOptions) {
+        super.applicationInit(options);
+
         if (!getAuth().currentUser) {
             return Promise.resolve();
         }
@@ -57,7 +59,7 @@ export class CheckListPageState extends BasePageState {
                 text: "Refresh",
                 icon: <Refresh />,
                 action: async () => {
-                    await applicationState.getAppFrame().withLoadingScreen(async () => {
+                    await options.state?.getAppFrame().withLoadingScreen(async () => {
                         await this.reloadList();
                     }, 0);
                 }
