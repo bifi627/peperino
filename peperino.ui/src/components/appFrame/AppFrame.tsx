@@ -52,15 +52,6 @@ export const AppFrame = observer((props: Props) => {
             action: async () => {
                 await router.push(KnownRoutes.Login())
             },
-            childItems: [
-                {
-                    text: "Login3",
-                    icon: <Login />,
-                    action: async () => {
-                        await router.push(KnownRoutes.Login())
-                    },
-                }
-            ]
         },
     ];
 

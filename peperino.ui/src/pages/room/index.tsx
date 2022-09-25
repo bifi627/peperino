@@ -12,7 +12,7 @@ import { useApplicationState } from "../../lib/state/ApplicationState";
 interface Props {
 }
 
-const GroupsPage = observer((props: Props) => {
+const RoomsPage = observer((props: Props) => {
     useAuthGuard();
     const router = useRouter();
     const roomOverviewState = useApplicationState().getRoomsOverviewState();
@@ -101,4 +101,4 @@ const GroupsPage = observer((props: Props) => {
     )
 });
 
-export default GroupsPage;
+export default RoomsPage;

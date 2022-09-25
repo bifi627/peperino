@@ -7,13 +7,14 @@ interface Props {
     subTexts?: string[];
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
+    disabled?: boolean;
 }
 
 export const CardListItem = (props: Props) => {
     return (
-        <Stack padding={1.5}>
+        <Stack sx={{ opacity: props.disabled ? ".25" : "1" }} padding={1.5} width="100%">
             <Paper elevation={2}>
-                <Box padding={2} display={"flex"} justifyContent={"space-between"} gap={2} onClick={() => props.onSelect?.()}>
+                <Box padding={2} display={"flex"} justifyContent={"space-between"} alignItems="center" gap={2} onClick={() => props.onSelect?.()}>
                     {props.leftIcon && <IconButton>
                         {props.leftIcon}
                     </IconButton>}
@@ -24,7 +25,7 @@ export const CardListItem = (props: Props) => {
                         })}
                     </Box>
                     {props.onSelect && <IconButton onClick={() => {
-                        props.onSelect?.();
+                        props.disabled === false && props.onSelect?.();
                     }}>
                         <Paper elevation={3} sx={{ borderRadius: 20, padding: 1, display: "flex" }}>
                             {props.rightIcon ?? <ChevronRight />}
