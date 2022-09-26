@@ -18,7 +18,7 @@ export const DynamicToolbar = observer((props: Props) => {
                 <Menu />
             </IconButton>
             <Typography sx={{ flexGrow: 1, overflow: "hidden", lineBreak: "anywhere" }} variant="h6" color="inherit" component="div">
-                {appFrameConfig?.toolbarText}
+                {appFrameConfig?.toolbarText.toString()}
             </Typography>
             {appFrameConfig?.contextMenuActions?.length > 0 && <ContextAction />}
             <UserAvatarMenu />

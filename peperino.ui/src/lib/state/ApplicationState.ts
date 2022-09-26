@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { ApplicationInitOptions, BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { CheckListPageState } from "./pageState/CheckListPageState";
-import { DemoPageState } from "./pageState/DemoPageState";
 import { RoomPageState } from "./pageState/RoomPageState";
 import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
 import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
@@ -13,7 +12,6 @@ import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 export class ApplicationState extends BaseState {
     public key = "ApplicationState";
     private appFrame: AppFrameState;
-    private demoState: DemoPageState;
     private roomsOverviewState: RoomsOverviewPageState;
     private roomState: RoomPageState;
     private roomSettingsState: RoomSettingsPageState;
@@ -24,7 +22,6 @@ export class ApplicationState extends BaseState {
     private get all() {
         return [
             this.appFrame,
-            this.demoState,
             this.roomsOverviewState,
             this.roomState,
             this.roomSettingsState,
@@ -39,7 +36,6 @@ export class ApplicationState extends BaseState {
         super();
 
         this.appFrame = new AppFrameState();
-        this.demoState = new DemoPageState();
         this.roomsOverviewState = new RoomsOverviewPageState();
         this.roomState = new RoomPageState();
         this.roomSettingsState = new RoomSettingsPageState();
@@ -91,10 +87,6 @@ export class ApplicationState extends BaseState {
 
     public getAppFrame() {
         return this.appFrame;
-    }
-
-    public getDemoState() {
-        return this.demoState;
     }
 
     public getRoomsOverviewState() {
