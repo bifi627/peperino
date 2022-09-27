@@ -3,7 +3,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, Te
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { CardListItem } from "../../components/room/overview/CardListItem";
+import { CardAction } from "../../components/Common/Cards/CardAction";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
@@ -45,9 +45,10 @@ const RoomsPage = observer((props: Props) => {
     return (
         <>
             {roomOverviewState.rooms.length === 0 &&
-                <CardListItem key={"new"} leftIcon={<GroupAdd />} mainText={"Neuen Raum erstellen"} subTexts={[""]} onSelect={() => {
-                    roomOverviewState.dialogOpened = true;
-                }}></CardListItem>
+                <CardAction key={"new"} leftIcon={<GroupAdd />} mainText={"Neuen Raum erstellen"} subTexts={[""]} actions={[{
+                    id: "new",
+                    action: () => roomOverviewState.dialogOpened = true,
+                }]} />
             }
             <Box>
                 {roomOverviewState.rooms.map(room => {
@@ -55,11 +56,14 @@ const RoomsPage = observer((props: Props) => {
                     const icon = room.accessLevel === "Owner" ? <Person /> : <Public />;
 
                     return (
-                        <CardListItem key={room.slug} leftIcon={icon} mainText={room.roomName} subTexts={[room.createdBy.userName ?? ""]} onSelect={() => {
-                            appFrame.withLoadingScreen(async () => {
-                                await router.push(KnownRoutes.Room(room.slug));
-                            });
-                        }}></CardListItem>
+                        <CardAction key={room.slug} leftIcon={icon} mainText={room.roomName} subTexts={[room.createdBy.userName ?? ""]} actions={[{
+                            id: room.slug,
+                            action: async () => {
+                                await appFrame.withLoadingScreen(async () => {
+                                    await router.push(KnownRoutes.Room(room.slug));
+                                });
+                            },
+                        }]} />
                     )
                 })}
             </Box>

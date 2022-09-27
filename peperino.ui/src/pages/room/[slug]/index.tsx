@@ -1,10 +1,10 @@
-import { Add, List, LocalActivity } from "@mui/icons-material";
+import { Add, ChevronRight, List, LocalActivity } from "@mui/icons-material";
 import { BottomNavigation, BottomNavigationAction, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@mui/material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { CardListItem } from "../../../components/room/overview/CardListItem";
+import { CardAction } from "../../../components/Common/Cards/CardAction";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useAuthGuard } from "../../../lib/auth/client/useAuthGuard";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
@@ -58,11 +58,17 @@ const GroupPage = observer((props: Props) => {
                 <Box>
                     {roomPageState.checkLists?.map(list => {
                         return (
-                            <CardListItem key={list.slug} mainText={list.name} subTexts={[`${list.entities.length} Einträge`]} onSelect={() => {
-                                appFrame.withLoadingScreen(async () => {
-                                    await router.push(KnownRoutes.CheckList(list.slug));
-                                });
-                            }} />
+                            <CardAction key={list.slug} mainText={list.name} subTexts={[`${list.entities.length} Einträge`]}
+                                actions={[{
+                                    id: "select",
+                                    icon: <ChevronRight />,
+                                    action: async () => {
+                                        await appFrame.withLoadingScreen(async () => {
+                                            await router.push(KnownRoutes.CheckList(list.slug));
+                                        });
+                                    }
+                                }]}
+                            />
                         )
                     })}
                 </Box>
