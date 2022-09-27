@@ -24,7 +24,7 @@ export const DynamicDrawer = observer((props: DynamicDrawerProps) => {
             <div style={{ width: 250 }}>
                 <ListItem button onClick={() => appFrame.drawerOpened = false}>
                     <ListItemIcon><ChevronLeft /></ListItemIcon>
-                    <ListItemText primary={"Close Menu"} />
+                    <ListItemText primary={"Schließen"} />
                 </ListItem>
                 <Divider />
                 {props.items?.map((drawerItem, index) => (

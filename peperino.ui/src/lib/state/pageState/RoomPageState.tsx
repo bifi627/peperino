@@ -25,7 +25,7 @@ export class RoomPageState extends BasePageState {
 
     public updateToolbar() {
 
-        this.appFrameConfig.toolbarText = "Room: " + this.room?.roomName;
+        this.appFrameConfig.toolbarText = this.room?.roomName ?? "Raum";
 
         const settingsAction = {
             id: "settings",
@@ -35,7 +35,7 @@ export class RoomPageState extends BasePageState {
                 }
             },
             icon: <Settings />,
-            text: "settings",
+            text: "Einstellungen",
         }
 
         if (this.room?.accessLevel === "Owner") {
@@ -48,7 +48,7 @@ export class RoomPageState extends BasePageState {
     public override applicationInit(options: ApplicationInitOptions) {
         super.applicationInit(options);
 
-        this.appFrameConfig.toolbarText = "Room";
+        this.appFrameConfig.toolbarText = "Raum";
 
         this.updateToolbar();
         return Promise.resolve();

@@ -8,10 +8,6 @@ export const useCurrentPageState = (): BasePageState | undefined => {
     const resolvedRoute = router.asPath
     const patternRoute = router.pathname;
 
-    if (resolvedRoute.startsWith(KnownRoutes.Demo())) {
-        return GlobalApplicationStateObject.getDemoState();
-    }
-
     // First the specific route
     if (patternRoute.startsWith(KnownRoutes.RoomSettings("[slug]"))) {
         return GlobalApplicationStateObject.getRoomSettingsState();

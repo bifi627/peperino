@@ -21,13 +21,13 @@ export class RoomSettingsPageState extends BasePageState {
     public override applicationInit(options: ApplicationInitOptions) {
         super.applicationInit(options);
 
-        this.appFrameConfig.toolbarText = "Settings Page";
+        this.appFrameConfig.toolbarText = "Raumeinstellungen";
         this.appFrameConfig.contextMenuActions = [
             {
                 id: "share",
                 action: async () => {
                     options.state?.getAppFrame().withLoadingScreen(async () => {
-                        if (this.room && confirm("Wirklich teilen?") === true) {
+                        if (this.room) {
                             const link = await ClientApi.sharedLink.createSharedLink({ entityType: "Room", slug: this.room.slug, grantAccessLevel: "WriteContent" });
 
                             const subString = KnownRoutes.SharedLink(link.slug);
@@ -44,12 +44,11 @@ export class RoomSettingsPageState extends BasePageState {
                             else {
                                 prompt(this.room.roomName, linkUrl);
                             }
-
                         }
                     });
                 },
                 icon: <Share />,
-                text: "share",
+                text: "Teilen",
             },
             {
                 id: "delete",
@@ -62,7 +61,7 @@ export class RoomSettingsPageState extends BasePageState {
                     });
                 },
                 icon: <Delete />,
-                text: "delete",
+                text: "Löschen",
             },
         ]
 

@@ -33,7 +33,7 @@ const HomePage: NextPage = () => {
             {user ?
                 <>
                     <CardListItem
-                        mainText="Öffne meine Räume"
+                        mainText="Meine Räume"
                         leftIcon={<Groups />}
                         onSelect={async () => {
                             await router.push(KnownRoutes.Room())
@@ -41,13 +41,13 @@ const HomePage: NextPage = () => {
                     />
                     <CardListItem
                         disabled
-                        mainText="Öffne mein Profil"
+                        mainText="Mein Profil"
                         leftIcon={<VerifiedUser />}
                         onSelect={async () => {
                         }}
                     />
                     <CardListItem
-                        mainText="Öffne Einstellungen"
+                        mainText="Einstellungen"
                         leftIcon={<Settings />}
                         disabled
                         onSelect={async () => {
@@ -56,8 +56,8 @@ const HomePage: NextPage = () => {
                 </>
                 :
                 <CardListItem
-                    mainText="Nicht eingeloggt!"
-                    subTexts={["Melde dich mit deinem Account an oder erstelle einen Neuen"]}
+                    mainText="Nicht angemeldet!"
+                    subTexts={["Melde dich mit deinem Account an oder erstelle einen neuen Account."]}
                     rightIcon={<Login />}
                     onSelect={async () => {
                         await router.push(KnownRoutes.Login())

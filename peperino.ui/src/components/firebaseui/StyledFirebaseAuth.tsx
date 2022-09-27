@@ -33,7 +33,7 @@ const StyledFirebaseAuth = ({ uiConfig, firebaseAuth, className, uiCallback }: P
             return;
 
         // Get or Create a firebaseUI instance.
-        const firebaseUiWidget = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebaseAuth);
+        const firebaseUiWidget: firebaseui.auth.AuthUI = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebaseAuth);
         if (uiConfig.signInFlow === 'popup')
             firebaseUiWidget.reset();
 

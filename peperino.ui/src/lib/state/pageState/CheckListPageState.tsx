@@ -52,11 +52,11 @@ export class CheckListPageState extends BasePageState {
             return Promise.resolve();
         }
 
-        this.appFrameConfig.toolbarText = "Check List Page";
+        this.appFrameConfig.toolbarText = "Liste";
         this.appFrameConfig.contextMenuActions = [
             {
                 id: "refresh",
-                text: "Refresh",
+                text: "Aktualisieren",
                 icon: <Refresh />,
                 action: async () => {
                     await options.state?.getAppFrame().withLoadingScreen(async () => {

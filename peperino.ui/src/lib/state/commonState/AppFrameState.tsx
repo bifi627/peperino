@@ -1,4 +1,4 @@
-import { Groups, Home, Login, StreamSharp } from "@mui/icons-material";
+import { Groups, Home } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { isObservableArray, makeObservable, observable } from "mobx";
 import { DrawerItem } from "../../../components/appFrame/Drawer/DrawerItem";
@@ -33,29 +33,13 @@ export class AppFrameState extends BaseState {
 
         drawerItems.push(home);
 
-        const demo = new DrawerItem();
-        demo.text = "Demo";
-        demo.icon = <StreamSharp />;
-        demo.action = async () => { await this.router?.push(KnownRoutes.Demo()) };
-        demo.childItems = [];
-
-        user && drawerItems.push(demo);
-
         const rooms = new DrawerItem();
-        rooms.text = "Rooms";
+        rooms.text = "Räume";
         rooms.icon = <Groups />;
         rooms.action = async () => { await this.router?.push(KnownRoutes.Room()) };
         rooms.childItems = [];
 
         user && drawerItems.push(rooms);
-
-        const login = new DrawerItem();
-        login.text = "Login";
-        login.icon = <Login />;
-        login.action = async () => { await this.router?.push(KnownRoutes.Login()) };
-        login.childItems = [];
-
-        drawerItems.push(login);
 
         if (isObservableArray(this.drawerItems)) {
             this.drawerItems.replace(drawerItems)

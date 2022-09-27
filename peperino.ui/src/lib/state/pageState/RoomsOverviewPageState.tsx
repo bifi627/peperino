@@ -21,7 +21,7 @@ export class RoomsOverviewPageState extends BasePageState {
     public override applicationInit(options: ApplicationInitOptions) {
         super.applicationInit(options);
 
-        this.appFrameConfig.toolbarText = "Rooms Overview";
+        this.appFrameConfig.toolbarText = "Raumübersicht";
         this.appFrameConfig.contextMenuActions = [
             {
                 id: "add",
