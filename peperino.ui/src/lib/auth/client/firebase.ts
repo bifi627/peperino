@@ -1,5 +1,7 @@
 import { getApps, initializeApp } from 'firebase/app';
+import { getAuth, onIdTokenChanged, User } from 'firebase/auth';
 import { FIREBASE_CONFIG } from '../../../shared/constants';
+import { GlobalApplicationStateObject } from '../../state/ApplicationState';
 
 const firebaseConfig = {
     apiKey: FIREBASE_CONFIG.apiKey,
@@ -14,3 +16,7 @@ const firebaseConfig = {
 if (getApps().length === 0) {
     initializeApp(firebaseConfig);
 }
+
+onIdTokenChanged(getAuth(), (user: User | null) => {
+    GlobalApplicationStateObject.userInit();
+});

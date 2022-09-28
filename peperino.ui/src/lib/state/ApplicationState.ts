@@ -1,9 +1,13 @@
 import { makeObservable, observable } from "mobx";
+import { NextRouter } from "next/router";
 import React, { useContext } from "react";
-import { BaseState } from "./BaseState";
+import { toast } from "react-toastify";
+import { EnvironmentOutDto } from "../api";
+import { ClientApi } from "../auth/client/apiClient";
+import { isClient } from "../helper/common";
+import { ApplicationInitOptions, BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { CheckListPageState } from "./pageState/CheckListPageState";
-import { DemoPageState } from "./pageState/DemoPageState";
 import { RoomPageState } from "./pageState/RoomPageState";
 import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
 import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
@@ -11,18 +15,18 @@ import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 export class ApplicationState extends BaseState {
     public key = "ApplicationState";
     private appFrame: AppFrameState;
-    private demoState: DemoPageState;
     private roomsOverviewState: RoomsOverviewPageState;
     private roomState: RoomPageState;
     private roomSettingsState: RoomSettingsPageState;
     private checklistState: CheckListPageState;
+
+    public environment?: EnvironmentOutDto;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
     private get all() {
         return [
             this.appFrame,
-            this.demoState,
             this.roomsOverviewState,
             this.roomState,
             this.roomSettingsState,
@@ -37,7 +41,6 @@ export class ApplicationState extends BaseState {
         super();
 
         this.appFrame = new AppFrameState();
-        this.demoState = new DemoPageState();
         this.roomsOverviewState = new RoomsOverviewPageState();
         this.roomState = new RoomPageState();
         this.roomSettingsState = new RoomSettingsPageState();
@@ -48,9 +51,38 @@ export class ApplicationState extends BaseState {
         });
     }
 
-    public async applicationInit() {
-        await Promise.all(this.all.map(state => state.applicationInit(this)));
-        this.stateLoading = false;
+    public async initClientState() {
+        if (isClient() === false) {
+            return;
+        }
+
+        try {
+            GlobalApplicationStateObject.stateLoading = true;
+            await GlobalApplicationStateObject.applicationInit({ state: GlobalApplicationStateObject });
+            await GlobalApplicationStateObject.userInit();
+        }
+        catch (error) {
+            console.error(error);
+            if (error instanceof Error) {
+                toast.error(error.message);
+            }
+        }
+        finally {
+            GlobalApplicationStateObject.stateLoading = false;
+        }
+    }
+
+    public override updateRouter(router: NextRouter) {
+        this.all.forEach(state => state.updateRouter(router));
+    }
+
+    public override async applicationInit(options: ApplicationInitOptions) {
+        this.environment = await ClientApi.environment.getEnvironment();
+        await Promise.all(this.all.map(state => state.applicationInit(options)));
+    }
+
+    public override async userInit() {
+        await Promise.all(this.all.map(state => state.userInit()));
     }
 
     public register<T extends BaseState>(state: T) {
@@ -64,10 +96,6 @@ export class ApplicationState extends BaseState {
 
     public getAppFrame() {
         return this.appFrame;
-    }
-
-    public getDemoState() {
-        return this.demoState;
     }
 
     public getRoomsOverviewState() {

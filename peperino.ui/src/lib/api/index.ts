@@ -19,6 +19,7 @@ export type { CreateCheckListCommand } from './models/CreateCheckListCommand';
 export type { CreateRoomCommand } from './models/CreateRoomCommand';
 export type { DeleteCheckListCommand } from './models/DeleteCheckListCommand';
 export type { Demo } from './models/Demo';
+export type { EnvironmentOutDto } from './models/EnvironmentOutDto';
 export type { GroupAccess } from './models/GroupAccess';
 export type { RearrangeCheckListItemsInDto } from './models/RearrangeCheckListItemsInDto';
 export type { RoomOutDto } from './models/RoomOutDto';
@@ -35,6 +36,7 @@ export type { WeatherForecast } from './models/WeatherForecast';
 
 export { CheckListService } from './services/CheckListService';
 export { DemoService } from './services/DemoService';
+export { EnvironmentService } from './services/EnvironmentService';
 export { HealthCheckService } from './services/HealthCheckService';
 export { RoomService } from './services/RoomService';
 export { SharedLinkService } from './services/SharedLinkService';

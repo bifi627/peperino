@@ -4,10 +4,10 @@ import { getAuth } from "firebase/auth";
 import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
-import { arrayMoveMutable } from "../../helper/arrayHelper";
+import { arrayMoveMutable } from "../../helper/common";
 import { KnownRoutes } from "../../routing/knownRoutes";
-import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
+import { ApplicationInitOptions } from "../BaseState";
 
 export class CheckListPageState extends BasePageState {
     private _checkList?: CheckListOutDto = undefined;
@@ -45,19 +45,21 @@ export class CheckListPageState extends BasePageState {
         });
     }
 
-    public override async applicationInit(applicationState: ApplicationState) {
+    public override async applicationInit(options: ApplicationInitOptions) {
+        super.applicationInit(options);
+
         if (!getAuth().currentUser) {
             return Promise.resolve();
         }
 
-        this.appFrameConfig.toolbarText = "Check List Page";
+        this.appFrameConfig.toolbarText = "Liste";
         this.appFrameConfig.contextMenuActions = [
             {
                 id: "refresh",
-                text: "Refresh",
+                text: "Aktualisieren",
                 icon: <Refresh />,
                 action: async () => {
-                    await applicationState.getAppFrame().withLoadingScreen(async () => {
+                    await options.state?.getAppFrame().withLoadingScreen(async () => {
                         await this.reloadList();
                     }, 0);
                 }

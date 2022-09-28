@@ -1,6 +1,6 @@
 import { AccountCircle, MoreVert } from "@mui/icons-material";
 import { makeAutoObservable } from "mobx";
-import { MenuAction } from "./menuAction";
+import { MenuAction } from "./Action";
 
 export interface AppFrameConfigInterface {
     toolbarText: string;

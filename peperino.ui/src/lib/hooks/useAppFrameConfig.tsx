@@ -35,7 +35,7 @@ const getAnonymousAppFrameConfig = () => {
     appFrameConfig.userAvatarIcon = <Avatar />;
     appFrameConfig.userAvatarActions = [{
         id: "Login",
-        text: "Login",
+        text: "Einloggen",
         action: async () => {
             await Router.push(KnownRoutes.Login(Router.asPath));
         },
@@ -49,7 +49,7 @@ const getDefaultAppFrameConfig = (user: User) => {
     appFrameConfig.userAvatarIcon = user.photoURL ? <Avatar src={user.photoURL} /> : <Avatar />;
     appFrameConfig.userAvatarActions = [{
         id: "Logout",
-        text: "Logout",
+        text: "Abmelden",
         action: async () => {
             await signOut(getAuth())
             await Router.push(KnownRoutes.Root());

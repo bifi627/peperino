@@ -8,7 +8,6 @@ export module KnownRoutes {
         }
         return `/login`;
     };
-    export const Demo = () => `/demo`;
     export const Room = (slug?: string) => slug ? `/room/${slug}` : "/room";
     export const RoomSettings = (slug: string) => `/room/${slug}/settings`;
     export const SharedLink = (slug: string) => `/share/${slug}`;

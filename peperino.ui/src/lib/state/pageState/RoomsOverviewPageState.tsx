@@ -2,8 +2,8 @@ import { Add } from "@mui/icons-material";
 import { isObservableArray, makeObservable, observable } from "mobx";
 import { RoomOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
-import { ApplicationState } from "../ApplicationState";
 import { BasePageState } from "../BasePageState";
+import { ApplicationInitOptions } from "../BaseState";
 
 export class RoomsOverviewPageState extends BasePageState {
     public dialogOpened = false;
@@ -18,8 +18,10 @@ export class RoomsOverviewPageState extends BasePageState {
         })
     }
 
-    public override applicationInit(applicationState: ApplicationState) {
-        this.appFrameConfig.toolbarText = "Rooms Overview";
+    public override applicationInit(options: ApplicationInitOptions) {
+        super.applicationInit(options);
+
+        this.appFrameConfig.toolbarText = "Raumübersicht";
         this.appFrameConfig.contextMenuActions = [
             {
                 id: "add",
