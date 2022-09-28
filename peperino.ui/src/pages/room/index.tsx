@@ -73,7 +73,7 @@ const RoomsPage = observer((props: Props) => {
                 <Add />
             </Fab>
             <Dialog open={roomOverviewState.dialogOpened} onClose={() => roomOverviewState.dialogOpened = false}>
-                <DialogTitle>Neue Gruppe erstellen</DialogTitle>
+                <DialogTitle>{"Neuen Raum erstellen"}</DialogTitle>
                 <DialogContent>
                     <TextField
                         inputMode="text"

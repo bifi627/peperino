@@ -95,7 +95,7 @@ const GroupPage = observer((props: Props) => {
                 <BottomNavigationAction label="Placeholder" icon={<LocalActivity />} />
             </BottomNavigation>
             <Dialog open={roomPageState.addCheckListDialogOpened} onClose={() => roomPageState.addCheckListDialogOpened = false}>
-                <DialogTitle>Neue Gruppe erstellen</DialogTitle>
+                <DialogTitle>{"Neue Liste erstellen"}</DialogTitle>
                 <DialogContent>
                     <TextField
                         inputMode="text"
