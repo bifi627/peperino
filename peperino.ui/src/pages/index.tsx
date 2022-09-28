@@ -1,4 +1,4 @@
-import { AccountBox, ChevronRight, Groups, Settings, VerifiedUser } from "@mui/icons-material";
+import { AccountBox, ChevronRight, Groups } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { getAuth } from "firebase/auth";
 import type { NextPage } from 'next';
@@ -41,7 +41,7 @@ const HomePage: NextPage = () => {
                             icon: <ChevronRight />
                         }]}
                     />
-                    <CardAction
+                    {/* <CardAction
                         mainText="Mein Profil"
                         leftIcon={<VerifiedUser />}
                         disabled
@@ -50,7 +50,7 @@ const HomePage: NextPage = () => {
                         mainText="Einstellungen"
                         leftIcon={<Settings />}
                         disabled
-                    />
+                    /> */}
                 </>
                 :
                 <CardAction
