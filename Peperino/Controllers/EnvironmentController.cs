@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Peperino.Dtos.Environment;
 
 namespace Peperino.Controllers
 {
-    [Authorize]
     public class EnvironmentController : ApiControllerBase
     {
         public EnvironmentController()
         {
         }
 
-        [HttpGet]
+        [HttpGet(Name = nameof(GetEnvironment))]
         public ActionResult<EnvironmentOutDto> GetEnvironment()
         {
             var variables = Environment.GetEnvironmentVariables();
@@ -23,10 +21,10 @@ namespace Peperino.Controllers
 
             var dto = new EnvironmentOutDto()
             {
-                RAILWAY_ENVIRONMENT = variables["RAILWAY_ENVIRONMENT"]?.ToString() ?? "",
-                RAILWAY_GIT_COMMIT_SHA = variables["RAILWAY_GIT_COMMIT_SHA"]?.ToString() ?? "",
-                RAILWAY_GIT_COMMIT_MESSAGE = variables["RAILWAY_GIT_COMMIT_MESSAGE"]?.ToString() ?? "",
-                RAILWAY_GIT_AUTHOR = variables["RAILWAY_GIT_AUTHOR"]?.ToString() ?? "",
+                RAILWAY_ENVIRONMENT = variables["RAILWAY_ENVIRONMENT"]?.ToString() ?? "localhost",
+                RAILWAY_GIT_COMMIT_SHA = variables["RAILWAY_GIT_COMMIT_SHA"]?.ToString() ?? Guid.NewGuid().ToString(),
+                RAILWAY_GIT_COMMIT_MESSAGE = variables["RAILWAY_GIT_COMMIT_MESSAGE"]?.ToString() ?? "Random commit message",
+                RAILWAY_GIT_AUTHOR = variables["RAILWAY_GIT_AUTHOR"]?.ToString() ?? "me",
             };
 
             return dto;

@@ -2,6 +2,9 @@ import { makeObservable, observable } from "mobx";
 import { NextRouter } from "next/router";
 import React, { useContext } from "react";
 import { toast } from "react-toastify";
+import { EnvironmentOutDto } from "../api";
+import { ClientApi } from "../auth/client/apiClient";
+import { isClient } from "../helper/common";
 import { ApplicationInitOptions, BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { CheckListPageState } from "./pageState/CheckListPageState";
@@ -16,6 +19,8 @@ export class ApplicationState extends BaseState {
     private roomState: RoomPageState;
     private roomSettingsState: RoomSettingsPageState;
     private checklistState: CheckListPageState;
+
+    public environment?: EnvironmentOutDto;
 
     private dynamicState: Map<string, BaseState> = new Map();
 
@@ -46,8 +51,11 @@ export class ApplicationState extends BaseState {
         });
     }
 
+    public async initClientState() {
+        if (isClient() === false) {
+            return;
+        }
 
-    public async initState() {
         try {
             GlobalApplicationStateObject.stateLoading = true;
             await GlobalApplicationStateObject.applicationInit({ state: GlobalApplicationStateObject });
@@ -69,6 +77,7 @@ export class ApplicationState extends BaseState {
     }
 
     public override async applicationInit(options: ApplicationInitOptions) {
+        this.environment = await ClientApi.environment.getEnvironment();
         await Promise.all(this.all.map(state => state.applicationInit(options)));
     }
 

@@ -8,3 +8,11 @@ export function arrayMoveMutable(array: any[], fromIndex: number, toIndex: numbe
         array.splice(endIndex, 0, item);
     }
 }
+
+export function isClient() {
+    return !isServer();
+}
+
+export function isServer() {
+    return typeof window === "undefined";
+}

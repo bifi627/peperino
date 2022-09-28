@@ -13,7 +13,7 @@ export const ClientStateProvider = observer((props: Props) => {
     const router = useRouter();
 
     useEffect(() => {
-        GlobalApplicationStateObject.initState();
+        GlobalApplicationStateObject.initClientState();
     }, []);
 
     useEffect(() => {

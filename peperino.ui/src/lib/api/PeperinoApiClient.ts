@@ -7,6 +7,7 @@ import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
 import { CheckListService } from './services/CheckListService';
 import { DemoService } from './services/DemoService';
+import { EnvironmentService } from './services/EnvironmentService';
 import { HealthCheckService } from './services/HealthCheckService';
 import { RoomService } from './services/RoomService';
 import { SharedLinkService } from './services/SharedLinkService';
@@ -20,6 +21,7 @@ export class PeperinoApiClient {
 
     public readonly checkList: CheckListService;
     public readonly demo: DemoService;
+    public readonly environment: EnvironmentService;
     public readonly healthCheck: HealthCheckService;
     public readonly room: RoomService;
     public readonly sharedLink: SharedLinkService;
@@ -44,6 +46,7 @@ export class PeperinoApiClient {
 
         this.checkList = new CheckListService(this.request);
         this.demo = new DemoService(this.request);
+        this.environment = new EnvironmentService(this.request);
         this.healthCheck = new HealthCheckService(this.request);
         this.room = new RoomService(this.request);
         this.sharedLink = new SharedLinkService(this.request);

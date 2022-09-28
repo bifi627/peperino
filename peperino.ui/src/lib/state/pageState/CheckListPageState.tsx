@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
 import { CheckListItemOutDto, CheckListOutDto } from "../../api";
 import { ClientApi } from "../../auth/client/apiClient";
-import { arrayMoveMutable } from "../../helper/arrayHelper";
+import { arrayMoveMutable } from "../../helper/common";
 import { KnownRoutes } from "../../routing/knownRoutes";
 import { BasePageState } from "../BasePageState";
 import { ApplicationInitOptions } from "../BaseState";
