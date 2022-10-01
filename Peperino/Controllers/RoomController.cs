@@ -36,6 +36,7 @@ namespace Peperino.Controllers
         {
             var rooms = await Mediator.Send(new GetRoomsQuery());
 
+            Console.WriteLine("_______STARET");
             var currentUser = CurrentUser;
             var dto = rooms.Select(room =>
             {

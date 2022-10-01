@@ -23,14 +23,14 @@ namespace Peperino.Application.Room.Queries.GetRooms
 
         public async Task<IEnumerable<EntityFramework.Entities.Room>> Handle(GetRoomsQuery request, CancellationToken cancellationToken)
         {
-            var currentUser = await _usersDbContext.Users.FirstOrDefaultAsync(u => u.Id == _currentUserService.UserId, cancellationToken: cancellationToken);
+            var currentUser = await _usersDbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == _currentUserService.UserId, cancellationToken: cancellationToken);
 
             if (currentUser is null)
             {
                 throw new ArgumentNullException("Current user is null", nameof(currentUser));
             }
 
-            var allRooms = _dbContext.Rooms.AsQueryable();
+            var allRooms = _dbContext.Rooms.AsNoTracking().Include(r => r.CheckLists).ThenInclude(l => l.Entities).WithOwnable().AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Slug))
             {
@@ -39,7 +39,7 @@ namespace Peperino.Application.Room.Queries.GetRooms
 
             var allRoomsWithAccess = allRooms.FilterRequireRead(currentUser);
 
-            return allRoomsWithAccess;
+            return allRoomsWithAccess.ToArray();
         }
     }
 }

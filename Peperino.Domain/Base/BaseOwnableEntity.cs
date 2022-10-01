@@ -1,4 +1,6 @@
-﻿using Peperino.Domain.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Peperino.Domain.Exceptions;
 
 namespace Peperino.Domain.Base
 {
@@ -10,15 +12,17 @@ namespace Peperino.Domain.Base
 
     public static class OwnableEntityExtensions
     {
-        //public static IIncludableQueryable<T, IList<GroupAccess>> WithOwnable<T>(this IQueryable<T> ownableEntity) where T : BaseOwnableEntity
-        //{
-        //    return ownableEntity
-        //        .Include(x => x.Access.UserAccess)
-        //        //.ThenInclude(f => f.User)
-        //        .Include(x => x.Access.GroupAccess);
-        //    //.ThenInclude(ga => ga.UserGroup)
-        //    //.ThenInclude(ug => ug.Users);
-        //}
+        public static IIncludableQueryable<T, User> WithOwnable<T>(this IQueryable<T> ownableEntity) where T : BaseOwnableEntity
+        {
+            return ownableEntity.
+                Include(r => r.CreatedBy).
+                Include(r => r.LastModifiedBy).
+                Include(r => r.GroupAccess).
+                    ThenInclude(ga => ga.UserGroup).
+                        ThenInclude(ug => ug.Users).
+                Include(r => r.UserAccess).
+                    ThenInclude(ua => ua.User);
+        }
 
         public static IEnumerable<T> FilterRequireRead<T>(this IEnumerable<T> entities, User? user) where T : BaseOwnableEntity
         {
@@ -37,15 +41,11 @@ namespace Peperino.Domain.Base
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return entities.ToArray().Where(e =>
+            return entities.Where(e =>
             {
-                var hasUserAccess = e.UserAccess.Where(ua => ua.User.Id == user.Id).Any(ua => ua.AccessLevel >= requestedAccess);
-                if (hasUserAccess)
-                {
-                    return true;
-                }
+                var hasUserAccess = e.UserAccess.Any(ua => ua.User.Id == user.Id && ua.AccessLevel >= requestedAccess);
                 var hasGroupAccess = e.GroupAccess.Where(ga => ga.UserGroup.Users.Any(u => u.Id == user.Id)).Any(ga => ga.AccessLevel >= requestedAccess);
-                return hasGroupAccess;
+                return hasUserAccess || hasGroupAccess;
             });
         }
 

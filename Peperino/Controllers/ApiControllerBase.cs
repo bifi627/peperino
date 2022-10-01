@@ -22,6 +22,6 @@ namespace Peperino.Controllers
 
         private ICurrentUserService CurrentUserService => currentUserService ??= HttpContext.RequestServices.GetRequiredService<ICurrentUserService>();
 
-        protected Domain.Base.User? CurrentUser => UserDbContext.Users.Include(u => u.UserGroups).Where(u => u.Id == CurrentUserService.UserId).ToArray().FirstOrDefault();
+        protected Domain.Base.User? CurrentUser => UserDbContext.Users.AsNoTracking().FirstOrDefault(u => u.Id == CurrentUserService.UserId);
     }
 }
