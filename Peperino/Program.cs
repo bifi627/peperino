@@ -1,5 +1,6 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Peperino;
 using Peperino.Application.CheckList;
 using Peperino.EntityFramework;
@@ -32,6 +33,14 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddServices(builder.Configuration);
 
+    var corsSettings = builder.Configuration.GetSection(CorsSettings.SECTION_NAME).Get<CorsSettings>();
+    var frontendUrls = JsonConvert.DeserializeObject<string[]>(corsSettings.FrontendUrlsJson) ?? Array.Empty<string>();
+
+    foreach (var url in frontendUrls)
+    {
+        Console.WriteLine(url);
+    }
+
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("DEV", policy =>
@@ -41,8 +50,7 @@ var builder = WebApplication.CreateBuilder(args);
 
         options.AddPolicy("PROD", policy =>
         {
-            var corsSettings = builder.Configuration.GetSection(CorsSettings.SECTION_NAME).Get<CorsSettings>();
-            policy.WithOrigins(corsSettings.FrontendUrl).WithMethods("POST", "PUT", "GET", "DELETE").AllowAnyHeader();
+            policy.WithOrigins(frontendUrls).WithMethods("POST", "PUT", "GET", "DELETE").AllowAnyHeader();
         });
     });
 }
