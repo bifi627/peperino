@@ -1,4 +1,4 @@
-﻿using Mapster;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,22 +17,24 @@ namespace Peperino.Controllers.CheckList
         [HttpGet("room", Name = "GetAllListInRoom")]
         public async Task<ActionResult<IEnumerable<CheckListOutDto>>> GetAllListInRoom(string roomSlug)
         {
-            var room = await DbContext.Rooms.FirstOrDefaultAsync(r => r.Slug == roomSlug);
+            var currentUser = CurrentUser;
+
+            Console.WriteLine("___________STARTED");
+            var room = DbContext.Rooms.Include(r => r.CheckLists).ThenInclude(c => c.Entities).WithOwnable().FilterRequireRead(currentUser).FirstOrDefault(r => r.Slug == roomSlug);
 
             if (room is null)
             {
                 return NotFound();
             }
 
-            room.RequireAccessRead(CurrentUser);
-
-            var currentUser = CurrentUser;
-            var dtos = room.CheckLists.Select(room =>
+            var dtos = room.CheckLists.Select(list =>
             {
-                var listOut = room.Adapt<CheckListOutDto>();
-                listOut.Room.AccessLevel = room.CalculateAccessLevel(currentUser);
+                var listOut = list.Adapt<CheckListOutDto>();
+                listOut.Room.AccessLevel = list.CalculateAccessLevel(currentUser);
                 return listOut;
             });
+
+            room.RequireAccessRead(CurrentUser);
 
             return Ok(dtos);
         }
