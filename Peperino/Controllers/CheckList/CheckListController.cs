@@ -40,7 +40,7 @@ namespace Peperino.Controllers.CheckList
         [HttpGet(Name = "GetCheckListBySlug")]
         public async Task<ActionResult<CheckListOutDto>> GetCheckListBySlug([Required] string listSlug)
         {
-            var checkList = await DbContext.CheckLists.FirstOrDefaultAsync(r => r.Slug == listSlug);
+            var checkList = DbContext.CheckLists.Include(c => c.Room).ThenInclude(r => r.CheckLists).Include(c => c.Entities).WithOwnable().FilterRequireRead(CurrentUser).FirstOrDefault(r => r.Slug == listSlug);
 
             if (checkList is null)
             {
