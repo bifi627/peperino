@@ -51,6 +51,18 @@ namespace Peperino.Controllers.CheckList
 
             var dto = checkList.Adapt<CheckListOutDto>();
 
+            var entities = checkList.Entities.Select(e =>
+            {
+                if (e is TextCheckListItem textCheckListItem)
+                {
+                    return textCheckListItem.Adapt<CheckListItemOutDto>();
+                }
+
+                return e.Adapt<CheckListItemOutDto>();
+            });
+
+            dto.Entities = entities.ToList();
+
             return dto;
         }
 
@@ -88,7 +100,7 @@ namespace Peperino.Controllers.CheckList
 
             checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
 
-            var checkListItem = new CheckListItem
+            var checkListItem = new TextCheckListItem
             {
                 Text = item.Text,
                 SortIndex = 0,
@@ -144,19 +156,22 @@ namespace Peperino.Controllers.CheckList
 
             checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
 
-            var checkListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
+            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
 
-            if (checkListItem is null)
+            if (baseCheckListItem is null)
             {
                 return NotFound();
             }
 
-            checkListItem.Text = checkListItemOutDto.Text;
-            checkListItem.Checked = checkListItemOutDto.Checked;
+            if (baseCheckListItem is TextCheckListItem checkListItem)
+            {
+                checkListItem.Text = checkListItemOutDto.Text;
+                checkListItem.Checked = checkListItemOutDto.Checked;
+            }
 
             await DbContext.SaveChangesAsync();
 
-            var dto = checkListItem.Adapt<CheckListItemOutDto>();
+            var dto = baseCheckListItem.Adapt<CheckListItemOutDto>();
 
             return dto;
         }

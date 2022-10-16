@@ -7,7 +7,7 @@ namespace Peperino.EntityFramework.Configurations.CheckList
     {
         public void Configure(EntityTypeBuilder<Entities.CheckList.CheckList> builder)
         {
-            builder.HasMany(c => c.Entities).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(c => c.Entities).WithOne(e => e.CheckList).OnDelete(DeleteBehavior.Cascade);
             builder.ToTable("CheckLists");
         }
     }

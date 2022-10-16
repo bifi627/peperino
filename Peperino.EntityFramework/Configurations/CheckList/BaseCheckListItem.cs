@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Peperino.EntityFramework.Entities.CheckList;
 
 namespace Peperino.EntityFramework.Configurations.CheckList
 {
-    public class CheckListItemConfiguration : IEntityTypeConfiguration<Entities.CheckList.CheckListItem>
+    public class BaseCheckListItemConfiguration : IEntityTypeConfiguration<BaseCheckListItem>
     {
-        public void Configure(EntityTypeBuilder<Entities.CheckList.CheckListItem> builder)
+        public void Configure(EntityTypeBuilder<BaseCheckListItem> builder)
         {
             builder.HasOne(i => i.CheckList).WithMany(l => l.Entities).OnDelete(DeleteBehavior.Cascade);
-            builder.ToTable("CheckListItems");
+            builder.ToTable("BaseCheckListItems");
         }
     }
 }

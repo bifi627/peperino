@@ -2,12 +2,18 @@
 
 namespace Peperino.EntityFramework.Entities.CheckList
 {
-    public class CheckListItem : BaseAuditableEntity
+    public enum ItemType
     {
+        Text,
+        Link,
+        Image,
+    }
+
+    public abstract class BaseCheckListItem : BaseAuditableEntity
+    {
+        public abstract ItemType ItemType { get; }
         public int SortIndex { get; set; }
         public bool Checked { get; set; }
-        public string Text { get; set; } = string.Empty;
-
         public virtual CheckList CheckList { get; set; }
     }
 }
