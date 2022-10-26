@@ -2,7 +2,6 @@
 {
     public class ImageCheckListItem : BaseCheckListItem
     {
-        public override ItemType ItemType => ItemType.Image;
-        public string Reference { get; set; } = string.Empty;
+        public string ImageLink { get; set; } = string.Empty;
     }
 }

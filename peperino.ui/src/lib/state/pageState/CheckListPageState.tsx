@@ -42,7 +42,7 @@ export class CheckListPageState extends BasePageState {
             _checkList: observable,
             _connectionState: observable,
             inputValue: observable,
-            addItem: action,
+            addTextItem: action,
         });
     }
 
@@ -87,7 +87,7 @@ export class CheckListPageState extends BasePageState {
         }
     }
 
-    public async addItem(text: string) {
+    public async addTextItem(text: string) {
         if (!this.checkList) {
             return;
         }
@@ -108,8 +108,19 @@ export class CheckListPageState extends BasePageState {
             }
         }
         else {
-            this.checkList.entities.push({ text: text, id: 0, checked: false, sortIndex: 999 } as TextCheckListItemOutDto);
-            await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
+            const item = {
+                id: Math.floor(Math.random() * 10000),
+                text: text,
+                sortIndex: 9999,
+                checked: false,
+                itemType: {
+                    variant: "Text",
+                    description: "",
+                    name: "Text",
+                }
+            } as TextCheckListItemOutDto;
+            this.checkList.entities.push(item);
+            await ClientApi.checkList.addTextCheckListItem(this.checkList.slug, { text: text });
         }
     }
 

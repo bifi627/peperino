@@ -7,7 +7,8 @@ import { DropResult } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
-import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
+import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
+import { isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
@@ -52,7 +53,7 @@ const CheckListPage = observer((props: Props) => {
         return <></>;
     }
 
-    const moveItems = async (sourceArray: CheckListItemOutDto[], from: number, to: number) => {
+    const moveItems = async (sourceArray: BaseCheckListItemOutDto[], from: number, to: number) => {
         await checklistState.moveItems(sourceArray, from, to);
     }
 
@@ -73,7 +74,7 @@ const CheckListPage = observer((props: Props) => {
             return [];
         }
 
-        const uniqueItems = new Set(checklistState.checkList?.entities.map(e => e.text));
+        const uniqueItems = new Set(checklistState.checkList?.entities.filter(e => isTextItem(e)).map(e => isTextItem(e) ? e.text : ""));
         const result = [...uniqueItems.values()]
         return result;
     }
@@ -86,7 +87,12 @@ const CheckListPage = observer((props: Props) => {
                         <SortableList
                             data={checklistState.uncheckedItems}
                             onDragEnd={onUncheckedDragEnd}
-                            renderData={item => <CheckListItem checkList={checklistState.checkList!} item={item} />}
+                            renderData={item => {
+                                if (isTextItem(item)) {
+                                    return <CheckListItem checkList={checklistState.checkList!} item={item} />;
+                                }
+                                return <div>unknown item...</div>;
+                            }}
                         />
 
                         <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={async (e) => {
@@ -95,7 +101,7 @@ const CheckListPage = observer((props: Props) => {
                             if (checklistState.inputValue !== "") {
                                 const text = checklistState.inputValue;
                                 checklistState.inputValue = "";
-                                await checklistState.addItem(text);
+                                await checklistState.addTextItem(text);
                                 await checklistState.reloadList();
                             }
                         }}>
@@ -103,14 +109,19 @@ const CheckListPage = observer((props: Props) => {
                                 <TextField autoFocus {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
                             }></Autocomplete>
                             <Button type="submit">
-                                {checklistState.checkList.entities.find(e => e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}
+                                {checklistState.checkList.entities.filter(e => isTextItem(e)).find(e => isTextItem(e) && e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}
                             </Button>
                         </form>
 
                         <SortableList
                             data={checklistState.checkedItems}
                             onDragEnd={onCheckedDragEnd}
-                            renderData={item => <CheckListItem checkList={checklistState.checkList!} item={item} />}
+                            renderData={item => {
+                                if (isTextItem(item)) {
+                                    return <CheckListItem checkList={checklistState.checkList!} item={item} />;
+                                }
+                                return <div>unknown item...</div>;
+                            }}
                         />
                     </Box>
                     <Box sx={{

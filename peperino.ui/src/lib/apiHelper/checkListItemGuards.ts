@@ -2,11 +2,11 @@ import { ImageCheckListItemOutDto, LinkCheckListItemOutDto, TextCheckListItemOut
 import { BaseCheckListItemOutDto } from "../api/models/BaseCheckListItemOutDto";
 
 export const isTextItem = (item?: BaseCheckListItemOutDto): item is TextCheckListItemOutDto => {
-    return item?.itemType === "Text";
+    return item?.itemType.variant === "Text";
 }
 export const isLinkItem = (item?: BaseCheckListItemOutDto): item is LinkCheckListItemOutDto => {
-    return item?.itemType === "Link";
+    return item?.itemType.variant === "Link";
 }
 export const isImageItem = (item?: BaseCheckListItemOutDto): item is ImageCheckListItemOutDto => {
-    return item?.itemType === "Image";
+    return item?.itemType.variant === "Image";
 }

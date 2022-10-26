@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { ItemType } from './ItemType';
+import type { CheckListItemTypeOutDto } from './CheckListItemTypeOutDto';
 
 export type BaseCheckListItemOutDto = {
-    itemType: ItemType;
     id: number;
     sortIndex: number;
     checked: boolean;
+    itemType: CheckListItemTypeOutDto;
     $type: string | null;
 };

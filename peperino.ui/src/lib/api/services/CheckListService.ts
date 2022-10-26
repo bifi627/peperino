@@ -1,11 +1,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BaseCheckListItemOutDto } from '../models/BaseCheckListItemOutDto';
 import type { CheckListOutDto } from '../models/CheckListOutDto';
 import type { CreateCheckListCommand } from '../models/CreateCheckListCommand';
 import type { DeleteCheckListCommand } from '../models/DeleteCheckListCommand';
 import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
+import type { TextCheckListItemOutDto } from '../models/TextCheckListItemOutDto';
 import type { UpdateTextAction } from '../models/UpdateTextAction';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -84,16 +84,16 @@ requestBody?: DeleteCheckListCommand,
     /**
      * @param slug 
      * @param requestBody 
-     * @returns BaseCheckListItemOutDto Success
+     * @returns TextCheckListItemOutDto Success
      * @throws ApiError
      */
-    public addCheckListItem(
+    public addTextCheckListItem(
 slug: string,
 requestBody: UpdateTextAction,
-): CancelablePromise<BaseCheckListItemOutDto> {
+): CancelablePromise<TextCheckListItemOutDto> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/api/CheckList/{slug}/add',
+            url: '/api/CheckList/{slug}/addText',
             path: {
                 'slug': slug,
             },
@@ -125,13 +125,13 @@ id: number,
     /**
      * @param slug 
      * @param id 
-     * @returns BaseCheckListItemOutDto Success
+     * @returns any Success
      * @throws ApiError
      */
     public toggleCheck(
 slug: string,
 id: number,
-): CancelablePromise<BaseCheckListItemOutDto> {
+): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/api/CheckList/{slug}/check/{id}',
@@ -146,14 +146,14 @@ id: number,
      * @param slug 
      * @param id 
      * @param requestBody 
-     * @returns BaseCheckListItemOutDto Success
+     * @returns any Success
      * @throws ApiError
      */
     public updateTextCheckItem(
 slug: string,
 id: number,
 requestBody?: UpdateTextAction,
-): CancelablePromise<BaseCheckListItemOutDto> {
+): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/api/CheckList/{slug}/text/{id}',

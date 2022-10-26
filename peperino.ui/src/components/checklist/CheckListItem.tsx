@@ -2,11 +2,11 @@ import { Delete } from "@mui/icons-material";
 import { Box, Checkbox, TextField } from "@mui/material";
 import { observer } from "mobx-react";
 import React, { useRef, useState } from "react";
-import { CheckListItemOutDto, CheckListOutDto } from "../../lib/api";
+import { CheckListOutDto, TextCheckListItemOutDto } from "../../lib/api";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
-    item: CheckListItemOutDto;
+    item: TextCheckListItemOutDto;
     checkList: CheckListOutDto;
 }
 
@@ -32,7 +32,7 @@ export const CheckListItem = observer((props: Props) => {
 
     const saveInput = async () => {
         if (isInputChanged) {
-            await checkListPageState.updateItem(props.item);
+            await checkListPageState.updateTextCheckItem(props.item);
         }
     }
 
