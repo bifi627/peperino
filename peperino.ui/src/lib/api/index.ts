@@ -30,8 +30,8 @@ export type { RoomOutDto } from './models/RoomOutDto';
 export type { SharedLinkInDto } from './models/SharedLinkInDto';
 export type { SharedLinkOutDto } from './models/SharedLinkOutDto';
 export type { SharedLinkResolvedOutDto } from './models/SharedLinkResolvedOutDto';
+export type { StringUpdateCheckListItemAction } from './models/StringUpdateCheckListItemAction';
 export type { TextCheckListItemOutDto } from './models/TextCheckListItemOutDto';
-export type { UpdateTextAction } from './models/UpdateTextAction';
 export type { User } from './models/User';
 export type { UserAccess } from './models/UserAccess';
 export type { UserGroup } from './models/UserGroup';
@@ -41,6 +41,7 @@ export type { UserStoreDto } from './models/UserStoreDto';
 export type { WeatherForecast } from './models/WeatherForecast';
 
 export { CheckListService } from './services/CheckListService';
+export { CheckListItemService } from './services/CheckListItemService';
 export { DemoService } from './services/DemoService';
 export { EnvironmentService } from './services/EnvironmentService';
 export { HealthCheckService } from './services/HealthCheckService';

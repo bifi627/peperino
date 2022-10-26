@@ -4,9 +4,6 @@
 import type { CheckListOutDto } from '../models/CheckListOutDto';
 import type { CreateCheckListCommand } from '../models/CreateCheckListCommand';
 import type { DeleteCheckListCommand } from '../models/DeleteCheckListCommand';
-import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
-import type { TextCheckListItemOutDto } from '../models/TextCheckListItemOutDto';
-import type { UpdateTextAction } from '../models/UpdateTextAction';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -76,112 +73,6 @@ requestBody?: DeleteCheckListCommand,
         return this.httpRequest.request({
             method: 'DELETE',
             url: '/api/CheckList',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-
-    /**
-     * @param slug 
-     * @param requestBody 
-     * @returns TextCheckListItemOutDto Success
-     * @throws ApiError
-     */
-    public addTextCheckListItem(
-slug: string,
-requestBody: UpdateTextAction,
-): CancelablePromise<TextCheckListItemOutDto> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/api/CheckList/{slug}/addText',
-            path: {
-                'slug': slug,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-
-    /**
-     * @param slug 
-     * @param id 
-     * @returns any Success
-     * @throws ApiError
-     */
-    public deleteCheckListItem(
-slug: string,
-id: number,
-): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/api/CheckList/{slug}/{id}',
-            path: {
-                'slug': slug,
-                'id': id,
-            },
-        });
-    }
-
-    /**
-     * @param slug 
-     * @param id 
-     * @returns any Success
-     * @throws ApiError
-     */
-    public toggleCheck(
-slug: string,
-id: number,
-): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/api/CheckList/{slug}/check/{id}',
-            path: {
-                'slug': slug,
-                'id': id,
-            },
-        });
-    }
-
-    /**
-     * @param slug 
-     * @param id 
-     * @param requestBody 
-     * @returns any Success
-     * @throws ApiError
-     */
-    public updateTextCheckItem(
-slug: string,
-id: number,
-requestBody?: UpdateTextAction,
-): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/api/CheckList/{slug}/text/{id}',
-            path: {
-                'slug': slug,
-                'id': id,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-
-    /**
-     * @param slug 
-     * @param requestBody 
-     * @returns any Success
-     * @throws ApiError
-     */
-    public arrangeSortIndex(
-slug: string,
-requestBody?: RearrangeCheckListItemsInDto,
-): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/api/CheckList/{slug}/arrange',
-            path: {
-                'slug': slug,
-            },
             body: requestBody,
             mediaType: 'application/json',
         });

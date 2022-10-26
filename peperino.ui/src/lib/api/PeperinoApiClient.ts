@@ -6,6 +6,7 @@ import type { OpenAPIConfig } from './core/OpenAPI';
 import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
 import { CheckListService } from './services/CheckListService';
+import { CheckListItemService } from './services/CheckListItemService';
 import { DemoService } from './services/DemoService';
 import { EnvironmentService } from './services/EnvironmentService';
 import { HealthCheckService } from './services/HealthCheckService';
@@ -20,6 +21,7 @@ type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 export class PeperinoApiClient {
 
     public readonly checkList: CheckListService;
+    public readonly checkListItem: CheckListItemService;
     public readonly demo: DemoService;
     public readonly environment: EnvironmentService;
     public readonly healthCheck: HealthCheckService;
@@ -45,6 +47,7 @@ export class PeperinoApiClient {
         });
 
         this.checkList = new CheckListService(this.request);
+        this.checkListItem = new CheckListItemService(this.request);
         this.demo = new DemoService(this.request);
         this.environment = new EnvironmentService(this.request);
         this.healthCheck = new HealthCheckService(this.request);

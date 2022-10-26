@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Mapster;
+using Peperino.EntityFramework.Entities.CheckList;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -32,6 +34,28 @@ namespace Peperino.Dtos.CheckList
 
         [Required]
         public CheckListItemTypeOutDto ItemType { get; set; }
+
+        public static BaseCheckListItemOutDto AdaptFrom(BaseCheckListItem baseCheckListItem)
+        {
+            BaseCheckListItemOutDto dto;
+
+            switch (baseCheckListItem)
+            {
+                case TextCheckListItem:
+                    dto = baseCheckListItem.Adapt<TextCheckListItemOutDto>();
+                    break;
+                case LinkCheckListItem:
+                    dto = baseCheckListItem.Adapt<LinkCheckListItemOutDto>();
+                    break;
+                case ImageCheckListItem:
+                    dto = baseCheckListItem.Adapt<ImageCheckListItemOutDto>();
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown item type {baseCheckListItem.GetType()}");
+            }
+
+            return dto;
+        }
     }
 
     public class TextCheckListItemOutDto : BaseCheckListItemOutDto

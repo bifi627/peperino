@@ -6,8 +6,6 @@ using Peperino.Application.CheckList.Commands.CreateCheckList;
 using Peperino.Application.CheckList.Commands.DeleteCheckList;
 using Peperino.Domain.Base;
 using Peperino.Dtos.CheckList;
-using Peperino.Dtos.CheckList.Actions;
-using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Controllers.CheckList
@@ -70,159 +68,10 @@ namespace Peperino.Controllers.CheckList
             return dto;
         }
 
-        [HttpDelete(Name = "DeleteList")]
+        [HttpDelete(Name = nameof(DeleteList))]
         public async Task<ActionResult> DeleteList(DeleteCheckListCommand deleteCheckListCommand)
         {
             await Mediator.Send(deleteCheckListCommand);
-            return Ok();
-        }
-
-        [HttpPost("{slug}/addText", Name = nameof(AddTextCheckListItem))]
-        public async Task<ActionResult<TextCheckListItemOutDto>> AddTextCheckListItem(string slug, [FromBody][Required] UpdateTextAction item)
-        {
-            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
-
-            if (checklist is null)
-            {
-                return NotFound();
-            }
-
-            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
-
-            var itemType = await DbContext.CheckListItemTypes.FirstOrDefaultAsync(x => x.Name == "Text");
-
-            if (itemType is null)
-            {
-                return BadRequest("Item type not found");
-            }
-
-            var checkListItem = new TextCheckListItem
-            {
-                Text = item.Text,
-                SortIndex = 0,
-                ItemType = itemType
-            };
-
-            if (checklist.Entities.Any())
-            {
-                checkListItem.SortIndex = checklist.Entities.Max(e => e.SortIndex) + 1;
-            }
-
-            checklist.Entities.Add(checkListItem);
-            await DbContext.SaveChangesAsync();
-
-            var dto = checkListItem.Adapt<TextCheckListItemOutDto>();
-
-            return dto;
-        }
-
-        [HttpDelete("{slug}/{id}", Name = nameof(DeleteCheckListItem))]
-        public async Task<ActionResult> DeleteCheckListItem(string slug, int id)
-        {
-            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
-
-            if (checklist is null)
-            {
-                return NotFound();
-            }
-
-            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
-
-            var checkListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
-
-            if (checkListItem is null)
-            {
-                return NotFound();
-            }
-
-            checklist.Entities.Remove(checkListItem);
-            await DbContext.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost("{slug}/check/{id}", Name = nameof(ToggleCheck))]
-        public async Task<ActionResult> ToggleCheck(string slug, int id)
-        {
-            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
-
-            if (checklist is null)
-            {
-                return NotFound();
-            }
-
-            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
-
-            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
-
-            if (baseCheckListItem is null)
-            {
-                return NotFound();
-            }
-
-            baseCheckListItem.Checked = !baseCheckListItem.Checked;
-
-            await DbContext.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost("{slug}/text/{id}", Name = nameof(UpdateTextCheckItem))]
-        public async Task<ActionResult> UpdateTextCheckItem(string slug, int id, [FromBody] UpdateTextAction updateTextAction)
-        {
-            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
-
-            if (checklist is null)
-            {
-                return NotFound();
-            }
-
-            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
-
-            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
-
-            if (baseCheckListItem is null)
-            {
-                return NotFound();
-            }
-
-            if (baseCheckListItem is TextCheckListItem checkListItem)
-            {
-                checkListItem.Text = updateTextAction.Text;
-
-                await DbContext.SaveChangesAsync();
-
-                var dto = checkListItem.Adapt<TextCheckListItemOutDto>();
-
-                return Ok();
-            }
-
-            return BadRequest();
-        }
-
-        [HttpPost("{slug}/arrange", Name = nameof(ArrangeSortIndex))]
-        public async Task<ActionResult> ArrangeSortIndex(string slug, RearrangeCheckListItemsInDto rearrangeRequest)
-        {
-            var updateItems = rearrangeRequest.Items;
-            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(l => l.Slug == slug);
-
-            if (checklist is null)
-            {
-                return NotFound();
-            }
-
-            var originalItems = checklist.Entities.ToArray();
-
-            foreach (var updateItem in updateItems)
-            {
-                var originalItem = originalItems.FirstOrDefault(i => i.Id == updateItem.Id);
-                if (originalItem is not null && originalItem.SortIndex != updateItem.SortIndex)
-                {
-                    originalItem.SortIndex = updateItem.SortIndex;
-                }
-            }
-
-            await DbContext.SaveChangesAsync();
             return Ok();
         }
     }

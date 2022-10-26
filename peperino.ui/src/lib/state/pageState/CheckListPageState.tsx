@@ -120,26 +120,27 @@ export class CheckListPageState extends BasePageState {
                 }
             } as TextCheckListItemOutDto;
             this.checkList.entities.push(item);
-            await ClientApi.checkList.addTextCheckListItem(this.checkList.slug, { text: text });
+
+            await ClientApi.checkListItem.addCheckListItem(this.checkList.slug, { value: item.text, variant: item.itemType.variant });
         }
     }
 
     public async deleteItem(item: BaseCheckListItemOutDto) {
         if (this.checkList) {
             this.checkList.entities.splice(this.checkList.entities.indexOf(item), 1);
-            await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
+            await ClientApi.checkListItem.deleteCheckListItem(this.checkList.slug, item.id);
         }
     }
 
     public async arrangeItems() {
         if (this.checkList) {
-            await ClientApi.checkList.arrangeSortIndex(this.checkList.slug, { items: this.checkList.entities });
+            await ClientApi.checkListItem.arrangeSortIndex(this.checkList.slug, { items: this.checkList.entities });
         }
     }
 
     public async updateTextCheckItem(item: TextCheckListItemOutDto) {
         if (this.checkList) {
-            await ClientApi.checkList.updateTextCheckItem(this.checkList.slug, item.id, { text: item.text });
+            await ClientApi.checkListItem.updateCheckListItem(this.checkList.slug, item.id, { value: item.text, variant: item.itemType.variant });
         }
     }
 
@@ -181,7 +182,7 @@ export class CheckListPageState extends BasePageState {
         item.checked = !item.checked;
 
         await this.arrangeItems();
-        await ClientApi.checkList.toggleCheck(this.checkList.slug, item.id);
+        await ClientApi.checkListItem.toggleCheck(this.checkList.slug, item.id);
     }
 
     private notificationHubConnection?: HubConnection;
