@@ -2,7 +2,8 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSt
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
-import { CheckListItemOutDto, CheckListOutDto } from "../../api";
+import { BaseCheckListItemOutDto, CheckListOutDto, TextCheckListItemOutDto } from "../../api";
+import { isTextItem } from "../../apiHelper/checkListItemGuards";
 import { ClientApi } from "../../auth/client/apiClient";
 import { arrayMoveMutable } from "../../helper/common";
 import { KnownRoutes } from "../../routing/knownRoutes";
@@ -91,7 +92,7 @@ export class CheckListPageState extends BasePageState {
             return;
         }
 
-        const existing = this.checkList.entities.find(e => e.text === text);
+        const existing = this.checkList.entities.find(e => isTextItem(e) && e.text === text) as TextCheckListItemOutDto;
 
         // If this text already exists, we want to move it to the latest unchecked element
         if (existing && existing.text.length >= 3) {
@@ -107,12 +108,12 @@ export class CheckListPageState extends BasePageState {
             }
         }
         else {
-            this.checkList.entities.push({ text: text, id: 0, checked: false, sortIndex: 999 });
+            this.checkList.entities.push({ text: text, id: 0, checked: false, sortIndex: 999 } as TextCheckListItemOutDto);
             await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
         }
     }
 
-    public async deleteItem(item: CheckListItemOutDto) {
+    public async deleteItem(item: BaseCheckListItemOutDto) {
         if (this.checkList) {
             this.checkList.entities.splice(this.checkList.entities.indexOf(item), 1);
             await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
@@ -125,13 +126,13 @@ export class CheckListPageState extends BasePageState {
         }
     }
 
-    public async updateItem(item: CheckListItemOutDto) {
+    public async updateTextCheckItem(item: TextCheckListItemOutDto) {
         if (this.checkList) {
-            await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
+            await ClientApi.checkList.updateTextCheckItem(this.checkList.slug, item.id, { text: item.text });
         }
     }
 
-    public async moveItems(sourceArray: CheckListItemOutDto[], from: number, to: number) {
+    public async moveItems(sourceArray: BaseCheckListItemOutDto[], from: number, to: number) {
         const tempList = [...sourceArray];
         arrayMoveMutable(tempList, from, to);
         tempList.forEach((item, i) => {
@@ -141,7 +142,7 @@ export class CheckListPageState extends BasePageState {
         await this.arrangeItems();
     }
 
-    public async toggleItemCheck(item: CheckListItemOutDto) {
+    public async toggleItemCheck(item: BaseCheckListItemOutDto) {
         if (!this.checkList) {
             return;
         }
@@ -169,7 +170,7 @@ export class CheckListPageState extends BasePageState {
         item.checked = !item.checked;
 
         await this.arrangeItems();
-        await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
+        await ClientApi.checkList.toggleCheck(this.checkList.slug, item.id);
     }
 
     private notificationHubConnection?: HubConnection;

@@ -3,8 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Peperino;
 using Peperino.Application.CheckList;
+using Peperino.Dtos.CheckList;
 using Peperino.EntityFramework;
+using Peperino.Filters;
 using Peperino.Infrastructure.Options;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -12,8 +15,6 @@ Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    //builder.Configuration.AddEnvironmentVariables();
-
     builder.Services.AddHttpContextAccessor();
 
     // Add services to the container.
@@ -26,10 +27,17 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSignalR();
 
     TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
+    TypeAdapterConfig.GlobalSettings.AllowImplicitDestinationInheritance = true;
+    TypeAdapterConfig.GlobalSettings.AllowImplicitSourceInheritance = true;
+    TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.DocumentFilter<PolymorphismDocumentFilter<BaseCheckListItemOutDto>>();
+        options.SchemaFilter<PolymorphismSchemaFilter<BaseCheckListItemOutDto>>();
+    });
 
     builder.Services.AddServices(builder.Configuration);
 

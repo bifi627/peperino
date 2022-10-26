@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CheckListItemOutDto } from './CheckListItemOutDto';
+import type { ArrangeItemInDto } from './ArrangeItemInDto';
 
 export type RearrangeCheckListItemsInDto = {
-    items: Array<CheckListItemOutDto>;
+    items: Array<ArrangeItemInDto>;
 };

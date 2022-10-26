@@ -6,6 +6,7 @@ using Peperino.Application.CheckList.Commands.CreateCheckList;
 using Peperino.Application.CheckList.Commands.DeleteCheckList;
 using Peperino.Domain.Base;
 using Peperino.Dtos.CheckList;
+using Peperino.Dtos.CheckList.Actions;
 using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,7 +15,7 @@ namespace Peperino.Controllers.CheckList
     [Authorize]
     public class CheckListController : ApiControllerBase
     {
-        [HttpGet("room", Name = "GetAllListInRoom")]
+        [HttpGet("room", Name = nameof(GetAllListInRoom))]
         public async Task<ActionResult<IEnumerable<CheckListOutDto>>> GetAllListInRoom(string roomSlug)
         {
             var room = await DbContext.Rooms.FirstOrDefaultAsync(r => r.Slug == roomSlug);
@@ -37,7 +38,7 @@ namespace Peperino.Controllers.CheckList
             return Ok(dtos);
         }
 
-        [HttpGet(Name = "GetCheckListBySlug")]
+        [HttpGet(Name = nameof(GetCheckListBySlug))]
         public async Task<ActionResult<CheckListOutDto>> GetCheckListBySlug([Required] string listSlug)
         {
             var checkList = await DbContext.CheckLists.FirstOrDefaultAsync(r => r.Slug == listSlug);
@@ -51,22 +52,10 @@ namespace Peperino.Controllers.CheckList
 
             var dto = checkList.Adapt<CheckListOutDto>();
 
-            var entities = checkList.Entities.Select(e =>
-            {
-                if (e is TextCheckListItem textCheckListItem)
-                {
-                    return textCheckListItem.Adapt<CheckListItemOutDto>();
-                }
-
-                return e.Adapt<CheckListItemOutDto>();
-            });
-
-            dto.Entities = entities.ToList();
-
             return dto;
         }
 
-        [HttpPost(Name = "CreateList")]
+        [HttpPost(Name = nameof(CreateList))]
         public async Task<ActionResult<CheckListOutDto>> CreateList(CreateCheckListCommand createCheckListCommand)
         {
             var checkList = await Mediator.Send(createCheckListCommand);
@@ -88,8 +77,8 @@ namespace Peperino.Controllers.CheckList
             return Ok();
         }
 
-        [HttpPost("{slug}/add", Name = "AddCheckListItem")]
-        public async Task<ActionResult<CheckListItemOutDto>> AddCheckListItem(string slug, [FromBody][Required] AddCheckListItem item)
+        [HttpPost("{slug}/add", Name = nameof(AddCheckListItem))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> AddCheckListItem(string slug, [FromBody][Required] UpdateTextAction item)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
 
@@ -114,12 +103,12 @@ namespace Peperino.Controllers.CheckList
             checklist.Entities.Add(checkListItem);
             await DbContext.SaveChangesAsync();
 
-            var dto = checkListItem.Adapt<CheckListItemOutDto>();
+            var dto = checkListItem.Adapt<TextCheckListItemOutDto>();
 
             return dto;
         }
 
-        [HttpDelete("{slug}/{id}", Name = "DeleteCheckListItem")]
+        [HttpDelete("{slug}/{id}", Name = nameof(DeleteCheckListItem))]
         public async Task<ActionResult> DeleteCheckListItem(string slug, int id)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
@@ -144,8 +133,36 @@ namespace Peperino.Controllers.CheckList
             return Ok();
         }
 
-        [HttpPost("{slug}/{id}", Name = "UpdateCheckListItem")]
-        public async Task<ActionResult<CheckListItemOutDto>> UpdateCheckListItem(string slug, int id, [FromBody] CheckListItemOutDto checkListItemOutDto)
+        [HttpPost("{slug}/check/{id}", Name = nameof(ToggleCheck))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> ToggleCheck(string slug, int id)
+        {
+            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
+
+            if (checklist is null)
+            {
+                return NotFound();
+            }
+
+            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
+
+            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
+
+            if (baseCheckListItem is null)
+            {
+                return NotFound();
+            }
+
+            baseCheckListItem.Checked = !baseCheckListItem.Checked;
+
+            await DbContext.SaveChangesAsync();
+
+            var dto = baseCheckListItem.Adapt<BaseCheckListItemOutDto>();
+
+            return dto;
+        }
+
+        [HttpPost("{slug}/text/{id}", Name = nameof(UpdateTextCheckItem))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> UpdateTextCheckItem(string slug, int id, [FromBody] UpdateTextAction updateTextAction)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
 
@@ -165,13 +182,12 @@ namespace Peperino.Controllers.CheckList
 
             if (baseCheckListItem is TextCheckListItem checkListItem)
             {
-                checkListItem.Text = checkListItemOutDto.Text;
-                checkListItem.Checked = checkListItemOutDto.Checked;
+                checkListItem.Text = updateTextAction.Text;
             }
 
             await DbContext.SaveChangesAsync();
 
-            var dto = baseCheckListItem.Adapt<CheckListItemOutDto>();
+            var dto = baseCheckListItem.Adapt<BaseCheckListItemOutDto>();
 
             return dto;
         }
@@ -189,15 +205,12 @@ namespace Peperino.Controllers.CheckList
 
             var originalItems = checklist.Entities.ToArray();
 
-            var toUpdateItems = new List<CheckListItemOutDto>();
-
             foreach (var updateItem in updateItems)
             {
                 var originalItem = originalItems.FirstOrDefault(i => i.Id == updateItem.Id);
                 if (originalItem is not null && originalItem.SortIndex != updateItem.SortIndex)
                 {
                     originalItem.SortIndex = updateItem.SortIndex;
-                    toUpdateItems.Add(updateItem);
                 }
             }
 

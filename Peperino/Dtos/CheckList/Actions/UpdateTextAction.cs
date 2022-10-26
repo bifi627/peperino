@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Peperino.Dtos.CheckList
+namespace Peperino.Dtos.CheckList.Actions
 {
-    public class AddCheckListItem
+    public class UpdateTextAction
     {
         [Required]
         public string Text { get; set; } = string.Empty;
