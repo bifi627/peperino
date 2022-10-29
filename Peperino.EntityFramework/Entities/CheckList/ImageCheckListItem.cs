@@ -2,6 +2,7 @@
 {
     public class ImageCheckListItem : BaseCheckListItem
     {
-        public string ImageLink { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public Guid ImageReference { get; set; }
     }
 }

@@ -2,8 +2,9 @@ import { Box, Checkbox } from "@mui/material";
 import { observer } from "mobx-react";
 import React, { useRef } from "react";
 import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
-import { isLinkItem, isTextItem } from "../../lib/apiHelper/checkListItemGuards";
+import { isImageItem, isLinkItem, isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { useApplicationState } from "../../lib/state/ApplicationState";
+import { ImageCheckListItem } from "./ImageCheckListItem";
 import { LinkCheckListItem } from "./LinkCheckListItem";
 import { TextCheckListItem } from "./TextCheckListItem";
 
@@ -28,6 +29,7 @@ export const CheckListItem = observer((props: Props) => {
             <>
                 {isTextItem(props.item) && <TextCheckListItem item={props.item} />}
                 {isLinkItem(props.item) && <LinkCheckListItem item={props.item} />}
+                {isImageItem(props.item) && <ImageCheckListItem contextId={checkListPageState.checkList?.id ?? 0} item={props.item} />}
             </>
         </Box>
     );

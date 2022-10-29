@@ -11,8 +11,6 @@ namespace Peperino.EntityFramework.Configurations
             builder.HasOne(d => d.CreatedBy).WithMany().OnDelete(DeleteBehavior.SetNull);
             builder.HasOne(d => d.LastModifiedBy).WithMany().OnDelete(DeleteBehavior.SetNull);
 
-            //builder.HasOne(d => d.Access).WithOne().HasForeignKey<AccessList>(a => a.ParentRelation).OnDelete(DeleteBehavior.Cascade);
-
             builder.ToTable("Rooms");
         }
     }

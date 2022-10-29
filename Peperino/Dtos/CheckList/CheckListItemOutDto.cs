@@ -47,8 +47,8 @@ namespace Peperino.Dtos.CheckList
                 case LinkCheckListItem:
                     dto = baseCheckListItem.Adapt<LinkCheckListItemOutDto>();
                     break;
-                case ImageCheckListItem:
-                    dto = baseCheckListItem.Adapt<ImageCheckListItemOutDto>();
+                case ImageCheckListItem imageCheckListItem:
+                    dto = imageCheckListItem.Adapt<ImageCheckListItemOutDto>();
                     break;
                 default:
                     throw new ArgumentException($"Unknown item type {baseCheckListItem.GetType()}");
@@ -79,6 +79,6 @@ namespace Peperino.Dtos.CheckList
         public string Title { get; set; } = string.Empty;
 
         [Required]
-        public string ImageLink { get; set; } = string.Empty;
+        public Guid ImageReference { get; set; } = Guid.Empty;
     }
 }

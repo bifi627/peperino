@@ -1,38 +1,31 @@
-import { Delete, FileCopy, MoreVert, OpenInBrowser } from "@mui/icons-material";
+import { Delete, MoreVert, OpenInBrowser } from "@mui/icons-material";
 import { Box, IconButton, Popover } from "@mui/material";
+import Image from "next/image";
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
-import { LinkCheckListItemOutDto } from "../../lib/api";
+import { ImageCheckListItemOutDto, OpenAPI } from "../../lib/api";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
-    item: LinkCheckListItemOutDto;
+    item: ImageCheckListItemOutDto;
+    contextId: number;
 }
+export const ImageCheckListItem = (props: Props) => {
 
-export const LinkCheckListItem = (props: Props) => {
-
-    const linkWithProtocol = props.item.link.startsWith("http") ? props.item.link : `https://${props.item.link}`;
-    const titleWithFallBack = props.item.title !== "" ? props.item.title : props.item.link;
+    const src = `${OpenAPI.BASE}/api/ImageStore/${props.contextId}/${props.item.imageReference}`
 
     const [optionsOpened, setOptionsOpened] = useState(false);
     const ref = useRef<HTMLButtonElement | null>(null);
 
     const checkListPageState = useApplicationState().getChecklistState();
 
-    const copyToClipboard = async () => {
-        await navigator.clipboard.writeText(linkWithProtocol);
-        setOptionsOpened(false);
-        toast.success("Link wurde in die Zwischenablage kopiert");
-    };
-
     const openLink = async () => {
-        window.open(linkWithProtocol, "_blank")?.focus();
+        window.open(src, "_blank")?.focus();
     }
 
     return (
         <>
-            <Box width="calc(100% - 90px)">
-                <a style={{ display: "block", textOverflow: "ellipsis", overflow: "hidden" }} target={"_blank"} href={linkWithProtocol} rel="noreferrer">{titleWithFallBack}</a>
+            <Box width="100%" height="200px" position="relative">
+                <Image layout={"fill"} objectFit="contain" src={src} alt={props.item.imageReference}></Image>
             </Box>
             <IconButton ref={ref}>
                 <MoreVert onClick={() => setOptionsOpened(true)} />
@@ -51,12 +44,6 @@ export const LinkCheckListItem = (props: Props) => {
                         <OpenInBrowser />
                     </IconButton>
                     <p>Öffnen</p>
-                </Box>
-                <Box display="flex" flexDirection="row" gap="6px" onClick={copyToClipboard}>
-                    <IconButton>
-                        <FileCopy />
-                    </IconButton>
-                    <p>Kopieren</p>
                 </Box>
                 <Box display="flex" flexDirection="row" gap="6px" sx={{ paddingRight: "20px" }} onClick={async () => {
                     await checkListPageState.deleteItem(props.item);

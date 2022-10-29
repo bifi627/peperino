@@ -11,5 +11,5 @@ sortIndex: number;
 checked: boolean;
 itemType: CheckListItemTypeOutDto;
 title: string;
-imageLink: string;
+imageReference: string;
 });

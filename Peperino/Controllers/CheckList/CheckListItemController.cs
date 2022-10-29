@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Peperino.Contracts.Services;
 using Peperino.Domain.Base;
 using Peperino.Dtos.CheckList;
 using Peperino.EntityFramework.Entities.CheckList;
@@ -7,8 +9,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Controllers.CheckList
 {
+    [Authorize]
     public class CheckListItemController : ApiControllerBase
     {
+        private readonly IFirebaseStorageService _firebaseStorageService;
+
+        public CheckListItemController(IFirebaseStorageService firebaseStorageService)
+        {
+            _firebaseStorageService = firebaseStorageService;
+        }
+
         private async Task<ActionResult<BaseCheckListItemOutDto>> AddCheckListItem(string slug, BaseCheckListItem item)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
@@ -67,6 +77,28 @@ namespace Peperino.Controllers.CheckList
 
             var dto = await AddCheckListItem(slug, textCheckListItem);
 
+            return dto;
+        }
+
+        [HttpPost("{slug}/image/add", Name = nameof(AddImageItem))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> AddImageItem(string slug, [FromBody][Required] ImageCheckListItemInDto imageInDto)
+        {
+            var parts = imageInDto.ImageBase64.Split(",");
+
+            var contentType = parts[0].Split(";")[0].Split(":")[1];
+            var content = parts[1];
+
+            var bytes = Convert.FromBase64String(content);
+
+            var guid = await _firebaseStorageService.UploadFile(StorageScope.CheckListStorage, new MemoryStream(bytes), contentType);
+
+            var imageCheckListItem = new ImageCheckListItem
+            {
+                Title = imageInDto.Title,
+                ImageReference = guid,
+            };
+
+            var dto = await AddCheckListItem(slug, imageCheckListItem);
             return dto;
         }
 
@@ -143,6 +175,11 @@ namespace Peperino.Controllers.CheckList
 
             checklist.Entities.Remove(checkListItem);
             await DbContext.SaveChangesAsync();
+
+            if (checkListItem is ImageCheckListItem imageCheckListItem)
+            {
+                await _firebaseStorageService.DeleteFile(StorageScope.CheckListStorage, imageCheckListItem.ImageReference);
+            }
 
             return Ok();
         }

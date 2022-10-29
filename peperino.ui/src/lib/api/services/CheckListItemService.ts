@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BaseCheckListItemOutDto } from '../models/BaseCheckListItemOutDto';
+import type { ImageCheckListItemInDto } from '../models/ImageCheckListItemInDto';
 import type { LinkCheckListItemInDto } from '../models/LinkCheckListItemInDto';
 import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
 
@@ -46,6 +47,27 @@ requestBody: LinkCheckListItemInDto,
         return this.httpRequest.request({
             method: 'POST',
             url: '/api/CheckListItem/{slug}/link/add',
+            path: {
+                'slug': slug,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @param slug 
+     * @param requestBody 
+     * @returns BaseCheckListItemOutDto Success
+     * @throws ApiError
+     */
+    public addImageItem(
+slug: string,
+requestBody: ImageCheckListItemInDto,
+): CancelablePromise<BaseCheckListItemOutDto> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/api/CheckListItem/{slug}/image/add',
             path: {
                 'slug': slug,
             },

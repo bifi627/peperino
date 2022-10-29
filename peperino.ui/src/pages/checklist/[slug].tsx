@@ -9,7 +9,9 @@ import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
 import { isTextItem } from "../../lib/apiHelper/checkListItemGuards";
+import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
+import { selectFile, toBase64 } from "../../lib/helper/common";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
@@ -80,7 +82,6 @@ const CheckListPage = observer((props: Props) => {
     }
 
     const createAttachment = () => {
-        const title = checklistState.inputValue.trim();
         checklistState.attachmentOptionsOpened = true;
     }
 
@@ -89,9 +90,24 @@ const CheckListPage = observer((props: Props) => {
         checklistState.linkDialogOpened = true;
     }
 
-    const openImageDialog = () => {
-        alert("Not implemented");
+    const openImageDialog = async () => {
+
         checklistState.attachmentOptionsOpened = false;
+
+        await appFrame.withLoadingScreen(async () => {
+            if (!checklistState.checkList) {
+                return;
+            }
+
+            const files = await selectFile("image/*");
+
+            if (files.length > 0) {
+                var file = files[0];
+                var fileContent = await toBase64(file);
+                await ClientApi.checkListItem.addImageItem(checklistState.checkList?.slug, { title: "TEST", imageBase64: fileContent });
+                await checklistState.reloadList();
+            }
+        });
     }
 
     return (
