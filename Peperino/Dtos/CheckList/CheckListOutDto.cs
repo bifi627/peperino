@@ -18,6 +18,6 @@ namespace Peperino.Dtos.CheckList
         public string Slug { get; set; } = string.Empty;
 
         [Required]
-        public List<CheckListItemOutDto> Entities { get; set; } = new List<CheckListItemOutDto>();
+        public List<BaseCheckListItemOutDto> Entities { get; set; } = new List<BaseCheckListItemOutDto>();
     }
 }

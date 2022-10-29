@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: { domains: ['192.168.0.106', 'peperino-backend.up.railway.app'] },
   env: {
     // theme: fs.readFileSync('./public/theme.js').toString(),
   }

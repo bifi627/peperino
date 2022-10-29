@@ -170,7 +170,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("UserGroups");
                 });
 
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckListItem", b =>
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -190,6 +190,9 @@ namespace Peperino.EntityFramework.Migrations
                     b.Property<string>("CreatedById")
                         .HasColumnType("text");
 
+                    b.Property<int>("ItemTypeId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp with time zone");
 
@@ -199,19 +202,41 @@ namespace Peperino.EntityFramework.Migrations
                     b.Property<int>("SortIndex")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CheckListId");
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("ItemTypeId");
+
                     b.HasIndex("LastModifiedById");
 
-                    b.ToTable("CheckListItems", (string)null);
+                    b.ToTable("BaseCheckListItems", (string)null);
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckListItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Variant")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CheckListItemTypes");
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.SharedLink", b =>
@@ -308,6 +333,46 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasIndex("RoomId");
 
                     b.ToTable("CheckLists", (string)null);
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", b =>
+                {
+                    b.HasBaseType("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem");
+
+                    b.Property<Guid>("ImageReference")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ToTable("ImageCheckListItems", (string)null);
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.LinkCheckListItem", b =>
+                {
+                    b.HasBaseType("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ToTable("LinkCheckListItems", (string)null);
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.TextCheckListItem", b =>
+                {
+                    b.HasBaseType("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.ToTable("TextCheckListItems", (string)null);
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Demo", b =>
@@ -420,7 +485,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.Navigation("LastModifiedBy");
                 });
 
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckListItem", b =>
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", b =>
                 {
                     b.HasOne("Peperino.EntityFramework.Entities.CheckList.CheckList", "CheckList")
                         .WithMany("Entities")
@@ -432,6 +497,12 @@ namespace Peperino.EntityFramework.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.CheckListItemType", "ItemType")
+                        .WithMany()
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById");
@@ -439,6 +510,8 @@ namespace Peperino.EntityFramework.Migrations
                     b.Navigation("CheckList");
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("ItemType");
 
                     b.Navigation("LastModifiedBy");
                 });
@@ -507,6 +580,33 @@ namespace Peperino.EntityFramework.Migrations
                         .IsRequired();
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", b =>
+                {
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.LinkCheckListItem", b =>
+                {
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.LinkCheckListItem", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.TextCheckListItem", b =>
+                {
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.TextCheckListItem", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Demo", b =>

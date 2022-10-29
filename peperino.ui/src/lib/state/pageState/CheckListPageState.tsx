@@ -2,7 +2,8 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSt
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
-import { CheckListItemOutDto, CheckListOutDto } from "../../api";
+import { BaseCheckListItemOutDto, CheckListOutDto, LinkCheckListItemOutDto, TextCheckListItemOutDto } from "../../api";
+import { isTextItem } from "../../apiHelper/checkListItemGuards";
 import { ClientApi } from "../../auth/client/apiClient";
 import { arrayMoveMutable } from "../../helper/common";
 import { KnownRoutes } from "../../routing/knownRoutes";
@@ -33,6 +34,12 @@ export class CheckListPageState extends BasePageState {
     }
 
     public inputValue = "";
+    public linkValue = "";
+
+    public attachmentOptionsOpened = false;
+    public attachmentOptionsAnchor: HTMLElement | null = null;
+
+    public linkDialogOpened = false;
 
     constructor() {
         super();
@@ -41,7 +48,12 @@ export class CheckListPageState extends BasePageState {
             _checkList: observable,
             _connectionState: observable,
             inputValue: observable,
-            addItem: action,
+            linkValue: observable,
+            linkDialogOpened: observable,
+            attachmentOptionsOpened: observable,
+            attachmentOptionsAnchor: observable,
+            addTextItem: action,
+            addLinkItem: action,
         });
     }
 
@@ -86,12 +98,47 @@ export class CheckListPageState extends BasePageState {
         }
     }
 
-    public async addItem(text: string) {
+    public isValidHttpUrl(string: string) {
+        let url;
+        try {
+            url = new URL(string);
+        } catch (_) {
+            return false;
+        }
+        return url.protocol === "http:" || url.protocol === "https:";
+    }
+
+    public async addLinkItem(text: string, link: string) {
         if (!this.checkList) {
             return;
         }
 
-        const existing = this.checkList.entities.find(e => e.text === text);
+        const item = {
+            id: Math.floor(Math.random() * 10000),
+            sortIndex: 9999,
+            checked: false,
+            title: text,
+            link: link,
+            itemType: {
+                variant: "Link",
+                description: "",
+                name: "Link",
+            }
+        } as LinkCheckListItemOutDto;
+
+        makeAutoObservable(item);
+
+        this.checkList.entities.push(item);
+        const result = await ClientApi.checkListItem.addLinkItem(this.checkList.slug, item);
+        item.id = result.id;
+    }
+
+    public async addTextItem(text: string) {
+        if (!this.checkList) {
+            return;
+        }
+
+        const existing = this.checkList.entities.find(e => isTextItem(e) && e.text === text) as TextCheckListItemOutDto;
 
         // If this text already exists, we want to move it to the latest unchecked element
         if (existing && existing.text.length >= 3) {
@@ -107,31 +154,46 @@ export class CheckListPageState extends BasePageState {
             }
         }
         else {
-            this.checkList.entities.push({ text: text, id: 0, checked: false, sortIndex: 999 });
-            await ClientApi.checkList.addCheckListItem(this.checkList.slug, { text: text });
+            const item = {
+                id: Math.floor(Math.random() * 10000),
+                sortIndex: 9999,
+                checked: false,
+                text: text,
+                itemType: {
+                    variant: "Text",
+                    description: "",
+                    name: "Text",
+                }
+            } as TextCheckListItemOutDto;
+
+            makeAutoObservable(item);
+
+            this.checkList.entities.push(item);
+            const result = await ClientApi.checkListItem.addTextItem(this.checkList.slug, text);
+            item.id = result.id;
         }
     }
 
-    public async deleteItem(item: CheckListItemOutDto) {
+    public async deleteItem(item: BaseCheckListItemOutDto) {
         if (this.checkList) {
             this.checkList.entities.splice(this.checkList.entities.indexOf(item), 1);
-            await ClientApi.checkList.deleteCheckListItem(this.checkList.slug, item.id);
+            await ClientApi.checkListItem.deleteCheckListItem(this.checkList.slug, item.id);
         }
     }
 
     public async arrangeItems() {
         if (this.checkList) {
-            await ClientApi.checkList.arrangeSortIndex(this.checkList.slug, { items: this.checkList.entities });
+            await ClientApi.checkListItem.arrangeSortIndex(this.checkList.slug, { items: this.checkList.entities });
         }
     }
 
-    public async updateItem(item: CheckListItemOutDto) {
+    public async updateTextCheckItem(item: BaseCheckListItemOutDto, text: string) {
         if (this.checkList) {
-            await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
+            await ClientApi.checkListItem.updateCheckListItem(this.checkList.slug, item.id, text);
         }
     }
 
-    public async moveItems(sourceArray: CheckListItemOutDto[], from: number, to: number) {
+    public async moveItems(sourceArray: BaseCheckListItemOutDto[], from: number, to: number) {
         const tempList = [...sourceArray];
         arrayMoveMutable(tempList, from, to);
         tempList.forEach((item, i) => {
@@ -141,7 +203,7 @@ export class CheckListPageState extends BasePageState {
         await this.arrangeItems();
     }
 
-    public async toggleItemCheck(item: CheckListItemOutDto) {
+    public async toggleItemCheck(item: BaseCheckListItemOutDto) {
         if (!this.checkList) {
             return;
         }
@@ -169,7 +231,7 @@ export class CheckListPageState extends BasePageState {
         item.checked = !item.checked;
 
         await this.arrangeItems();
-        await ClientApi.checkList.updateCheckListItem(this.checkList.slug, item.id, item);
+        await ClientApi.checkListItem.toggleCheck(this.checkList.slug, item.id);
     }
 
     private notificationHubConnection?: HubConnection;
