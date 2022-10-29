@@ -10,5 +10,6 @@ id: number;
 sortIndex: number;
 checked: boolean;
 itemType: CheckListItemTypeOutDto;
+title: string;
 link: string;
 });

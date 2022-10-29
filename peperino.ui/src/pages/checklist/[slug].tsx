@@ -1,5 +1,5 @@
-import { MoveUp, Send } from "@mui/icons-material";
-import { Autocomplete, Box, Button, TextField, useTheme } from "@mui/material";
+import { AttachFile, Link, MoveUp, Photo, Send } from "@mui/icons-material";
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, TextField, useTheme } from "@mui/material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -79,6 +79,21 @@ const CheckListPage = observer((props: Props) => {
         return result;
     }
 
+    const createAttachment = () => {
+        const title = checklistState.inputValue.trim();
+        checklistState.attachmentOptionsOpened = true;
+    }
+
+    const openLinkDialog = () => {
+        checklistState.attachmentOptionsOpened = false;
+        checklistState.linkDialogOpened = true;
+    }
+
+    const openImageDialog = () => {
+        alert("Not implemented");
+        checklistState.attachmentOptionsOpened = false;
+    }
+
     return (
         <>
             {checklistState.checkList &&
@@ -88,10 +103,7 @@ const CheckListPage = observer((props: Props) => {
                             data={checklistState.uncheckedItems}
                             onDragEnd={onUncheckedDragEnd}
                             renderData={item => {
-                                if (isTextItem(item)) {
-                                    return <CheckListItem checkList={checklistState.checkList!} item={item} />;
-                                }
-                                return <div>unknown item...</div>;
+                                return <CheckListItem checkList={checklistState.checkList!} item={item} />;
                             }}
                         />
 
@@ -99,28 +111,53 @@ const CheckListPage = observer((props: Props) => {
                             e.preventDefault();
                             e.stopPropagation();
                             if (checklistState.inputValue !== "") {
-                                const text = checklistState.inputValue;
+                                const text = checklistState.inputValue.trim();
                                 checklistState.inputValue = "";
                                 await checklistState.addTextItem(text);
-                                await checklistState.reloadList();
                             }
                         }}>
                             <Autocomplete inputValue={checklistState.inputValue} onInputChange={(_, value) => checklistState.inputValue = value} inputMode="search" options={getAutoCompleteOptions()} freeSolo fullWidth renderInput={params =>
                                 <TextField autoFocus {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
                             }></Autocomplete>
-                            <Button type="submit">
-                                {checklistState.checkList.entities.filter(e => isTextItem(e)).find(e => isTextItem(e) && e.text === checklistState.inputValue) === undefined ? <Send /> : <MoveUp />}
-                            </Button>
+                            <IconButton ref={ref => {
+                                if (!checklistState.attachmentOptionsAnchor) {
+                                    checklistState.attachmentOptionsAnchor = ref;
+                                }
+                            }} size="small" onClick={createAttachment}>
+                                <AttachFile color="primary" />
+                            </IconButton>
+                            <Popover
+                                open={checklistState.attachmentOptionsOpened}
+                                anchorEl={checklistState.attachmentOptionsAnchor}
+                                onClose={() => checklistState.attachmentOptionsOpened = false}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Box display="flex" flexDirection="row" gap="6px" onClick={openLinkDialog}>
+                                    <IconButton>
+                                        <Link />
+                                    </IconButton>
+                                    <p>Link</p>
+                                </Box>
+                                <Box display="flex" flexDirection="row" gap="6px" onClick={openImageDialog} sx={{ paddingRight: "20px" }}>
+                                    <IconButton>
+                                        <Photo />
+                                    </IconButton>
+                                    <p>Bild / Foto</p>
+                                </Box>
+                            </Popover>
+                            <IconButton size="small" type="submit" sx={{ paddingRight: "20px", paddingLeft: "20px" }}>
+                                {checklistState.checkList.entities.filter(e => isTextItem(e)).find(e => isTextItem(e) && e.text === checklistState.inputValue) === undefined ? <Send color="primary" /> : <MoveUp color="primary" />}
+                            </IconButton>
                         </form>
 
                         <SortableList
                             data={checklistState.checkedItems}
                             onDragEnd={onCheckedDragEnd}
                             renderData={item => {
-                                if (isTextItem(item)) {
-                                    return <CheckListItem checkList={checklistState.checkList!} item={item} />;
-                                }
-                                return <div>unknown item...</div>;
+                                return <CheckListItem checkList={checklistState.checkList!} item={item} />;
                             }}
                         />
                     </Box>
@@ -133,6 +170,48 @@ const CheckListPage = observer((props: Props) => {
                             <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
                         )}
                     </Box>
+                    <Dialog open={checklistState.linkDialogOpened} onClose={() => checklistState.linkDialogOpened = false}>
+                        <DialogTitle>{"Neuen Link hinzufügen"}</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                inputMode="text"
+                                value={checklistState.inputValue}
+                                onChange={(s) => { checklistState.inputValue = s.target.value }}
+                                autoComplete="off"
+                                margin="dense"
+                                id="name"
+                                label="Titel"
+                                fullWidth
+                                variant="standard"
+                            />
+                            <TextField
+                                inputMode="url"
+                                value={checklistState.linkValue}
+                                onChange={(s) => { checklistState.linkValue = s.target.value }}
+                                autoComplete="off"
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="Link*"
+                                fullWidth
+                                variant="standard"
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => checklistState.linkDialogOpened = false}>Abbrechen</Button>
+                            <Button onClick={async () => {
+                                if (!checklistState.isValidHttpUrl(checklistState.linkValue)) {
+                                    toast.error("Ungültiger Link");
+                                    return;
+                                }
+
+                                await appFrame.withLoadingScreen(async () => {
+                                    checklistState.linkDialogOpened = false;
+                                    await checklistState.addLinkItem(checklistState.inputValue, checklistState.linkValue);
+                                });
+                            }}>Hinzufügen</Button>
+                        </DialogActions>
+                    </Dialog>
                 </>
             }
         </>

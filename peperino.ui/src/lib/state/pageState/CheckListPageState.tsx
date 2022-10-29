@@ -2,7 +2,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionSt
 import { Refresh } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { action, isObservable, makeAutoObservable, makeObservable, observable } from "mobx";
-import { BaseCheckListItemOutDto, CheckListOutDto, TextCheckListItemOutDto } from "../../api";
+import { BaseCheckListItemOutDto, CheckListOutDto, LinkCheckListItemOutDto, TextCheckListItemOutDto } from "../../api";
 import { isTextItem } from "../../apiHelper/checkListItemGuards";
 import { ClientApi } from "../../auth/client/apiClient";
 import { arrayMoveMutable } from "../../helper/common";
@@ -34,6 +34,12 @@ export class CheckListPageState extends BasePageState {
     }
 
     public inputValue = "";
+    public linkValue = "";
+
+    public attachmentOptionsOpened = false;
+    public attachmentOptionsAnchor: HTMLElement | null = null;
+
+    public linkDialogOpened = false;
 
     constructor() {
         super();
@@ -42,7 +48,12 @@ export class CheckListPageState extends BasePageState {
             _checkList: observable,
             _connectionState: observable,
             inputValue: observable,
+            linkValue: observable,
+            linkDialogOpened: observable,
+            attachmentOptionsOpened: observable,
+            attachmentOptionsAnchor: observable,
             addTextItem: action,
+            addLinkItem: action,
         });
     }
 
@@ -87,6 +98,41 @@ export class CheckListPageState extends BasePageState {
         }
     }
 
+    public isValidHttpUrl(string: string) {
+        let url;
+        try {
+            url = new URL(string);
+        } catch (_) {
+            return false;
+        }
+        return url.protocol === "http:" || url.protocol === "https:";
+    }
+
+    public async addLinkItem(text: string, link: string) {
+        if (!this.checkList) {
+            return;
+        }
+
+        const item = {
+            id: Math.floor(Math.random() * 10000),
+            sortIndex: 9999,
+            checked: false,
+            title: text,
+            link: link,
+            itemType: {
+                variant: "Link",
+                description: "",
+                name: "Link",
+            }
+        } as LinkCheckListItemOutDto;
+
+        makeAutoObservable(item);
+
+        this.checkList.entities.push(item);
+        const result = await ClientApi.checkListItem.addLinkItem(this.checkList.slug, item);
+        item.id = result.id;
+    }
+
     public async addTextItem(text: string) {
         if (!this.checkList) {
             return;
@@ -110,18 +156,21 @@ export class CheckListPageState extends BasePageState {
         else {
             const item = {
                 id: Math.floor(Math.random() * 10000),
-                text: text,
                 sortIndex: 9999,
                 checked: false,
+                text: text,
                 itemType: {
                     variant: "Text",
                     description: "",
                     name: "Text",
                 }
             } as TextCheckListItemOutDto;
-            this.checkList.entities.push(item);
 
-            await ClientApi.checkListItem.addCheckListItem(this.checkList.slug, { value: item.text, variant: item.itemType.variant });
+            makeAutoObservable(item);
+
+            this.checkList.entities.push(item);
+            const result = await ClientApi.checkListItem.addTextItem(this.checkList.slug, text);
+            item.id = result.id;
         }
     }
 
@@ -138,9 +187,9 @@ export class CheckListPageState extends BasePageState {
         }
     }
 
-    public async updateTextCheckItem(item: TextCheckListItemOutDto) {
+    public async updateTextCheckItem(item: BaseCheckListItemOutDto, text: string) {
         if (this.checkList) {
-            await ClientApi.checkListItem.updateCheckListItem(this.checkList.slug, item.id, { value: item.text, variant: item.itemType.variant });
+            await ClientApi.checkListItem.updateCheckListItem(this.checkList.slug, item.id, text);
         }
     }
 

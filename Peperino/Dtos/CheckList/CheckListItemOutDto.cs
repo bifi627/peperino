@@ -67,11 +67,17 @@ namespace Peperino.Dtos.CheckList
     public class LinkCheckListItemOutDto : BaseCheckListItemOutDto
     {
         [Required]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
         public string Link { get; set; } = string.Empty;
     }
 
     public class ImageCheckListItemOutDto : BaseCheckListItemOutDto
     {
+        [Required]
+        public string Title { get; set; } = string.Empty;
+
         [Required]
         public string ImageLink { get; set; } = string.Empty;
     }

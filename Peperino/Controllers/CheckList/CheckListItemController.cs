@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Peperino.Domain.Base;
 using Peperino.Dtos.CheckList;
-using Peperino.Dtos.CheckList.Actions;
 using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,8 +9,7 @@ namespace Peperino.Controllers.CheckList
 {
     public class CheckListItemController : ApiControllerBase
     {
-        [HttpPost("{slug}/string/add", Name = nameof(AddCheckListItem))]
-        public async Task<ActionResult<BaseCheckListItemOutDto>> AddCheckListItem(string slug, [FromBody][Required] UpdateCheckListItemAction<string> action)
+        private async Task<ActionResult<BaseCheckListItemOutDto>> AddCheckListItem(string slug, BaseCheckListItem item)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
 
@@ -22,30 +20,58 @@ namespace Peperino.Controllers.CheckList
 
             checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
 
-            var itemType = await DbContext.CheckListItemTypes.FirstOrDefaultAsync(x => x.Variant == action.Variant);
+            var variant = item.GetType() == typeof(TextCheckListItem) ? ItemVariant.Text : item.GetType() == typeof(LinkCheckListItem) ? ItemVariant.Link : ItemVariant.Image;
+
+            var itemType = await DbContext.CheckListItemTypes.FirstOrDefaultAsync(x => x.Variant == variant);
 
             if (itemType is null)
             {
                 return BadRequest("Item type not found");
             }
 
-            var baseCheckListItem = CheckListItemBuilder.CreateStringItem(action.Value, itemType);
+            item.ItemType = itemType;
 
             if (checklist.Entities.Any())
             {
-                baseCheckListItem.SortIndex = checklist.Entities.Max(e => e.SortIndex) + 1;
+                item.SortIndex = checklist.Entities.Max(e => e.SortIndex) + 1;
             }
 
-            var dto = BaseCheckListItemOutDto.AdaptFrom(baseCheckListItem);
-
-            checklist.Entities.Add(baseCheckListItem);
+            checklist.Entities.Add(item);
             await DbContext.SaveChangesAsync();
+
+            var dto = BaseCheckListItemOutDto.AdaptFrom(item);
+            return dto;
+        }
+
+        [HttpPost("{slug}/text/add", Name = nameof(AddTextItem))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> AddTextItem(string slug, [FromBody][Required] string text)
+        {
+            var textCheckListItem = new TextCheckListItem
+            {
+                Text = text,
+            };
+
+            var dto = await AddCheckListItem(slug, textCheckListItem);
 
             return dto;
         }
 
-        [HttpPost("{slug}/{id}/string/update", Name = nameof(UpdateCheckListItem))]
-        public async Task<ActionResult> UpdateCheckListItem(string slug, int id, [FromBody][Required] UpdateCheckListItemAction<string> action)
+        [HttpPost("{slug}/link/add", Name = nameof(AddLinkItem))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> AddLinkItem(string slug, [FromBody][Required] LinkCheckListItemInDto linkInDto)
+        {
+            var textCheckListItem = new LinkCheckListItem
+            {
+                Link = linkInDto.Link,
+                Title = linkInDto.Title,
+            };
+
+            var dto = await AddCheckListItem(slug, textCheckListItem);
+
+            return dto;
+        }
+
+        [HttpPost("{slug}/{id}/text/update", Name = nameof(UpdateCheckListItem))]
+        public async Task<ActionResult> UpdateCheckListItem(string slug, int id, [FromBody][Required] string text)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
 
@@ -58,22 +84,42 @@ namespace Peperino.Controllers.CheckList
 
             var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
 
-            if (baseCheckListItem is null)
+            if (baseCheckListItem is TextCheckListItem textCheckListItem)
+            {
+                textCheckListItem.Text = text;
+                await DbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost("{slug}/{id}/link/update", Name = nameof(UpdateLinkCheckListItem))]
+        public async Task<ActionResult> UpdateLinkCheckListItem(string slug, int id, [FromBody][Required] LinkCheckListItemInDto linkInDto)
+        {
+            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
+
+            if (checklist is null)
             {
                 return NotFound();
             }
 
-            switch (baseCheckListItem)
+            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
+
+            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
+
+            if (baseCheckListItem is LinkCheckListItem linkCheckListItem)
             {
-                default:
-                    break;
+                linkCheckListItem.Link = linkInDto.Link;
+                linkCheckListItem.Title = linkInDto.Title;
+
+                await DbContext.SaveChangesAsync();
+
+                return Ok();
             }
 
-            CheckListItemBuilder.UpdateStringItem(baseCheckListItem, action.Value);
-
-            await DbContext.SaveChangesAsync();
-
-            return Ok();
+            return BadRequest();
         }
 
         [HttpDelete("{slug}/{id}", Name = nameof(DeleteCheckListItem))]

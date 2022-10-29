@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { BaseCheckListItemOutDto } from '../models/BaseCheckListItemOutDto';
+import type { LinkCheckListItemInDto } from '../models/LinkCheckListItemInDto';
 import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
-import type { StringUpdateCheckListItemAction } from '../models/StringUpdateCheckListItemAction';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -18,13 +18,34 @@ export class CheckListItemService {
      * @returns BaseCheckListItemOutDto Success
      * @throws ApiError
      */
-    public addCheckListItem(
+    public addTextItem(
 slug: string,
-requestBody: StringUpdateCheckListItemAction,
+requestBody: string,
 ): CancelablePromise<BaseCheckListItemOutDto> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/api/CheckListItem/{slug}/string/add',
+            url: '/api/CheckListItem/{slug}/text/add',
+            path: {
+                'slug': slug,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @param slug 
+     * @param requestBody 
+     * @returns BaseCheckListItemOutDto Success
+     * @throws ApiError
+     */
+    public addLinkItem(
+slug: string,
+requestBody: LinkCheckListItemInDto,
+): CancelablePromise<BaseCheckListItemOutDto> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/api/CheckListItem/{slug}/link/add',
             path: {
                 'slug': slug,
             },
@@ -43,11 +64,35 @@ requestBody: StringUpdateCheckListItemAction,
     public updateCheckListItem(
 slug: string,
 id: number,
-requestBody: StringUpdateCheckListItemAction,
+requestBody: string,
 ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/api/CheckListItem/{slug}/{id}/string/update',
+            url: '/api/CheckListItem/{slug}/{id}/text/update',
+            path: {
+                'slug': slug,
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @param slug 
+     * @param id 
+     * @param requestBody 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public updateLinkCheckListItem(
+slug: string,
+id: number,
+requestBody: LinkCheckListItemInDto,
+): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/api/CheckListItem/{slug}/{id}/link/update',
             path: {
                 'slug': slug,
                 'id': id,
