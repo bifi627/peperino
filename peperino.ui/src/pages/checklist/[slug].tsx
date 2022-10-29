@@ -93,13 +93,12 @@ const CheckListPage = observer((props: Props) => {
     const openImageDialog = async () => {
 
         checklistState.attachmentOptionsOpened = false;
+        const files = await selectFile("image/*");
 
         await appFrame.withLoadingScreen(async () => {
             if (!checklistState.checkList) {
                 return;
             }
-
-            const files = await selectFile("image/*");
 
             if (files.length > 0) {
                 var file = files[0];
