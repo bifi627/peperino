@@ -13,42 +13,22 @@ namespace Peperino.Controllers.CheckList
     [Authorize]
     public class CheckListController : ApiControllerBase
     {
-        [HttpGet("room", Name = nameof(GetAllListInRoom))]
-        public async Task<ActionResult<IEnumerable<CheckListOutDto>>> GetAllListInRoom(string roomSlug)
-        {
-            var currentUser = CurrentUser;
-
-            Console.WriteLine("___________STARTED");
-            var room = DbContext.Rooms.Include(r => r.CheckLists).ThenInclude(c => c.Entities).WithOwnable().FilterRequireRead(currentUser).FirstOrDefault(r => r.Slug == roomSlug);
-
-            if (room is null)
-            {
-                return NotFound();
-            }
-
-            var dtos = room.CheckLists.Select(list =>
-            {
-                var listOut = list.Adapt<CheckListOutDto>();
-                listOut.Room.AccessLevel = list.CalculateAccessLevel(currentUser);
-                return listOut;
-            });
-
-            room.RequireAccessRead(CurrentUser);
-
-            return Ok(dtos);
-        }
-
         [HttpGet(Name = nameof(GetCheckListBySlug))]
-        public async Task<ActionResult<CheckListOutDto>> GetCheckListBySlug([Required] string listSlug)
+        public ActionResult<CheckListOutDto> GetCheckListBySlug([Required] string listSlug)
         {
-            var checkList = DbContext.CheckLists.Include(c => c.Room).ThenInclude(r => r.CheckLists).Include(c => c.Entities).WithOwnable().FilterRequireRead(CurrentUser).FirstOrDefault(r => r.Slug == listSlug);
+            var checkList = DbContext.CheckLists.AsSplitQuery()
+                                                .Include(c => c.Room)
+                                                .ThenInclude(r => r.CheckLists)
+                                                .Include(c => c.Entities)
+                                                .WithOwnable()
+                                                .FilterRequireRead(CurrentUser)
+                                                .Where(r => r.Slug == listSlug)
+                                                .FirstOrDefault(r => r.Slug == listSlug);
 
             if (checkList is null)
             {
                 return NotFound();
             }
-
-            checkList.RequireAccessRead(CurrentUser);
 
             var dto = checkList.Adapt<CheckListOutDto>();
 

@@ -30,16 +30,20 @@ namespace Peperino.Application.Room.Queries.GetRooms
                 throw new ArgumentNullException("Current user is null", nameof(currentUser));
             }
 
-            var allRooms = _dbContext.Rooms.AsNoTracking().Include(r => r.CheckLists).ThenInclude(l => l.Entities).WithOwnable().AsQueryable();
+            var allRooms = _dbContext.Rooms.AsNoTracking().AsSplitQuery()
+                                           .Include(r => r.CheckLists)
+                                           .ThenInclude(l => l.Entities)
+                                           .ThenInclude(e => e.ItemType)
+                                           .WithOwnable()
+                                           .FilterRequireRead(currentUser)
+                                           .AsQueryable();
 
             if (!string.IsNullOrEmpty(request.Slug))
             {
                 allRooms = allRooms.Where(r => r.Slug == request.Slug);
             }
 
-            var allRoomsWithAccess = allRooms.FilterRequireRead(currentUser);
-
-            return allRoomsWithAccess.ToArray();
+            return allRooms;
         }
     }
 }

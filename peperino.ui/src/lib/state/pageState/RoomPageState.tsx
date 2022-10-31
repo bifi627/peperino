@@ -55,9 +55,12 @@ export class RoomPageState extends BasePageState {
     }
 
     public async reloadCheckLists() {
-        const lists = await ClientApi.checkList.getAllListInRoom(this.room?.slug);
-        if (isObservableArray(this.checkLists)) {
-            this.checkLists.replace(lists);
+        if (this.room?.slug) {
+            const room = await ClientApi.room.getBySlug(this.room?.slug ?? "");
+            const lists = room.checkLists;
+            if (isObservableArray(this.checkLists)) {
+                this.checkLists.replace(lists);
+            }
         }
     }
 

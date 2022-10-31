@@ -13,23 +13,6 @@ export class CheckListService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
-     * @param roomSlug 
-     * @returns CheckListOutDto Success
-     * @throws ApiError
-     */
-    public getAllListInRoom(
-roomSlug?: string,
-): CancelablePromise<Array<CheckListOutDto>> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/api/CheckList/room',
-            query: {
-                'roomSlug': roomSlug,
-            },
-        });
-    }
-
-    /**
      * @param listSlug 
      * @returns CheckListOutDto Success
      * @throws ApiError
