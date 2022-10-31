@@ -22,6 +22,27 @@ namespace Peperino.Controllers
 
         private ICurrentUserService CurrentUserService => currentUserService ??= HttpContext.RequestServices.GetRequiredService<ICurrentUserService>();
 
-        protected Domain.Base.User? CurrentUser => UserDbContext.Users.Include(u => u.UserGroups).Where(u => u.Id == CurrentUserService.UserId).ToArray().FirstOrDefault();
+        private readonly Dictionary<string, Domain.Base.User> _userCache = new();
+        protected Domain.Base.User? CurrentUser
+        {
+            get
+            {
+                var key = CurrentUserService.UserId;
+
+                if (_userCache.TryGetValue(key, out var cachedUser))
+                {
+                    return cachedUser;
+                }
+
+                var user = UserDbContext.Users.AsNoTracking().FirstOrDefault(u => u.Id == CurrentUserService.UserId);
+
+                if (user is not null)
+                {
+                    _userCache.Add(key, user);
+                }
+
+                return user;
+            }
+        }
     }
 }
