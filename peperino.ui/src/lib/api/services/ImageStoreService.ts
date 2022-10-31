@@ -9,17 +9,6 @@ export class ImageStoreService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
-     * @returns any Success
-     * @throws ApiError
-     */
-    public getTicket(): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/api/ImageStore',
-        });
-    }
-
-    /**
      * @param contextId 
      * @param guid 
      * @returns any Success

@@ -5,6 +5,7 @@ import type { BaseCheckListItemOutDto } from '../models/BaseCheckListItemOutDto'
 import type { ImageCheckListItemInDto } from '../models/ImageCheckListItemInDto';
 import type { LinkCheckListItemInDto } from '../models/LinkCheckListItemInDto';
 import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
+import type { TextCheckListItemInDto } from '../models/TextCheckListItemInDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -21,7 +22,7 @@ export class CheckListItemService {
      */
     public addTextItem(
 slug: string,
-requestBody: string,
+requestBody: TextCheckListItemInDto,
 ): CancelablePromise<BaseCheckListItemOutDto> {
         return this.httpRequest.request({
             method: 'POST',

@@ -169,7 +169,7 @@ export class CheckListPageState extends BasePageState {
             makeAutoObservable(item);
 
             this.checkList.entities.push(item);
-            const result = await ClientApi.checkListItem.addTextItem(this.checkList.slug, text);
+            const result = await ClientApi.checkListItem.addTextItem(this.checkList.slug, { text: text });
             item.id = result.id;
         }
     }

@@ -54,11 +54,11 @@ namespace Peperino.Controllers.CheckList
         }
 
         [HttpPost("{slug}/text/add", Name = nameof(AddTextItem))]
-        public async Task<ActionResult<BaseCheckListItemOutDto>> AddTextItem(string slug, [FromBody][Required] string text)
+        public async Task<ActionResult<BaseCheckListItemOutDto>> AddTextItem(string slug, [FromBody][Required] TextCheckListItemInDto textInDto)
         {
             var textCheckListItem = new TextCheckListItem
             {
-                Text = text,
+                Text = textInDto.Text,
             };
 
             var dto = await AddCheckListItem(slug, textCheckListItem);
