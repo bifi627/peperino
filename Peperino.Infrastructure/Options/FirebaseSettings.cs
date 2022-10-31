@@ -1,6 +1,6 @@
 ﻿namespace Peperino.Infrastructure.Options
 {
-    internal class FirebaseSettings
+    public class FirebaseSettings
     {
         public const string SECTION_NAME = "FirebaseSettings";
         public string ValidIssuer { get; set; } = "";

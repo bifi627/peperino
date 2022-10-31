@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type AddCheckListItem = {
-    text: string;
+export type ArrangeItemInDto = {
+    id: number;
+    sortIndex: number;
 };

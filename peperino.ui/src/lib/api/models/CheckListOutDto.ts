@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CheckListItemOutDto } from './CheckListItemOutDto';
+import type { BaseCheckListItemOutDto } from './BaseCheckListItemOutDto';
 import type { RoomOutDto } from './RoomOutDto';
 
 export type CheckListOutDto = {
@@ -10,5 +10,5 @@ export type CheckListOutDto = {
     room: RoomOutDto;
     name: string;
     slug: string;
-    entities: Array<CheckListItemOutDto>;
+    entities: Array<BaseCheckListItemOutDto>;
 };

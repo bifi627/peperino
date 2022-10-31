@@ -40,7 +40,7 @@ namespace Peperino.Application.CheckList
                 return;
             }
 
-            var entries = context.ChangeTracker.Entries<CheckListItem>();
+            var entries = context.ChangeTracker.Entries<TextCheckListItem>();
 
             if (entries.TryGetNonEnumeratedCount(out int count) && count == 0 || !entries.Any())
             {

@@ -46,6 +46,8 @@ namespace Peperino.EntityFramework
 
         public DbSet<CheckList> CheckLists => Set<CheckList>();
 
+        public DbSet<CheckListItemType> CheckListItemTypes => Set<CheckListItemType>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql();

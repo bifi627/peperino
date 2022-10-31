@@ -2,7 +2,7 @@
 
 namespace Peperino.Dtos.CheckList
 {
-    public class AddCheckListItem
+    public class TextCheckListItemInDto
     {
         [Required]
         public string Text { get; set; } = string.Empty;
