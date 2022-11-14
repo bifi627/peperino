@@ -5,7 +5,8 @@ const nextConfig = {
   images: { domains: ['192.168.0.106', 'peperino-backend.up.railway.app'] },
   env: {
     // theme: fs.readFileSync('./public/theme.js').toString(),
-  }
+  },
+  experimental: { appDir: true }
 }
 
 const cacheStrategies = require("./src/lib/pwa/cacheStrategy");
