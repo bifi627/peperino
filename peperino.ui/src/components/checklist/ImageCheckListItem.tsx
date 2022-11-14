@@ -1,6 +1,6 @@
 import { Delete, MoreVert, OpenInBrowser } from "@mui/icons-material";
 import { Box, IconButton, Popover } from "@mui/material";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useRef, useState } from "react";
 import { ImageCheckListItemOutDto, OpenAPI } from "../../lib/api";
 import { useApplicationState } from "../../lib/state/ApplicationState";

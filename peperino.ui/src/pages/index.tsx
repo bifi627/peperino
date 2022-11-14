@@ -2,7 +2,7 @@ import { AccountBox, ChevronRight, Groups } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { getAuth } from "firebase/auth";
 import type { NextPage } from 'next';
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { CardAction } from "../components/Common/Cards/CardAction";
