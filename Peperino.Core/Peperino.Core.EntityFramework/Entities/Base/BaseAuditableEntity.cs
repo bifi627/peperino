@@ -1,8 +1,7 @@
-﻿using Peperino.Core.EntityFramework.Interfaces;
-
-namespace Peperino.Core.EntityFramework.Entities
+﻿namespace Peperino.Core.EntityFramework.Entities
 {
-    public abstract class BaseAuditableEntity : BaseEntity<int>, IAuditable
+    public abstract class BaseAuditableEntity : BaseAuditableEntity<int> { }
+    public abstract class BaseAuditableEntity<KeyType> : BaseEntity<KeyType>
     {
         public DateTime Created { get; set; }
 

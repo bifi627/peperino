@@ -4,7 +4,8 @@ namespace Peperino.Core.EntityFramework.Interfaces
 {
     public interface IOwnable : IAuditable
     {
-        IList<UserAccess> UserAccess { get; set; }
-        IList<GroupAccess> GroupAccess { get; set; }
+        // Must be strongly typed as list because this is used by entity framework
+        List<UserAccess> UserAccess { get; set; }
+        List<GroupAccess> GroupAccess { get; set; }
     }
 }

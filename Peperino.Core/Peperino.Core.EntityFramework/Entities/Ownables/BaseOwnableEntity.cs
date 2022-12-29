@@ -2,9 +2,11 @@
 
 namespace Peperino.Core.EntityFramework.Entities
 {
-    public abstract class BaseOwnableEntity : BaseAuditableEntity, IOwnable
+    public abstract class BaseOwnableEntity : BaseOwnableEntity<int> { }
+    public abstract class BaseOwnableEntity<KeyType> : BaseAuditableEntity<KeyType>, IOwnable
     {
-        public virtual IList<UserAccess> UserAccess { get; set; } = new List<UserAccess>();
-        public virtual IList<GroupAccess> GroupAccess { get; set; } = new List<GroupAccess>();
+        // Must be strongly typed as list because this is used by entity framework
+        public virtual List<UserAccess> UserAccess { get; set; } = new List<UserAccess>();
+        public virtual List<GroupAccess> GroupAccess { get; set; } = new List<GroupAccess>();
     }
 }

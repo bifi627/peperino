@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace Peperino.Core.EntityFramework.Entities
 {
+    public abstract class BaseEntity : BaseEntity<int> { }
     public abstract class BaseEntity<KeyType>
     {
         [Key]
