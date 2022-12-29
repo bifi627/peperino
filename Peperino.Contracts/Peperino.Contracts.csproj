@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Peperino.Core\Peperino.Core.Contracts\Peperino.Core.Contracts.csproj" />
     <ProjectReference Include="..\Peperino.Domain\Peperino.Domain.csproj" />
   </ItemGroup>
 

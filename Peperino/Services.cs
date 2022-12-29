@@ -1,4 +1,5 @@
 ﻿using Peperino.Application;
+using Peperino.Core.EntityFramework;
 using Peperino.EntityFramework;
 using Peperino.Infrastructure;
 
@@ -11,8 +12,11 @@ namespace Peperino
             services.AddTransient<Middleware.ExceptionHandlerMiddleware>();
 
             services.AddApplication();
+
+            services.AddCoreEntityFramework(configuration);
             services.AddEntityFramework(configuration);
             services.AddInfrastructure(configuration);
+
 
             services.AddTransient<Middleware.InitialConnectionMiddleware>();
 

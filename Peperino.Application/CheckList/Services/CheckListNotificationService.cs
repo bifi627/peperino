@@ -4,7 +4,7 @@ using Peperino.Contracts.Services.CheckList;
 
 namespace Peperino.Application.CheckList.Services
 {
-    public class CheckListNotificationService : ICheckListNotificationService
+    public class CheckListNotificationService : ICheckListNotificationService<Core.EntityFramework.Entities.User>
     {
         private readonly IHubContext<CheckListHub> _checkListHub;
         private readonly ICheckListHub _checkListHub2;
@@ -14,7 +14,8 @@ namespace Peperino.Application.CheckList.Services
             _checkListHub = checkListHub;
             _checkListHub2 = checkListHub2;
         }
-        public Task SendCheckListUpdatedNotification(string checkListSlug, Domain.Base.User sender)
+
+        public Task SendCheckListUpdatedNotification(string checkListSlug, Core.EntityFramework.Entities.User sender)
         {
             var connectionId = _checkListHub2.GetConnectionsForUserId(sender.Id);
             return _checkListHub.Clients.GroupExcept(checkListSlug, connectionId).SendAsync("Update");

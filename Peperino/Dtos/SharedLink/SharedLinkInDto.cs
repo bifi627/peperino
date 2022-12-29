@@ -1,4 +1,4 @@
-﻿using Peperino.Domain.Base;
+﻿using Peperino.Core.EntityFramework.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Dtos.SharedLink

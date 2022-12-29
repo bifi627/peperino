@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Peperino.Contracts.DbContexts;
-using Peperino.Contracts.Services;
-using Peperino.Domain.Base;
+using Peperino.Core.Contracts;
+using Peperino.Core.EntityFramework;
+using Peperino.Core.EntityFramework.Entities;
 
 namespace Peperino.Infrastructure.Persistence.Interceptors
 {
@@ -36,7 +36,7 @@ namespace Peperino.Infrastructure.Persistence.Interceptors
                 return;
             }
 
-            if (context is IUsersDbContext usersDbContext)
+            if (context is ICoreDbContext usersDbContext)
             {
                 var user = usersDbContext.Users.FirstOrDefault(user => user.Id == _currentUserService.UserId);
 

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Contracts.Services;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.CheckList;
 using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;

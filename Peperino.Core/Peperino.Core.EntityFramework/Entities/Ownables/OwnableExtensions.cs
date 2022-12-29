@@ -1,15 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Peperino.Domain.Exceptions;
+using Peperino.Core.EntityFramework.Exceptions;
 
-namespace Peperino.Domain.Base
+namespace Peperino.Core.EntityFramework.Entities
 {
-    public abstract class BaseOwnableEntity : BaseAuditableEntity
-    {
-        public virtual IList<UserAccess> UserAccess { get; set; } = new List<UserAccess>();
-        public virtual IList<GroupAccess> GroupAccess { get; set; } = new List<GroupAccess>();
-    }
-
     public static class OwnableEntityExtensions
     {
         public static IIncludableQueryable<T, User> WithOwnable<T>(this IQueryable<T> ownableEntity) where T : BaseOwnableEntity

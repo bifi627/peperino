@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
-using Peperino.Contracts.DbContexts;
+using Peperino.EntityFramework;
 
 namespace Peperino.Application.User.Commands.CreateUser
 {
     public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
     {
-        private readonly IUsersDbContext _usersDbContext;
+        private readonly IApplicationDbContext _dbContext;
 
-        public CreateUserCommandValidator(IUsersDbContext usersDbContext)
+        public CreateUserCommandValidator(IApplicationDbContext dbContext)
         {
-            _usersDbContext = usersDbContext;
+            _dbContext = dbContext;
 
             RuleFor(user => user.UserId).NotEmpty().NotEqual("0");
             RuleFor(user => user.UserId).Must(BeUniqueExternalId).WithMessage("Account with this id already created");
@@ -20,12 +20,12 @@ namespace Peperino.Application.User.Commands.CreateUser
 
         private bool BeUniqueExternalId(string userId)
         {
-            return _usersDbContext.Users.Find(userId) == null;
+            return _dbContext.Users.Find(userId) == null;
         }
 
         private bool BeUniqueUserName(string username)
         {
-            return _usersDbContext.Users.FirstOrDefault(u => u.UserName == username) == null;
+            return _dbContext.Users.FirstOrDefault(u => u.UserName == username) == null;
         }
     }
 }

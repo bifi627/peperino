@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Peperino.Application.User.Commands.CreateUser;
-using Peperino.Contracts.DbContexts;
-using Peperino.Contracts.Services;
+using Peperino.Core.Contracts;
+using Peperino.EntityFramework;
 
 namespace Peperino.Middleware
 {
@@ -9,19 +9,19 @@ namespace Peperino.Middleware
     {
         private static readonly HashSet<string> _checkedConnections = new();
         private readonly ICurrentUserService _currentUserService;
-        private readonly IUsersDbContext _usersDbContext;
+        private readonly IApplicationDbContext _dbContext;
 
-        public InitialConnectionMiddleware(ICurrentUserService currentUserService, IUsersDbContext usersDbContext)
+        public InitialConnectionMiddleware(ICurrentUserService currentUserService, IApplicationDbContext dbContext)
         {
             _currentUserService = currentUserService;
-            _usersDbContext = usersDbContext;
+            _dbContext = dbContext;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             if (_currentUserService.UserId != "0" && !_checkedConnections.Contains(_currentUserService.UserId))
             {
-                if (await _usersDbContext.Users.FindAsync(_currentUserService.UserId) is null)
+                if (await _dbContext.Users.FindAsync(_currentUserService.UserId) is null)
                 {
                     var mediatR = context?.RequestServices.GetRequiredService<ISender>();
                     if (mediatR is not null)

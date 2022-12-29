@@ -1,4 +1,4 @@
-﻿namespace Peperino.Contracts.Services
+﻿namespace Peperino.Core.Contracts
 {
     public interface ICurrentUserService
     {

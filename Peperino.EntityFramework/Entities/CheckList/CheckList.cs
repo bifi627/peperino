@@ -1,8 +1,8 @@
-﻿using Peperino.Domain.Base;
+﻿using Peperino.Core.EntityFramework.Entities;
 
 namespace Peperino.EntityFramework.Entities.CheckList
 {
-    public class CheckList : BaseEntityList<BaseCheckListItem>
+    public class CheckList : BaseOwnableEntityList<BaseCheckListItem>
     {
         public virtual Room Room { get; set; }
         public string Name { get; set; } = string.Empty;

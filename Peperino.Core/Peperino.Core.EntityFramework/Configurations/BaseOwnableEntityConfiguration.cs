@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 
-namespace Peperino.EntityFramework.Configurations
+namespace Peperino.Core.EntityFramework.Configurations
 {
     public class BaseOwnableEntityConfiguration : IEntityTypeConfiguration<BaseOwnableEntity>
     {

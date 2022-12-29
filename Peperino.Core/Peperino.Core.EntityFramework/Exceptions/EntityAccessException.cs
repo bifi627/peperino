@@ -1,6 +1,6 @@
-﻿using Peperino.Domain.Base;
+﻿using Peperino.Core.EntityFramework.Entities;
 
-namespace Peperino.Domain.Exceptions
+namespace Peperino.Core.EntityFramework.Exceptions
 {
     public class EntityAccessException : Exception
     {
@@ -21,7 +21,7 @@ namespace Peperino.Domain.Exceptions
 
         public string GetReason()
         {
-            var reason = $"The user '{UserId}' is not allowed to access '{EntityName}_{EntityId}' (Requested Access '{RequestedAccessLevel}' Provided Access '{AccessLevel ?? Base.AccessLevel.None}')";
+            var reason = $"The user '{UserId}' is not allowed to access '{EntityName}_{EntityId}' (Requested Access '{RequestedAccessLevel}' Provided Access '{AccessLevel ?? Entities.AccessLevel.None}')";
 
             return reason;
         }

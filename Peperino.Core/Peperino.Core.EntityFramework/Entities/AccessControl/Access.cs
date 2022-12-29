@@ -1,4 +1,4 @@
-﻿namespace Peperino.Domain.Base
+﻿namespace Peperino.Core.EntityFramework.Entities
 {
     public enum AccessLevel
     {

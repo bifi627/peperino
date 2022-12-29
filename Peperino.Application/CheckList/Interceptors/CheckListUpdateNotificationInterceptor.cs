@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Peperino.Contracts.Services;
 using Peperino.Contracts.Services.CheckList;
+using Peperino.Core.Contracts;
 using Peperino.EntityFramework;
 using Peperino.EntityFramework.Entities.CheckList;
 using Peperino.Interceptors.CheckList;
@@ -10,10 +10,10 @@ namespace Peperino.Application.CheckList
 {
     public class CheckListUpdateNotificationInterceptor : SaveChangesInterceptor, ICheckListItemsChangedInterceptor
     {
-        private readonly ICheckListNotificationService _checkListNotificationService;
+        private readonly ICheckListNotificationService<Core.EntityFramework.Entities.User> _checkListNotificationService;
         private readonly ICurrentUserService _currentUserService;
 
-        public CheckListUpdateNotificationInterceptor(ICheckListNotificationService checkListNotificationService, ICurrentUserService currentUser)
+        public CheckListUpdateNotificationInterceptor(ICheckListNotificationService<Core.EntityFramework.Entities.User> checkListNotificationService, ICurrentUserService currentUser)
         {
             _checkListNotificationService = checkListNotificationService;
             _currentUserService = currentUser;

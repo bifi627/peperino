@@ -1,4 +1,4 @@
-﻿using Peperino.Domain.Base;
+﻿using Peperino.Core.EntityFramework.Entities;
 
 namespace Peperino.EntityFramework.Entities.CheckList
 {

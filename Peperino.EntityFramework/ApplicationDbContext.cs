@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities.CheckList;
 using Peperino.Infrastructure.Persistence.Interceptors;
@@ -63,6 +64,8 @@ namespace Peperino.EntityFramework
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            builder.ApplyConfigurationsFromAssembly(typeof(ICoreDbContext).Assembly);
+
             base.OnModelCreating(builder);
         }
 

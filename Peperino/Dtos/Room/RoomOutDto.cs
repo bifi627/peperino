@@ -1,4 +1,4 @@
-﻿using Peperino.Domain.Base;
+﻿using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.User;
 using System.ComponentModel.DataAnnotations;
 

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Peperino.Domain.Exceptions;
+using Peperino.Core.EntityFramework.Exceptions;
 using System.Text.Json;
 
 namespace Peperino.Middleware

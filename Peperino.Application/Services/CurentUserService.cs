@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Peperino.Contracts.Constants.Authentication;
-using Peperino.Contracts.Services;
+using Peperino.Core.Contracts;
 using System.Security.Claims;
 
 namespace Peperino.Application.Services

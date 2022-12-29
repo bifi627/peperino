@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 
 namespace MediatR;
 

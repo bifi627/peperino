@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Peperino.Domain.Base
+namespace Peperino.Core.EntityFramework.Entities
 {
     public abstract class BaseEntity<KeyType>
     {
