@@ -1,26 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Peperino.Core.EntityFramework.Entities;
+using Peperino.Core.Contracts.EventManagement;
 
 namespace MediatR;
 
 public static class MediatorExtensions
 {
-    public static async Task DispatchDomainEvents(this IMediator mediator, DbContext context)
+    public static async Task DispatchEntityNotifications(this IMediator mediator, DbContext context)
     {
         var entities = context.ChangeTracker
-            .Entries<BaseEntity<object>>()
-            .Where(e => e.Entity.DomainEvents.Any())
+            .Entries<IEventable>()
+            .Where(e => e.Entity.Events.Any())
             .Select(e => e.Entity);
 
-        var domainEvents = entities
-            .SelectMany(e => e.DomainEvents)
-            .ToList();
+        await mediator.DispatchEntityNotifications(entities.ToArray());
+    }
 
-        entities.ToList().ForEach(e => e.ClearDomainEvents());
-
-        foreach (var domainEvent in domainEvents)
+    public static async Task DispatchEntityNotifications(this IMediator mediator, params IEventable[] notifiers)
+    {
+        foreach (var notifier in notifiers)
         {
-            await mediator.Publish(domainEvent);
+            var notifications = notifier.Events.ToList();
+            notifier.ClearEvents();
+
+            foreach (var notification in notifications)
+            {
+                await mediator.Publish(notification);
+            }
         }
     }
 }

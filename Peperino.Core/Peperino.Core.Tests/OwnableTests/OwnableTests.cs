@@ -1,5 +1,4 @@
 ﻿using Peperino.Core.EntityFramework.Entities;
-using Peperino.Core.Tests.AccessControl.Models;
 
 namespace Peperino.Core.Tests.AccessControl
 {

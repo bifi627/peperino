@@ -1,5 +1,6 @@
 ﻿using Peperino.Application;
 using Peperino.Core.EntityFramework;
+using Peperino.Core.Web;
 using Peperino.EntityFramework;
 using Peperino.Infrastructure;
 
@@ -9,16 +10,16 @@ namespace Peperino
     {
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddCoreEntityFramework(configuration);
+            services.AddCorePeperino(configuration);
+
             services.AddTransient<Middleware.ExceptionHandlerMiddleware>();
+            services.AddTransient<Middleware.InitialConnectionMiddleware>();
+
+            services.AddEntityFramework(configuration);
 
             services.AddApplication();
-
-            services.AddCoreEntityFramework(configuration);
-            services.AddEntityFramework(configuration);
             services.AddInfrastructure(configuration);
-
-
-            services.AddTransient<Middleware.InitialConnectionMiddleware>();
 
             return services;
         }

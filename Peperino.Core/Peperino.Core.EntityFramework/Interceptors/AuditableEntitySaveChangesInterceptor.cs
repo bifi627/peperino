@@ -2,10 +2,9 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Peperino.Core.Contracts;
-using Peperino.Core.EntityFramework;
 using Peperino.Core.EntityFramework.Entities;
 
-namespace Peperino.Infrastructure.Persistence.Interceptors
+namespace Peperino.Core.EntityFramework.Interceptors
 {
     public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
     {

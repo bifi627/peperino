@@ -22,7 +22,7 @@ namespace Peperino.Application.User.Commands.CreateUser
                 UserName = request.UserName
             };
 
-            user.AddDomainEvent(new UserCreatedEvent(user));
+            user.AddEvent(new UserCreatedEvent(user));
 
             await _dbContext.Users.AddAsync(user, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);

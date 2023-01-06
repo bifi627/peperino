@@ -1,6 +1,6 @@
 ﻿using Peperino.Core.EntityFramework.Entities;
 
-namespace Peperino.Core.Tests.AccessControl.Models
+namespace Peperino.Core.Tests
 {
     internal class TestEntity : BaseOwnableEntity
     {
