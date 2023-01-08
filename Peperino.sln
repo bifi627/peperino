@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peperino.Core.Contracts", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{41CAD1B8-7082-40BA-A39E-9D52CCE48836}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.Core.Tests", "Peperino.Core\Peperino.Core.Tests\Peperino.Core.Tests.csproj", "{5B45950C-079A-474A-9D78-76638749B485}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Peperino.Core.Tests", "Peperino.Core\Peperino.Core.Tests\Peperino.Core.Tests.csproj", "{5B45950C-079A-474A-9D78-76638749B485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Peperino.Core.Auth", "Peperino.Core\Peperino.Core.Auth\Peperino.Core.Auth.csproj", "{75A25DE7-8C52-406C-9DE7-B927B9EDEA34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{5B45950C-079A-474A-9D78-76638749B485}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B45950C-079A-474A-9D78-76638749B485}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B45950C-079A-474A-9D78-76638749B485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75A25DE7-8C52-406C-9DE7-B927B9EDEA34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75A25DE7-8C52-406C-9DE7-B927B9EDEA34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75A25DE7-8C52-406C-9DE7-B927B9EDEA34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75A25DE7-8C52-406C-9DE7-B927B9EDEA34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{C32DB793-C2D2-4A14-B2A9-7BF881705F44} = {B644E753-AD55-4F42-AAE3-43273675D215}
 		{41CAD1B8-7082-40BA-A39E-9D52CCE48836} = {B644E753-AD55-4F42-AAE3-43273675D215}
 		{5B45950C-079A-474A-9D78-76638749B485} = {41CAD1B8-7082-40BA-A39E-9D52CCE48836}
+		{75A25DE7-8C52-406C-9DE7-B927B9EDEA34} = {B644E753-AD55-4F42-AAE3-43273675D215}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {04129814-D395-4903-937E-57B9EC5701AF}

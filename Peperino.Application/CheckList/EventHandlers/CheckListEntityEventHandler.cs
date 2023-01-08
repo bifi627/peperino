@@ -27,6 +27,7 @@ namespace Peperino.Application.CheckList.EventHandlers
             _currentUserService = currentUserService;
             _checkListNotificationService = checkListNotificationService;
         }
+
         public override Task<bool> CanHandle(IEventable eventable)
         {
             return Task.FromResult(eventable is BaseCheckListItem);
