@@ -4,7 +4,6 @@ using Peperino.Core.EntityFramework;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities.CheckList;
-using Peperino.Interceptors.CheckList;
 using System.Reflection;
 
 namespace Peperino.EntityFramework
@@ -12,16 +11,13 @@ namespace Peperino.EntityFramework
     public class ApplicationDbContext : BaseDbContext, IApplicationDbContext
     {
         private readonly IMediator _mediator;
-        private readonly ICheckListItemsChangedInterceptor _checkListItemsChangedInterceptor;
 
-        public ApplicationDbContext(DbContextOptions options,
-                                    IMediator mediator,
-                                    IServiceProvider serviceProvider,
-                                    ICheckListItemsChangedInterceptor checkListItemsChangedInterceptor)
-            : base(options, serviceProvider)
+        public ApplicationDbContext(
+            DbContextOptions options,
+            IMediator mediator,
+            IServiceProvider serviceProvider) : base(options, serviceProvider)
         {
             _mediator = mediator;
-            _checkListItemsChangedInterceptor = checkListItemsChangedInterceptor;
         }
 
         public override DbSet<User> Users => Set<User>();
@@ -44,8 +40,6 @@ namespace Peperino.EntityFramework
             optionsBuilder.UseNpgsql();
 
             optionsBuilder.UseLazyLoadingProxies();
-
-            //optionsBuilder.AddInterceptors(_checkListItemsChangedInterceptor);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
