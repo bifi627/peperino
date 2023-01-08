@@ -19,8 +19,8 @@ namespace Peperino.Infrastructure
             services.AddFirebaseAuth(configuration);
 
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-            services.AddSingleton<IFirebaseStorageService, FirebaseStorageService>();
 
+            services.AddScoped<IFirebaseStorageService, FirebaseStorageService>();
             services.AddScoped<ICustomClaimService, CustomClaimService>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

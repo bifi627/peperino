@@ -13,9 +13,6 @@ namespace Peperino
             services.AddCoreEntityFramework(configuration);
             services.AddCorePeperino(configuration);
 
-            services.AddTransient<Middleware.ExceptionHandlerMiddleware>();
-            services.AddTransient<Middleware.InitialConnectionMiddleware>();
-
             services.AddEntityFramework(configuration);
 
             services.AddApplication();

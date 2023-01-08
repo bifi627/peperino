@@ -1,8 +1,11 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Logging;
 using Peperino.Core.EntityFramework.Exceptions;
 using System.Text.Json;
 
-namespace Peperino.Middleware
+namespace Peperino.Core.Web.Middleware
 {
     public sealed class ExceptionHandlerMiddleware : IMiddleware
     {
