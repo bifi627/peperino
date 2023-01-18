@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Peperino.Core.Contracts;
 using Peperino.Core.EntityFramework.Entities;
+using Peperino.Core.EntityFramework.Interfaces;
 
 namespace Peperino.Core.EntityFramework.Interceptors
 {
@@ -39,7 +40,7 @@ namespace Peperino.Core.EntityFramework.Interceptors
             {
                 var user = usersDbContext.Users.FirstOrDefault(user => user.Id == _currentUserService.UserId);
 
-                foreach (var entry in context.ChangeTracker.Entries<BaseOwnableEntity>())
+                foreach (var entry in context.ChangeTracker.Entries<IOwnable>())
                 {
                     if (entry.State == EntityState.Added && user is not null && entry.Entity.UserAccess.FirstOrDefault(a => a.User.Id == user.Id) is null)
                     {

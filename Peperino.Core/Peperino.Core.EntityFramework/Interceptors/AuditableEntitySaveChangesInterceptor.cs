@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Peperino.Core.Contracts;
-using Peperino.Core.EntityFramework.Entities;
+using Peperino.Core.EntityFramework.Interfaces;
 
 namespace Peperino.Core.EntityFramework.Interceptors
 {
@@ -44,7 +44,7 @@ namespace Peperino.Core.EntityFramework.Interceptors
             {
                 var user = usersDbContext.Users.FirstOrDefault(user => user.Id == _currentUserService.UserId);
 
-                foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
+                foreach (var entry in context.ChangeTracker.Entries<IAuditable>())
                 {
                     if (entry.State == EntityState.Added)
                     {
