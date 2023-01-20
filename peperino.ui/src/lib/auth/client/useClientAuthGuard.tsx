@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { isClient } from "../../helper/common";
 import { KnownRoutes } from "../../routing/knownRoutes";
 
-export const useAuthGuard = () => {
+export const useClientAuthGuard = () => {
     const router = useRouter();
     if (!getAuth().currentUser) {
         if (isClient()) {

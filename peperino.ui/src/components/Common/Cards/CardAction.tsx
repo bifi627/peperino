@@ -2,7 +2,7 @@ import { ChevronRight } from "@mui/icons-material";
 import { Box, IconButton, Paper, Stack } from "@mui/material";
 import { ButtonAction } from "../../../lib/appFrame/Action";
 
-interface Props {
+export interface MyCardActionProps {
     mainText: string;
     subTexts?: string[];
     leftIcon?: React.ReactNode;
@@ -10,7 +10,7 @@ interface Props {
     actions?: ButtonAction[];
 }
 
-export const CardAction = (props: Props) => {
+export const CardAction = (props: MyCardActionProps) => {
     const actions = props.actions ?? [];
     return (
         <Stack sx={{ opacity: props.disabled ? ".25" : "1" }} padding={1.5} width="100%">

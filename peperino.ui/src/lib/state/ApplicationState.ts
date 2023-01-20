@@ -8,16 +8,10 @@ import { isClient } from "../helper/common";
 import { ApplicationInitOptions, BaseState } from "./BaseState";
 import { AppFrameState } from "./commonState/AppFrameState";
 import { CheckListPageState } from "./pageState/CheckListPageState";
-import { RoomPageState } from "./pageState/RoomPageState";
-import { RoomSettingsPageState } from "./pageState/RoomSettingsPageState";
-import { RoomsOverviewPageState } from "./pageState/RoomsOverviewPageState";
 
 export class ApplicationState extends BaseState {
     public key = "ApplicationState";
     private appFrame: AppFrameState;
-    private roomsOverviewState: RoomsOverviewPageState;
-    private roomState: RoomPageState;
-    private roomSettingsState: RoomSettingsPageState;
     private checklistState: CheckListPageState;
 
     public environment?: EnvironmentOutDto;
@@ -27,9 +21,6 @@ export class ApplicationState extends BaseState {
     private get all() {
         return [
             this.appFrame,
-            this.roomsOverviewState,
-            this.roomState,
-            this.roomSettingsState,
             this.checklistState,
             ...this.dynamicState.values()
         ];
@@ -41,9 +32,6 @@ export class ApplicationState extends BaseState {
         super();
 
         this.appFrame = new AppFrameState();
-        this.roomsOverviewState = new RoomsOverviewPageState();
-        this.roomState = new RoomPageState();
-        this.roomSettingsState = new RoomSettingsPageState();
         this.checklistState = new CheckListPageState();
 
         makeObservable(this, {
@@ -96,18 +84,6 @@ export class ApplicationState extends BaseState {
 
     public getAppFrame() {
         return this.appFrame;
-    }
-
-    public getRoomsOverviewState() {
-        return this.roomsOverviewState;
-    }
-
-    public getRoomState() {
-        return this.roomState;
-    }
-
-    public getRoomSettingsState() {
-        return this.roomSettingsState;
     }
 
     public getChecklistState() {

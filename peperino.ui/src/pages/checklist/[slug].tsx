@@ -10,7 +10,7 @@ import { SortableList } from "../../components/sortables/SortableList";
 import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
 import { isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { ClientApi } from "../../lib/auth/client/apiClient";
-import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
+import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
 import { selectFile, toBase64 } from "../../lib/helper/common";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const CheckListPage = observer((props: Props) => {
-    useAuthGuard();
+    useClientAuthGuard();
 
     const router = useRouter();
 
