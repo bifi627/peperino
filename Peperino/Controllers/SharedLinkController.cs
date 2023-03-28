@@ -1,4 +1,4 @@
-﻿using Mapster;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +52,11 @@ namespace Peperino.Controllers
                 return BadRequest();
             }
 
-            var link = DbContext.SharedLinks.Where(l => l.Slug == slug).Include(l => l.Entity).Include(l => l.Entity.UserAccess).Include(l => l.Entity.GroupAccess).FirstOrDefault();
+            var link = DbContext.SharedLinks.Where(l => l.Slug == slug)
+                                            .Include(l => l.Entity)
+                                            .Include(l => l.Entity.UserAccess)
+                                            .Include(l => l.Entity.GroupAccess)
+                                            .FirstOrDefault();
 
             if (link is null)
             {

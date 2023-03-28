@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Peperino.Core.Contracts;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
@@ -32,7 +31,7 @@ namespace Peperino.Controllers
                     return cachedUser;
                 }
 
-                var user = DbContext.Users.AsNoTracking().FirstOrDefault(u => u.Id == CurrentUserService.UserId);
+                var user = DbContext.Users.SingleOrDefault(u => u.Id == CurrentUserService.UserId);
 
                 if (user is not null)
                 {
