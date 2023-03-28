@@ -3,6 +3,7 @@ import { Box, Fab } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
+import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CardAction } from "../../components/Common/Cards/CardAction";
 import { RoomCreateDialog } from "../../components/pages/room/dialogs/RoomCreateDialog";
 import { RoomCardAction } from "../../components/pages/room/RoomCardAction";
@@ -42,7 +43,20 @@ const RoomsPage = observer(() => {
     }, [appFrameConfig]);
 
     return (
-        <>
+        <AppFrame
+            toolbarText="Räume"
+            menuActions={[
+                {
+                    id: "add",
+                    action: () => {
+                        setDialogOpened(true);
+                        return Promise.resolve();
+                    },
+                    icon: <Add />,
+                    text: "add",
+                }
+            ]}
+        >
             {/* Placeholder */}
             {rooms?.length === 0 &&
                 <CardAction key={"new"} leftIcon={<GroupAdd />} mainText={"Neuen Raum erstellen"} subTexts={[""]} actions={[{
@@ -85,7 +99,7 @@ const RoomsPage = observer(() => {
                     });
                 }}
             />
-        </>
+        </AppFrame>
     )
 });
 

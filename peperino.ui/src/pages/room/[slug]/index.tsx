@@ -3,7 +3,8 @@ import { BottomNavigation, BottomNavigationAction, Box, Fab } from "@mui/materia
 import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { CheckListCardAction } from "../../../components/pages/room/CheckListCardAction";
 import { RoomCreateChecklistDialog } from "../../../components/pages/room/dialogs/RoomCreateChecklistDialog";
 import { RoomQueries } from "../../../hooks/state/roomQueries";
@@ -29,27 +30,16 @@ const GroupPage = observer((props: Props) => {
     const room = roomBySlugQuery.data;
     const checkLists = room?.checkLists;
 
-    useEffect(() => {
-        // TODO: Use different state management for global/semi global state
-        appFrameConfig.toolbarText = room?.roomName ?? "Raum";
-
-        const settingsAction = {
-            id: "settings",
-            action: async () => {
-                if (room) {
-                    await router.push(KnownRoutes.RoomSettings(room.slug));
-                }
-            },
-            icon: <Settings />,
-            text: "Einstellungen",
-        }
-
-        if (room?.accessLevel === "Owner") {
-            if (!appFrameConfig.contextMenuActions.some(a => a.id === settingsAction.id)) {
-                appFrameConfig.contextMenuActions.push(settingsAction);
+    const settingsAction = {
+        id: "settings",
+        action: async () => {
+            if (room) {
+                await router.push(KnownRoutes.RoomSettings(room.slug));
             }
-        }
-    }, [appFrameConfig, room, router, room?.accessLevel]);
+        },
+        icon: <Settings />,
+        text: "Einstellungen",
+    }
 
     const createCheckListMutation = RoomQueries.useCreateCheckListMutation(queryClient, () => setDialogOpened(false));
 
@@ -57,7 +47,10 @@ const GroupPage = observer((props: Props) => {
     const fabButtonOffset = 64;
 
     return (
-        <>
+        <AppFrame
+            toolbarText={room?.roomName}
+            menuActions={room?.accessLevel === "Owner" ? [settingsAction] : []}
+        >
             <Box style={{ minHeight: `calc(100% - ${(fabButtonOffset - 4) * 2}px)`, paddingBottom: `${fabButtonOffset - 4}px` }}>
                 {/* CheckListCards */}
                 <Box>
@@ -109,7 +102,7 @@ const GroupPage = observer((props: Props) => {
                     });
                 }}
             />
-        </>
+        </AppFrame>
     );
 });
 

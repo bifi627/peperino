@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
+import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
@@ -110,7 +111,7 @@ const CheckListPage = observer((props: Props) => {
     }
 
     return (
-        <>
+        <AppFrame>
             {checklistState.checkList &&
                 <>
                     <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
@@ -229,7 +230,7 @@ const CheckListPage = observer((props: Props) => {
                     </Dialog>
                 </>
             }
-        </>
+        </AppFrame>
     );
 });
 

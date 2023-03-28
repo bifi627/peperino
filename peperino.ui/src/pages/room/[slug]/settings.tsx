@@ -1,6 +1,7 @@
 import { DeleteForever, Share } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { CardAction } from "../../../components/Common/Cards/CardAction";
 import { RoomQueries } from "../../../hooks/state/roomQueries";
 import { SharedLinkOutDto } from "../../../lib/api";
@@ -61,7 +62,7 @@ const GroupSettingsPage = observer((props: Props) => {
     }
 
     return (
-        <>
+        <AppFrame>
             <CardAction mainText={room?.roomName ?? "Name"} />
             <CardAction mainText="Teilen" subTexts={["Lade jemanden mit diesem Link in den Raum ein."]} actions={[{
                 id: "share",
@@ -77,7 +78,7 @@ const GroupSettingsPage = observer((props: Props) => {
                     await deleteRoom();
                 },
             }]} />
-        </>
+        </AppFrame>
     );
 });
 
