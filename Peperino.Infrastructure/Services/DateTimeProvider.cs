@@ -1,4 +1,4 @@
-﻿using Peperino.Contracts.Services;
+﻿using Peperino.Core.Contracts;
 
 namespace Peperino.Infrastructure.Services
 {

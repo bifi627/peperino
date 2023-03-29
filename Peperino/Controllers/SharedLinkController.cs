@@ -1,9 +1,9 @@
-﻿using Mapster;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Application.Room.Commands.CreateRoom;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.SharedLink;
 using Peperino.EntityFramework.Entities;
 
@@ -52,7 +52,11 @@ namespace Peperino.Controllers
                 return BadRequest();
             }
 
-            var link = DbContext.SharedLinks.Where(l => l.Slug == slug).Include(l => l.Entity).Include(l => l.Entity.UserAccess).Include(l => l.Entity.GroupAccess).FirstOrDefault();
+            var link = DbContext.SharedLinks.Where(l => l.Slug == slug)
+                                            .Include(l => l.Entity)
+                                            .Include(l => l.Entity.UserAccess)
+                                            .Include(l => l.Entity.GroupAccess)
+                                            .FirstOrDefault();
 
             if (link is null)
             {
@@ -106,7 +110,7 @@ namespace Peperino.Controllers
             {
                 var ids = room.GroupAccess.Select(s => s.Id).ToList();
 
-                var groupAccess = await UserDbContext.GroupAccess.Include(ga => ga.UserGroup).Include(ga => ga.UserGroup.Users)
+                var groupAccess = await DbContext.GroupAccess.Include(ga => ga.UserGroup).Include(ga => ga.UserGroup.Users)
                     .Where(ga => ids.Contains(ga.Id))
                     .Where(ga => ga.UserGroup.GroupName == CreateRoomCommand.SHARED_ROOM_ACCESS)
                     .FirstOrDefaultAsync();

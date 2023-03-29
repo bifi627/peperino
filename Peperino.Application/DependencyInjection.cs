@@ -5,9 +5,11 @@ using Peperino.Application.CheckList;
 using Peperino.Application.CheckList.Hubs;
 using Peperino.Application.CheckList.Services;
 using Peperino.Application.Services;
-using Peperino.Contracts.Services;
 using Peperino.Contracts.Services.CheckList;
-using Peperino.Interceptors.CheckList;
+using Peperino.Core.Contracts;
+using Peperino.Core.Contracts.ConnectionManagement;
+using Peperino.Core.EntityFramework;
+using Peperino.Infrastructure.Services;
 using System.Reflection;
 
 namespace Peperino.Application
@@ -17,14 +19,21 @@ namespace Peperino.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IInitialConnectionService, InitialConnectionService>();
 
-            services.AddScoped<ICheckListItemsChangedInterceptor, CheckListUpdateNotificationInterceptor>();
-            services.AddScoped<ICheckListNotificationService, CheckListNotificationService>();
+            services.AddScoped<ICheckListNotificationService<Core.EntityFramework.Entities.User>, CheckListNotificationService>();
 
-            services.AddSingleton<ICheckListHub, CheckListHub>();
+            services.AddScoped<ICheckListHub, CheckListHub>();
 
-            services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            var assemblies = new List<Assembly>()
+            {
+                Assembly.GetExecutingAssembly(),
+                Assembly.GetCallingAssembly(),
+                Assembly.GetAssembly(typeof(ICoreDbContext))!
+            }.ToArray();
+
+            services.AddMediatR(assemblies);
+            services.AddValidatorsFromAssemblies(assemblies);
 
             return services;
         }

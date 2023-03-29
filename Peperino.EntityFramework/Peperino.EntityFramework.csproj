@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Peperino.Core\Peperino.Core.EntityFramework\Peperino.Core.EntityFramework.csproj" />
     <ProjectReference Include="..\Peperino.Domain\Peperino.Domain.csproj" />
     <ProjectReference Include="..\Peperino.Infrastructure\Peperino.Infrastructure.csproj" />
   </ItemGroup>

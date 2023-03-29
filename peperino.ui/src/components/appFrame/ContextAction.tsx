@@ -1,9 +1,14 @@
+import { MoreVert } from "@mui/icons-material";
 import { Box, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { observer } from "mobx-react";
 import { useState } from "react";
-import { useAppFrameConfig } from "../../lib/hooks/useAppFrameConfig";
+import { MenuAction } from "../../lib/appFrame/Action";
 
-export const ContextAction = observer(() => {
+interface Props {
+    actions: MenuAction[];
+}
+
+export const ContextAction = observer((props: Props) => {
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -13,10 +18,8 @@ export const ContextAction = observer(() => {
         setAnchorElUser(null);
     };
 
-    const appFrameConfig = useAppFrameConfig();
-
-    if (appFrameConfig?.contextMenuActions?.length === 1) {
-        const contextAction = appFrameConfig?.contextMenuActions[0];
+    if (props.actions.length === 1) {
+        const contextAction = props.actions[0];
         return (
             <IconButton onClick={contextAction.action} color="inherit" aria-label="menu" sx={{ mr: 2 }}>
                 {contextAction.icon}
@@ -27,7 +30,7 @@ export const ContextAction = observer(() => {
     return (
         <>
             <IconButton onClick={handleOpenUserMenu} color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-                {appFrameConfig?.contextMenuIcon}
+                <MoreVert />
             </IconButton>
             <Menu
                 sx={{ mt: '45px' }}
@@ -45,7 +48,7 @@ export const ContextAction = observer(() => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
             >
-                {appFrameConfig?.contextMenuActions?.map((action) => (
+                {props.actions.map((action) => (
                     <MenuItem key={action.text} onClick={async () => {
                         !action.keepMenuOpen && handleCloseUserMenu();
                         await action.action();

@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Peperino.Contracts.DbContexts;
-using Peperino.Contracts.Services;
-using Peperino.Domain.Base;
+using Peperino.Core.Contracts;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,15 +15,13 @@ namespace Peperino.Application.CheckList.Commands.DeleteCheckList
 
     public class DeleteCheckListCommandHandler : IRequestHandler<DeleteCheckListCommand, Unit>
     {
-        private readonly IUsersDbContext _usersDbContext;
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
-        private readonly Domain.Base.User? _currentUser;
+        private readonly Core.EntityFramework.Entities.User? _currentUser;
 
-        public DeleteCheckListCommandHandler(IApplicationDbContext dbContext, IUsersDbContext usersDbContext, ICurrentUserService currentUserService)
+        public DeleteCheckListCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _usersDbContext = usersDbContext;
             _currentUserService = currentUserService;
             _currentUser = _dbContext.Users.FirstOrDefault(u => u.Id == _currentUserService.UserId);
         }

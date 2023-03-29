@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Peperino.Application.Room.Commands.CreateRoom;
 using Peperino.Application.Room.Commands.DeleteRoom;
 using Peperino.Application.Room.Queries.GetRooms;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.UserGroup;
 
 namespace Peperino.Controllers

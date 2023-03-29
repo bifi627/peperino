@@ -1,7 +1,9 @@
 ﻿namespace Peperino.Contracts.Services.CheckList
 {
-    public interface ICheckListNotificationService
+    // TODO: Build basic notification service for base entity without depending on user...
+    // Are these domain events???
+    public interface ICheckListNotificationService<IUser>
     {
-        Task SendCheckListUpdatedNotification(string checkListSlug, Domain.Base.User sender);
+        Task SendCheckListUpdatedNotification(string checkListSlug, IUser sender);
     }
 }

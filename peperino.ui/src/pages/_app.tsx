@@ -1,11 +1,12 @@
 import { EmotionCache } from '@emotion/react';
 import { observer } from 'mobx-react';
 import type { AppProps } from 'next/app';
-import { AppFrame } from '../components/appFrame/AppFrame';
+import { useRouter } from 'next/router';
 import { AuthProvider } from '../components/appFrame/PageMiddleware/AuthMiddleware';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
 import { ClientStateProvider } from '../lib/state/commonState/ClientStateProvider';
+import { ReactQueryProvider } from '../lib/state/commonState/ReactQueryProvider';
 import PageThemeProvider from '../styles/PageThemeProvider';
 
 export interface MUIAppProps extends AppProps {
@@ -14,15 +15,18 @@ export interface MUIAppProps extends AppProps {
 
 function MyApp(props: MUIAppProps) {
     const { Component, pageProps, emotionCache } = props;
+
+    const router = useRouter();
+
     return (
         <PageThemeProvider emotionCache={emotionCache}>
-            <AuthProvider>
-                <ClientStateProvider>
-                    <AppFrame>
+            <ReactQueryProvider>
+                <AuthProvider>
+                    <ClientStateProvider>
                         <Component {...pageProps} />
-                    </AppFrame>
-                </ClientStateProvider>
-            </AuthProvider>
+                    </ClientStateProvider>
+                </AuthProvider>
+            </ReactQueryProvider>
         </PageThemeProvider>
     );
 }

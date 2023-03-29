@@ -1,17 +1,18 @@
 import { Menu } from "@mui/icons-material";
 import { IconButton, Toolbar, Typography } from "@mui/material";
 import { observer } from "mobx-react";
-import { useAppFrameConfig } from "../../lib/hooks/useAppFrameConfig";
+import { MenuAction } from "../../lib/appFrame/Action";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 import { ContextAction } from "./ContextAction";
 import { UserAvatarMenu } from "./UserAvatarMenu";
 
 interface Props {
     menuClick?: () => void;
+    menuActions?: MenuAction[];
+    toolbarText?: string;
 }
 
 export const DynamicToolbar = observer((props: Props) => {
-    const appFrameConfig = useAppFrameConfig();
     const env = useApplicationState().environment;
 
     const envTag = env && env.railwaY_ENVIRONMENT !== "production" ? ` [${env.railwaY_ENVIRONMENT}]` : "";
@@ -22,9 +23,9 @@ export const DynamicToolbar = observer((props: Props) => {
                 <Menu />
             </IconButton>
             <Typography sx={{ flexGrow: 1, overflow: "hidden", lineBreak: "anywhere" }} variant="h6" color="inherit" component="div">
-                {`${appFrameConfig?.toolbarText.toString()}${envTag}`}
+                {`${props.toolbarText?.toString() ?? ""}${envTag}`}
             </Typography>
-            {appFrameConfig?.contextMenuActions?.length > 0 && <ContextAction />}
+            {(props.menuActions?.length ?? 0) > 0 && <ContextAction actions={props.menuActions ?? []} />}
             <UserAvatarMenu />
         </Toolbar>
     );

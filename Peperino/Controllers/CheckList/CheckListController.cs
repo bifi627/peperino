@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Application.CheckList.Commands.CreateCheckList;
 using Peperino.Application.CheckList.Commands.DeleteCheckList;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.CheckList;
 using System.ComponentModel.DataAnnotations;
 

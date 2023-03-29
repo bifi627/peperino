@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Application.Room.Commands.CreateRoom;
-using Peperino.Contracts.DbContexts;
-using Peperino.Contracts.Services;
-using Peperino.Domain.Base;
+using Peperino.Core.Contracts;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,14 +19,12 @@ namespace Peperino.Application.CheckList.Commands.CreateCheckList
 
     public class CreateCheckListCommandHandler : IRequestHandler<CreateCheckListCommand, EntityFramework.Entities.CheckList.CheckList>
     {
-        private readonly IUsersDbContext _usersDbContext;
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
 
-        public CreateCheckListCommandHandler(IApplicationDbContext dbContext, IUsersDbContext usersDbContext, ICurrentUserService currentUserService)
+        public CreateCheckListCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _usersDbContext = usersDbContext;
             _currentUserService = currentUserService;
         }
 

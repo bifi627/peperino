@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Peperino.Contracts.DbContexts;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities.CheckList;
 
 namespace Peperino.EntityFramework
 {
-    public interface IApplicationDbContext : IUsersDbContext, IBaseDbContext
+    public interface IApplicationDbContext : ICoreDbContext
     {
         DatabaseFacade Database { get; }
         DbSet<BaseOwnableEntity> BaseOwnableEntity { get; }

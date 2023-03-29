@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Peperino.Contracts.DbContexts;
-using Peperino.Contracts.Services;
+using Peperino.Core.Contracts;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,14 +21,12 @@ namespace Peperino.Application.Room.Commands.CreateRoom
 
     public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, EntityFramework.Entities.Room>
     {
-        private readonly IUsersDbContext _usersDbContext;
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
 
-        public CreateRoomCommandHandler(IApplicationDbContext dbContext, IUsersDbContext usersDbContext, ICurrentUserService currentUserService)
+        public CreateRoomCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
-            _usersDbContext = usersDbContext;
             _currentUserService = currentUserService;
         }
 
@@ -54,9 +52,9 @@ namespace Peperino.Application.Room.Commands.CreateRoom
                 Slug = slug,
             };
 
-            var groupAccess = new Domain.Base.GroupAccess
+            var groupAccess = new GroupAccess
             {
-                AccessLevel = Domain.Base.AccessLevel.WriteContent
+                AccessLevel = AccessLevel.WriteContent
             };
 
             groupAccess.UserGroup.GroupName = CreateRoomCommand.SHARED_ROOM_ACCESS;

@@ -1,12 +1,15 @@
-import { Add, ChevronRight, List, LocalActivity } from "@mui/icons-material";
-import { BottomNavigation, BottomNavigationAction, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, TextField } from "@mui/material";
+import { Add, List, LocalActivity, Settings } from "@mui/icons-material";
+import { BottomNavigation, BottomNavigationAction, Box, Fab } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
-import { CardAction } from "../../../components/Common/Cards/CardAction";
-import { ClientApi } from "../../../lib/auth/client/apiClient";
-import { useAuthGuard } from "../../../lib/auth/client/useAuthGuard";
+import { useState } from "react";
+import { AppFrame } from "../../../components/appFrame/AppFrame";
+import { CheckListCardAction } from "../../../components/pages/room/CheckListCardAction";
+import { RoomCreateChecklistDialog } from "../../../components/pages/room/dialogs/RoomCreateChecklistDialog";
+import { RoomQueries } from "../../../hooks/state/roomQueries";
+import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
+import { useAppFrameConfig } from "../../../lib/hooks/useAppFrameConfig";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../../lib/state/ApplicationState";
 
@@ -14,70 +17,61 @@ interface Props {
 }
 
 const GroupPage = observer((props: Props) => {
-    useAuthGuard();
+    useClientAuthGuard();
 
     const router = useRouter();
     const appFrame = useApplicationState().getAppFrame();
+    const appFrameConfig = useAppFrameConfig();
 
-    const initRooms = async () => {
-        await appFrame.withLoadingScreen(async () => {
-            try {
-                const slug = router.query["slug"] as string ?? "";
-                const room = await ClientApi.room.getBySlug(slug);
-                roomPageState.room = room;
-                roomPageState.checkLists = room.checkLists;
-                roomPageState.updateToolbar();
-            } catch (error) {
-                if (error instanceof Error) {
-                    toast.error(error.message, { autoClose: 1000 });
-                    setTimeout(() => {
-                        router.push(KnownRoutes.Root());
-                    }, 1000);
-                }
+    const [dialogOpened, setDialogOpened] = useState(false);
+
+    const queryClient = useQueryClient();
+    const roomBySlugQuery = RoomQueries.useGetRoomBySlugQuery(router.query["slug"] as string ?? "")
+    const room = roomBySlugQuery.data;
+    const checkLists = room?.checkLists;
+
+    const settingsAction = {
+        id: "settings",
+        action: async () => {
+            if (room) {
+                await router.push(KnownRoutes.RoomSettings(room.slug));
             }
-        }, 0);
+        },
+        icon: <Settings />,
+        text: "Einstellungen",
     }
 
-    const roomPageState = useApplicationState().getRoomState();
-
-    useEffect(() => {
-        initRooms();
-    }, [])
+    const createCheckListMutation = RoomQueries.useCreateCheckListMutation(queryClient, () => setDialogOpened(false));
 
     const [bottomNavigation, setBottomNavigation] = useState(0);
-
-    const inputRef = useRef<HTMLInputElement>();
-
-    const [listName, setListName] = useState("");
-
     const fabButtonOffset = 64;
 
     return (
-        <>
-            <div style={{ minHeight: `calc(100% - ${(fabButtonOffset - 4) * 2}px)`, paddingBottom: `${fabButtonOffset - 4}px` }}>
+        <AppFrame
+            toolbarText={room?.roomName}
+            menuActions={room?.accessLevel === "Owner" ? [settingsAction] : []}
+        >
+            <Box style={{ minHeight: `calc(100% - ${(fabButtonOffset - 4) * 2}px)`, paddingBottom: `${fabButtonOffset - 4}px` }}>
+                {/* CheckListCards */}
                 <Box>
-                    {roomPageState.checkLists?.map(list => {
+                    {checkLists?.map(list => {
                         return (
-                            <CardAction key={list.slug} mainText={list.name} subTexts={[`${list.entities.length} Einträge`]}
-                                actions={[{
-                                    id: "select",
-                                    icon: <ChevronRight />,
-                                    action: async () => {
-                                        await appFrame.withLoadingScreen(async () => {
-                                            await router.push(KnownRoutes.CheckList(list.slug));
-                                        });
-                                    }
-                                }]}
+                            <CheckListCardAction
+                                key={list.slug}
+                                mainText={list.name}
+                                subTexts={[`${list.entities.length} Einträge`]}
+                                slug={list.slug}
                             />
                         )
                     })}
                 </Box>
+                {/* Add Button */}
                 <Fab size={"medium"} color={"primary"} sx={{ position: "fixed", bottom: `${fabButtonOffset}px`, right: "24px" }} onClick={() => {
-                    roomPageState.addCheckListDialogOpened = true;
+                    setDialogOpened(true);
                 }}>
                     <Add />
                 </Fab>
-            </div>
+            </Box>
             <BottomNavigation
                 sx={{
                     position: "sticky",
@@ -94,36 +88,21 @@ const GroupPage = observer((props: Props) => {
                 <BottomNavigationAction label="Placeholder" icon={<LocalActivity />} />
                 <BottomNavigationAction label="Placeholder" icon={<LocalActivity />} />
             </BottomNavigation>
-            <Dialog open={roomPageState.addCheckListDialogOpened} onClose={() => roomPageState.addCheckListDialogOpened = false}>
-                <DialogTitle>{"Neue Liste erstellen"}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        inputMode="text"
-                        inputRef={inputRef}
-                        value={listName}
-                        onChange={(s) => { setListName(s.target.value) }}
-                        autoComplete="off"
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Name"
-                        fullWidth
-                        variant="standard"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => roomPageState.addCheckListDialogOpened = false}>Abbrechen</Button>
-                    <Button onClick={async () => {
-                        await appFrame.withLoadingScreen(async () => {
-                            roomPageState.addCheckListDialogOpened = false;
-                            await roomPageState.createCheckList(listName);
-                            await roomPageState.reloadCheckLists();
-                            setListName("");
-                        });
-                    }}>Erstellen</Button>
-                </DialogActions>
-            </Dialog>
-        </>
+            <RoomCreateChecklistDialog
+                dialogOpened={dialogOpened}
+                handleClose={() => setDialogOpened(false)}
+                handleSubmit={async (listName) => {
+                    await appFrame.withLoadingScreen(async () => {
+                        if (room?.slug) {
+                            await createCheckListMutation.mutateAsync({
+                                name: listName,
+                                roomSlug: room?.slug,
+                            });
+                        }
+                    });
+                }}
+            />
+        </AppFrame>
     );
 });
 

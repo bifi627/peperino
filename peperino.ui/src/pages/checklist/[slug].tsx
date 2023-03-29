@@ -5,12 +5,13 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
+import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
 import { isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { ClientApi } from "../../lib/auth/client/apiClient";
-import { useAuthGuard } from "../../lib/auth/client/useAuthGuard";
+import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
 import { selectFile, toBase64 } from "../../lib/helper/common";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
@@ -20,7 +21,7 @@ interface Props {
 }
 
 const CheckListPage = observer((props: Props) => {
-    useAuthGuard();
+    useClientAuthGuard();
 
     const router = useRouter();
 
@@ -110,7 +111,7 @@ const CheckListPage = observer((props: Props) => {
     }
 
     return (
-        <>
+        <AppFrame>
             {checklistState.checkList &&
                 <>
                     <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
@@ -229,7 +230,7 @@ const CheckListPage = observer((props: Props) => {
                     </Dialog>
                 </>
             }
-        </>
+        </AppFrame>
     );
 });
 

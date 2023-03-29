@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Peperino.Contracts.Services;
-using Peperino.Domain.Base;
+using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
 using Peperino.EntityFramework.Entities;
 
@@ -16,12 +15,10 @@ namespace Peperino.Controllers
     public class DemoController : ApiControllerBase
     {
         private readonly IApplicationDbContext _dbContext;
-        private readonly ICurrentUserService _currentUserService;
 
-        public DemoController(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public DemoController(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _currentUserService = currentUserService;
         }
 
         // GET: api/<DemoController>

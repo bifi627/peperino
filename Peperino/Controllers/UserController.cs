@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Peperino.Application.User.Commands.CreateUser;
-using Peperino.Contracts.Services;
+using Peperino.Core.Contracts;
 using Peperino.Dtos.User;
 
 namespace Peperino.Controllers

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Peperino;
 using Peperino.Application.CheckList;
+using Peperino.Core.Web;
 using Peperino.Dtos.CheckList;
 using Peperino.EntityFramework;
 using Peperino.Filters;
@@ -91,12 +92,10 @@ var app = builder.Build();
         await context.Database.MigrateAsync();
     }
 
-    app.UseMiddleware<Peperino.Middleware.ExceptionHandlerMiddleware>();
-
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.UseMiddleware<Peperino.Middleware.InitialConnectionMiddleware>();
+    app.UseCorePeperino();
 
     app.MapControllers();
 
