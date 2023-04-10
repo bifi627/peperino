@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Peperino.EntityFramework.Entities.CheckList;
+using Peperino.EntityFramework.Entities.Inventory;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -50,6 +51,9 @@ namespace Peperino.Dtos.CheckList
                 case ImageCheckListItem imageCheckListItem:
                     dto = imageCheckListItem.Adapt<ImageCheckListItemOutDto>();
                     break;
+                case InventoryCheckListItem inventoryCheckListItem:
+                    dto = baseCheckListItem.Adapt<InventoryCheckListItemOutDto>();
+                    break;
                 default:
                     throw new ArgumentException($"Unknown item type {baseCheckListItem.GetType()}");
             }
@@ -80,5 +84,14 @@ namespace Peperino.Dtos.CheckList
 
         [Required]
         public Guid ImageReference { get; set; } = Guid.Empty;
+    }
+
+    public class InventoryCheckListItemOutDto : BaseCheckListItemOutDto
+    {
+        [Required]
+        public string Text { get; set; } = string.Empty;
+
+        [Required]
+        public double Quantity { get; set; } = 0.0;
     }
 }

@@ -4,6 +4,7 @@ using Peperino.Core.EntityFramework;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities;
 using Peperino.EntityFramework.Entities.CheckList;
+using Peperino.EntityFramework.Entities.Inventory;
 using System.Reflection;
 
 namespace Peperino.EntityFramework
@@ -32,6 +33,8 @@ namespace Peperino.EntityFramework
         public DbSet<SharedLink> SharedLinks => Set<SharedLink>();
         public DbSet<CheckList> CheckLists => Set<CheckList>();
         public DbSet<CheckListItemType> CheckListItemTypes => Set<CheckListItemType>();
+        public DbSet<InventoryQuantityType> InventoryQuantityTypes => Set<InventoryQuantityType>();
+        public DbSet<Inventory> Inventories => Set<Inventory>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

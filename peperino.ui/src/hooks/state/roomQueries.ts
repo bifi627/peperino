@@ -1,5 +1,5 @@
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { CreateCheckListCommand } from "../../lib/api";
+import { CreateCheckListCommand, CreateInventoryCommand } from "../../lib/api";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 
 export module RoomQueries {
@@ -33,7 +33,7 @@ export module RoomQueries {
     }
 
     export const useCreateCheckListMutation = (queryClient: QueryClient, onMutate?: () => unknown | Promise<unknown>) => {
-        const createRoomMutation = useMutation({
+        const createCheckListMutation = useMutation({
             mutationFn: async (createCommand: CreateCheckListCommand) => {
                 await ClientApi.checkList.createList(createCommand);
             },
@@ -42,7 +42,20 @@ export module RoomQueries {
             },
             onMutate: onMutate,
         });
-        return createRoomMutation;
+        return createCheckListMutation;
+    }
+
+    export const useCreateInventoryMutation = (queryClient: QueryClient, onMutate?: () => unknown | Promise<unknown>) => {
+        const createInventoryMutation = useMutation({
+            mutationFn: async (createCommand: CreateInventoryCommand) => {
+                await ClientApi.inventory.createInventory(createCommand);
+            },
+            onSettled: async () => {
+                await queryClient.invalidateQueries({ queryKey: roomBySlugQueryKey });
+            },
+            onMutate: onMutate,
+        });
+        return createInventoryMutation;
     }
 }
 

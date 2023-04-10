@@ -29,5 +29,8 @@ namespace Peperino.Dtos.UserGroup
 
         [Required]
         public List<CheckList.CheckListOutDto> CheckLists { get; set; } = new();
+
+        [Required]
+        public List<Inventory.InventoryOutDto> Inventories { get; set; } = new();
     }
 }

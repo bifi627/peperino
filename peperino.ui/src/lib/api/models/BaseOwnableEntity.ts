@@ -2,14 +2,14 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { BaseEvent } from './BaseEvent';
 import type { GroupAccess } from './GroupAccess';
+import type { INotification } from './INotification';
 import type { User } from './User';
 import type { UserAccess } from './UserAccess';
 
 export type BaseOwnableEntity = {
     id?: number;
-    readonly domainEvents?: Array<BaseEvent> | null;
+    readonly events?: Array<INotification> | null;
     created?: string;
     createdBy?: User;
     lastModified?: string | null;

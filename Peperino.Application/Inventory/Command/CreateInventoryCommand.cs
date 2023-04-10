@@ -6,9 +6,9 @@ using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 
-namespace Peperino.Application.CheckList.Commands.CreateCheckList
+namespace Peperino.Application.Inventory.Command
 {
-    public class CreateCheckListCommand : IRequest<EntityFramework.Entities.CheckList.CheckList>
+    public class CreateInventoryCommand : IRequest<EntityFramework.Entities.Inventory.Inventory>
     {
         [Required]
         public string Name { get; set; } = string.Empty;
@@ -17,18 +17,18 @@ namespace Peperino.Application.CheckList.Commands.CreateCheckList
         public string RoomSlug { get; set; } = string.Empty;
     }
 
-    public class CreateCheckListCommandHandler : IRequestHandler<CreateCheckListCommand, EntityFramework.Entities.CheckList.CheckList>
+    public class CreateInventoryCommandHandler : IRequestHandler<CreateInventoryCommand, EntityFramework.Entities.Inventory.Inventory>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
 
-        public CreateCheckListCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public CreateInventoryCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
         }
 
-        public async Task<EntityFramework.Entities.CheckList.CheckList> Handle(CreateCheckListCommand request, CancellationToken cancellationToken)
+        public async Task<EntityFramework.Entities.Inventory.Inventory> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
         {
             var currentUser = _dbContext.Users.FirstOrDefault(u => u.Id == _currentUserService.UserId);
 
@@ -44,37 +44,31 @@ namespace Peperino.Application.CheckList.Commands.CreateCheckList
 
             room.RequireAccess(currentUser, AccessLevel.WriteContent);
 
-            // Create CheckList
             var slug = request.Name.Slugify();
 
-            if (_dbContext.CheckLists.Any(r => r.Slug == slug))
+            if (_dbContext.Inventories.Any(r => r.Slug == slug))
             {
                 slug += $"-{Guid.NewGuid().ToString()[..8]}";
             }
 
-            var checkList = new EntityFramework.Entities.CheckList.CheckList
+            var inventory = new EntityFramework.Entities.Inventory.Inventory
             {
                 Name = request.Name,
                 Slug = slug
             };
 
-            // Every room has a specific user group for easeier managing the access
-            // The entity inside the group (CheckList in this case) should reference this user group
-            // Once applied we dont need the reference to the actual group but is this even necessary
-            // I shoud be able to access the parent room at any time if i need to check access...
             var sharedRoomAccess = room.GroupAccess.FirstOrDefault(f => f.UserGroup.GroupName == CreateRoomCommand.SHARED_ROOM_ACCESS);
-
             if (sharedRoomAccess is null)
             {
                 throw new Exception($"Room ({roomSlug}) has no shared room access group, something is fishy there");
             }
 
-            checkList.GroupAccess.Add(sharedRoomAccess);
+            inventory.GroupAccess.Add(sharedRoomAccess);
 
-            room.CheckLists.Add(checkList);
+            room.Inventories.Add(inventory);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return checkList;
+            return inventory;
         }
     }
 }

@@ -8,5 +8,6 @@ namespace Peperino.EntityFramework.Entities
         public string Slug { get; set; } = string.Empty;
 
         public virtual IList<CheckList.CheckList> CheckLists { get; set; } = new List<CheckList.CheckList>();
+        public virtual IList<Inventory.Inventory> Inventories { get; set; } = new List<Inventory.Inventory>();
     }
 }

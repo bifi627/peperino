@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
-import { BaseCheckListItemOutDto, CheckListOutDto } from "../../lib/api";
+import { BaseCheckListItemOutDto } from "../../lib/api";
 import { isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
@@ -16,11 +16,7 @@ import { selectFile, toBase64 } from "../../lib/helper/common";
 import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
-interface Props {
-    checkList: CheckListOutDto;
-}
-
-const CheckListPage = observer((props: Props) => {
+const CheckListPage = observer(() => {
     useClientAuthGuard();
 
     const router = useRouter();
