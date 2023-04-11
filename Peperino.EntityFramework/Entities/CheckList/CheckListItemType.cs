@@ -7,6 +7,7 @@ namespace Peperino.EntityFramework.Entities.CheckList
         Text = 1,
         Link = 2,
         Image = 3,
+        Inventory = 4,
     }
 
     public class CheckListItemType : BaseEntity<int>

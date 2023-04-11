@@ -10,6 +10,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AccessLevel } from './models/AccessLevel';
+export type { AddInventoryItemCommand } from './models/AddInventoryItemCommand';
 export type { ArrangeItemInDto } from './models/ArrangeItemInDto';
 export type { BaseCheckListItemOutDto } from './models/BaseCheckListItemOutDto';
 export type { BaseOwnableEntity } from './models/BaseOwnableEntity';
@@ -28,11 +29,10 @@ export type { ImageCheckListItemOutDto } from './models/ImageCheckListItemOutDto
 export type { INotification } from './models/INotification';
 export type { InventoryCheckListItemOutDto } from './models/InventoryCheckListItemOutDto';
 export type { InventoryOutDto } from './models/InventoryOutDto';
-export type { InventoryQuantityTypeOutDto } from './models/InventoryQuantityTypeOutDto';
 export type { ItemVariant } from './models/ItemVariant';
 export type { LinkCheckListItemInDto } from './models/LinkCheckListItemInDto';
 export type { LinkCheckListItemOutDto } from './models/LinkCheckListItemOutDto';
-export type { QuantityType } from './models/QuantityType';
+export type { QuantityUnit } from './models/QuantityUnit';
 export type { RearrangeCheckListItemsInDto } from './models/RearrangeCheckListItemsInDto';
 export type { RoomOutDto } from './models/RoomOutDto';
 export type { SharedLinkInDto } from './models/SharedLinkInDto';
@@ -55,7 +55,6 @@ export { EnvironmentService } from './services/EnvironmentService';
 export { HealthCheckService } from './services/HealthCheckService';
 export { ImageStoreService } from './services/ImageStoreService';
 export { InventoryService } from './services/InventoryService';
-export { QuantityService } from './services/QuantityService';
 export { RoomService } from './services/RoomService';
 export { SharedLinkService } from './services/SharedLinkService';
 export { UserService } from './services/UserService';

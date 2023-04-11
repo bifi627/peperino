@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Application.Inventory.Command
 {
-    public class CreateInventoryCommand : IRequest<EntityFramework.Entities.Inventory.Inventory>
+    public class CreateInventoryCommand : IRequest<EntityFramework.Entities.CheckList.CheckList>
     {
         [Required]
         public string Name { get; set; } = string.Empty;
@@ -17,7 +17,7 @@ namespace Peperino.Application.Inventory.Command
         public string RoomSlug { get; set; } = string.Empty;
     }
 
-    public class CreateInventoryCommandHandler : IRequestHandler<CreateInventoryCommand, EntityFramework.Entities.Inventory.Inventory>
+    public class CreateInventoryCommandHandler : IRequestHandler<CreateInventoryCommand, EntityFramework.Entities.CheckList.CheckList>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
@@ -28,7 +28,7 @@ namespace Peperino.Application.Inventory.Command
             _currentUserService = currentUserService;
         }
 
-        public async Task<EntityFramework.Entities.Inventory.Inventory> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
+        public async Task<EntityFramework.Entities.CheckList.CheckList> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
         {
             var currentUser = _dbContext.Users.FirstOrDefault(u => u.Id == _currentUserService.UserId);
 
@@ -46,12 +46,12 @@ namespace Peperino.Application.Inventory.Command
 
             var slug = request.Name.Slugify();
 
-            if (_dbContext.Inventories.Any(r => r.Slug == slug))
+            if (_dbContext.CheckLists.Any(r => r.Slug == slug))
             {
                 slug += $"-{Guid.NewGuid().ToString()[..8]}";
             }
 
-            var inventory = new EntityFramework.Entities.Inventory.Inventory
+            var inventory = new EntityFramework.Entities.CheckList.CheckList
             {
                 Name = request.Name,
                 Slug = slug

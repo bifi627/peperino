@@ -22,7 +22,6 @@ namespace Peperino.Controllers.CheckList
                                                 .Include(c => c.Entities)
                                                 .WithOwnable()
                                                 .FilterRequireRead(CurrentUser)
-                                                .Where(r => r.Slug == listSlug)
                                                 .FirstOrDefault(r => r.Slug == listSlug);
 
             if (checkList is null)

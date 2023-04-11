@@ -1,15 +1,15 @@
 ﻿using Peperino.EntityFramework.Entities.Inventory;
 using System.ComponentModel.DataAnnotations;
 
-namespace Peperino.Dtos.Inventory
+namespace Peperino.Dtos.CheckList.AddItems
 {
-    public class InventoryQuantityTypeOutDto
+    public class InventoryCheckListItemInDto
     {
         [Required]
-        public string Name { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
 
         [Required]
-        public string ShortName { get; set; } = string.Empty;
+        public double Quantity { get; set; } = 0.0;
 
         [Required]
         public QuantityUnit Unit { get; set; } = QuantityUnit.Unit;

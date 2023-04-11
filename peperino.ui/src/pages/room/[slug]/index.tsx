@@ -84,12 +84,15 @@ const GroupPage = observer((props: Props) => {
                     <Box>
                         {inventories?.map(inventory => {
                             return (
-                                <InventoryListCardAction
-                                    key={inventory.slug}
-                                    mainText={inventory.name}
-                                    subTexts={[`${inventory.entities.length} Einträge`]}
-                                    slug={inventory.slug}
-                                />
+                                <>
+                                    <InventoryListCardAction
+                                        key={inventory.slug}
+                                        mainText={inventory.name}
+                                        subTexts={[`${inventory.entities.length} Einträge`]}
+                                        slug={inventory.slug}
+                                    />
+                                    {/* <InventoryListPage slug={inventory.slug} /> */}
+                                </>
                             )
                         })}
                     </Box>

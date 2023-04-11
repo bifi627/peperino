@@ -52,7 +52,7 @@ namespace Peperino.Dtos.CheckList
                     dto = imageCheckListItem.Adapt<ImageCheckListItemOutDto>();
                     break;
                 case InventoryCheckListItem inventoryCheckListItem:
-                    dto = baseCheckListItem.Adapt<InventoryCheckListItemOutDto>();
+                    dto = inventoryCheckListItem.Adapt<InventoryCheckListItemOutDto>();
                     break;
                 default:
                     throw new ArgumentException($"Unknown item type {baseCheckListItem.GetType()}");
@@ -93,5 +93,8 @@ namespace Peperino.Dtos.CheckList
 
         [Required]
         public double Quantity { get; set; } = 0.0;
+
+        [Required]
+        public QuantityUnit Unit { get; set; }
     }
 }

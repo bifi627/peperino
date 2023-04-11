@@ -56,14 +56,18 @@ namespace Peperino.Application.CheckList.EventHandlers
         private async Task NotifyDirect(BaseCheckListItem entity)
         {
             var currentUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _currentUserService.UserId);
-            var slug = entity.CheckList.Slug;
 
-            if (currentUser is null)
+            if (entity.CheckList is not null)
             {
-                throw new Exception("CurrentUser is null");
-            }
+                var slug = entity.CheckList.Slug;
 
-            await _checkListNotificationService.SendCheckListUpdatedNotification(slug, currentUser);
+                if (currentUser is null)
+                {
+                    throw new Exception("CurrentUser is null");
+                }
+
+                await _checkListNotificationService.SendCheckListUpdatedNotification(slug, currentUser);
+            }
         }
 
         public override async Task OnDeleted(IEventable entity)

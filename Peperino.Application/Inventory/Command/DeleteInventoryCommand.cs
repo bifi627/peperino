@@ -28,7 +28,7 @@ namespace Peperino.Application.Inventory.Command
 
         public async Task<Unit> Handle(DeleteInventoryCommand request, CancellationToken cancellationToken)
         {
-            var inventory = await _dbContext.Inventories.FirstOrDefaultAsync(i => i.Slug == request.InventorySlug, cancellationToken);
+            var inventory = await _dbContext.CheckLists.FirstOrDefaultAsync(i => i.Slug == request.InventorySlug, cancellationToken);
 
             if (inventory is null)
             {
@@ -37,7 +37,7 @@ namespace Peperino.Application.Inventory.Command
 
             inventory.RequireAccess(_currentUser, AccessLevel.Delete);
 
-            _dbContext.Inventories.Remove(inventory);
+            _dbContext.CheckLists.Remove(inventory);
             await _dbContext.SaveChangesAsync();
 
             return Unit.Value;

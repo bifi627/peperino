@@ -245,7 +245,6 @@ export class CheckListPageState extends BasePageState {
             return;
         }
         const url = KnownRoutes.SignalR.CheckList();
-        console.log(url);
         this.notificationHubConnection = new HubConnectionBuilder().withUrl(url,
             {
                 skipNegotiation: true,

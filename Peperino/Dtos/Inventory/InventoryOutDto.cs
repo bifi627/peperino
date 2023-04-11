@@ -10,7 +10,7 @@ namespace Peperino.Dtos.Inventory
         public int Id { get; set; }
 
         [Required]
-        public RoomOutDto Room { get; set; }
+        public RoomOutDto Room_Inventory { get; set; }
 
         [Required]
         public string Name { get; set; } = string.Empty;
@@ -19,6 +19,6 @@ namespace Peperino.Dtos.Inventory
         public string Slug { get; set; } = string.Empty;
 
         [Required]
-        public List<InventoryCheckListItemOutDto> Entities { get; set; } = new List<InventoryCheckListItemOutDto>();
+        public List<BaseCheckListItemOutDto> Entities { get; set; } = new List<BaseCheckListItemOutDto>();
     }
 }

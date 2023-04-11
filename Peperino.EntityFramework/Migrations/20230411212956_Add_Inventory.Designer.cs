@@ -12,7 +12,7 @@ using Peperino.EntityFramework;
 namespace Peperino.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230410205704_Add_Inventory")]
+    [Migration("20230411212956_Add_Inventory")]
     partial class Add_Inventory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -241,30 +241,6 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("CheckListItemTypes");
                 });
 
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.Inventory.InventoryQuantityType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("QuantityType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ShortName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InventoryQuantityTypes");
-                });
-
             modelBuilder.Entity("Peperino.EntityFramework.Entities.SharedLink", b =>
                 {
                     b.Property<int>("Id")
@@ -349,7 +325,10 @@ namespace Peperino.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RoomId")
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Room_InventoryId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Slug")
@@ -357,6 +336,8 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("Room_InventoryId");
 
                     b.ToTable("CheckLists", (string)null);
                 });
@@ -373,6 +354,23 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.ToTable("ImageCheckListItems", (string)null);
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.InventoryCheckListItem", b =>
+                {
+                    b.HasBaseType("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
+                    b.ToTable("InventoryCheckListItems", (string)null);
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.LinkCheckListItem", b =>
@@ -410,50 +408,6 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.ToTable("Demos", (string)null);
-                });
-
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.Inventory.Inventory", b =>
-                {
-                    b.HasBaseType("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("Inventories", (string)null);
-                });
-
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.Inventory.InventoryCheckListItem", b =>
-                {
-                    b.HasBaseType("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem");
-
-                    b.Property<int?>("InventoryId")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("InventoryId");
-
-                    b.HasIndex("TypeId");
-
-                    b.ToTable("InventoryCheckListItems", (string)null);
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
@@ -646,10 +600,16 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasOne("Peperino.EntityFramework.Entities.Room", "Room")
                         .WithMany("CheckLists")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Peperino.EntityFramework.Entities.Room", "Room_Inventory")
+                        .WithMany("Inventories")
+                        .HasForeignKey("Room_InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Room");
+
+                    b.Navigation("Room_Inventory");
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", b =>
@@ -657,6 +617,15 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
                         .WithOne()
                         .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.InventoryCheckListItem", b =>
+                {
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.InventoryCheckListItem", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -688,44 +657,6 @@ namespace Peperino.EntityFramework.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.Inventory.Inventory", b =>
-                {
-                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
-                        .WithOne()
-                        .HasForeignKey("Peperino.EntityFramework.Entities.Inventory.Inventory", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Peperino.EntityFramework.Entities.Room", "Room")
-                        .WithMany("Inventories")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.Inventory.InventoryCheckListItem", b =>
-                {
-                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
-                        .WithOne()
-                        .HasForeignKey("Peperino.EntityFramework.Entities.Inventory.InventoryCheckListItem", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Peperino.EntityFramework.Entities.Inventory.Inventory", null)
-                        .WithMany("Entities")
-                        .HasForeignKey("InventoryId");
-
-                    b.HasOne("Peperino.EntityFramework.Entities.Inventory.InventoryQuantityType", "Type")
-                        .WithMany()
-                        .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Type");
-                });
-
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
                 {
                     b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
@@ -736,11 +667,6 @@ namespace Peperino.EntityFramework.Migrations
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckList", b =>
-                {
-                    b.Navigation("Entities");
-                });
-
-            modelBuilder.Entity("Peperino.EntityFramework.Entities.Inventory.Inventory", b =>
                 {
                     b.Navigation("Entities");
                 });
