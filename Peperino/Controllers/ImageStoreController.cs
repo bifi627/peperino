@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Peperino.Contracts.Services;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,12 +16,12 @@ namespace Peperino.Controllers
         [HttpGet("{contextId}/{guid}", Name = nameof(Get))]
         public async Task<IActionResult> Get([Required] int contextId, [Required] Guid guid)
         {
-            var entry = await DbContext.BaseOwnableEntity.FirstOrDefaultAsync(i => i.Id == contextId);
+            //var entry = await DbContext.BaseOwnableEntity.FirstOrDefaultAsync(i => i.Id == contextId);
 
-            if (entry == null)
-            {
-                return NotFound();
-            }
+            //if (entry == null)
+            //{
+            //    return NotFound();
+            //}
 
             var response = await _firebaseStorageService.DownloadFile(StorageScope.CheckListStorage, guid);
 

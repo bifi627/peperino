@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BaseCheckListItemOutDto, InventoryCheckListItemInDto, InventoryCheckListItemOutDto, InventoryOutDto, RearrangeCheckListItemsInDto, TextCheckListItemInDto } from "../../lib/api";
+import { BaseCheckListItemOutDto, InventoryCheckListItemInDto, InventoryCheckListItemOutDto, InventoryOutDto, LinkCheckListItemInDto, LinkCheckListItemOutDto, RearrangeCheckListItemsInDto, TextCheckListItemInDto } from "../../lib/api";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 
 export module CheckListQueries {
@@ -75,6 +75,44 @@ export module CheckListQueries {
                     sortIndex: 9999,
                     checked: false,
                 } as InventoryCheckListItemOutDto;
+
+                queryClient.setQueryData<InventoryOutDto>(computeQueryKey(slug), (old) => {
+                    old?.entities.push(newValue);
+                    return old;
+                });
+
+                return previousValues;
+            },
+        });
+
+        return addInventoryItemMutation;
+    }
+
+    export const useAddLinkItemMutation = (slug: string) => {
+        const queryClient = useQueryClient();
+
+        const addInventoryItemMutation = useMutation({
+            mutationFn: async (dto: LinkCheckListItemInDto) => {
+                await ClientApi.checkListItem.addLinkItem(slug, dto)
+            },
+            onSettled: async () => {
+                await queryClient.invalidateQueries({ queryKey: computeQueryKey(slug) })
+            },
+            onError: async () => {
+                await queryClient.invalidateQueries({ queryKey: computeQueryKey(slug) });
+            },
+            onMutate: async (command) => {
+                await queryClient.cancelQueries(computeQueryKey(slug));
+                const previousValues = queryClient.getQueryData<InventoryOutDto>(computeQueryKey(slug));
+
+                const newValue: LinkCheckListItemOutDto = {
+                    title: command.title,
+                    link: command.link,
+                    id: 0,
+                    itemType: { variant: "Link", name: "", description: "" },
+                    sortIndex: 9999,
+                    checked: false,
+                } as LinkCheckListItemOutDto;
 
                 queryClient.setQueryData<InventoryOutDto>(computeQueryKey(slug), (old) => {
                     old?.entities.push(newValue);

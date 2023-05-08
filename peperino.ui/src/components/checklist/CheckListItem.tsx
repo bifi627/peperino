@@ -1,7 +1,6 @@
 import { Box, Checkbox } from "@mui/material";
 import { BaseCheckListItemOutDto } from "../../lib/api";
 import { isImageItem, isInventoryItem, isLinkItem, isTextItem } from "../../lib/apiHelper/checkListItemGuards";
-import { useApplicationState } from "../../lib/state/ApplicationState";
 import { ImageCheckListItem } from "./ImageCheckListItem";
 import { InventoryCheckListItem } from "./InventoryCheckListItem";
 import { LinkCheckListItem } from "./LinkCheckListItem";
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export const CheckListItem = (props: Props) => {
-    const checkListPageState = useApplicationState().getChecklistState();
 
     const onCheckChange = async () => {
         props.onCheck(props.item);
@@ -28,7 +26,7 @@ export const CheckListItem = (props: Props) => {
             <>
                 {isTextItem(props.item) && <TextCheckListItem onUpdate={props.onUpdate} onDelete={props.onDelete} checkListSlug={props.checkListSlug} item={props.item} />}
                 {isLinkItem(props.item) && <LinkCheckListItem onUpdate={props.onUpdate} onDelete={props.onDelete} checkListSlug={props.checkListSlug} item={props.item} />}
-                {isImageItem(props.item) && <ImageCheckListItem onUpdate={props.onUpdate} onDelete={props.onDelete} checkListSlug={props.checkListSlug} contextId={checkListPageState.checkList?.id ?? 0} item={props.item} />}
+                {isImageItem(props.item) && <ImageCheckListItem onUpdate={props.onUpdate} onDelete={props.onDelete} checkListSlug={props.checkListSlug} contextId={props.item.id} item={props.item} />}
                 {isInventoryItem(props.item) && <InventoryCheckListItem onUpdate={props.onUpdate} onDelete={props.onDelete} checkListSlug={props.checkListSlug} item={props.item} />}
             </>
         </Box>

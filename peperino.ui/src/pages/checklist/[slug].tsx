@@ -1,5 +1,6 @@
 import { AttachFile, Link, MoveUp, Photo, Send } from "@mui/icons-material";
 import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, TextField, useTheme } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { DropResult } from "react-beautiful-dnd";
@@ -45,10 +46,12 @@ const CheckListPage = observer((props: Props) => {
     //     }
     // }
 
+    const queryClient = useQueryClient();
     const checkListQuery = CheckListQueries.useGetCheckListQuery(slug);
     const checkList = checkListQuery.data;
     const loading = checkListQuery.isLoading;
 
+    const addLinkItemMutation = CheckListQueries.useAddLinkItemMutation(slug);
     const addTextItemMutation = CheckListQueries.useAddTextItemMutation(slug);
     const arrangeItemsMutation = CheckListQueries.useArrangeItemsMutation(slug);
     const deleteItemMutation = CheckListQueries.useDeleteItemMutation(slug);
@@ -112,19 +115,19 @@ const CheckListPage = observer((props: Props) => {
 
     const openImageDialog = async () => {
 
+
+        queryClient.setDefaultOptions({ queries: { refetchOnWindowFocus: false } });
+
         checklistState.attachmentOptionsOpened = false;
         const files = await selectFile("image/*");
 
         await appFrame.withLoadingScreen(async () => {
-            if (!checklistState.checkList) {
-                return;
-            }
-
             if (files.length > 0) {
                 var file = files[0];
                 var fileContent = await toBase64(file);
-                await ClientApi.checkListItem.addImageItem(checklistState.checkList?.slug, { title: "TEST", imageBase64: fileContent });
-                await checklistState.reloadList();
+                await ClientApi.checkListItem.addImageItem(slug, { title: "TEST", imageBase64: fileContent });
+
+                await queryClient.invalidateQueries(CheckListQueries.computeQueryKey(slug));
             }
         });
     }
@@ -289,10 +292,8 @@ const CheckListPage = observer((props: Props) => {
                             return;
                         }
 
-                        await appFrame.withLoadingScreen(async () => {
-                            checklistState.linkDialogOpened = false;
-                            await checklistState.addLinkItem(checklistState.inputValue, checklistState.linkValue);
-                        });
+                        checklistState.linkDialogOpened = false;
+                        await addLinkItemMutation.mutateAsync({ link: checklistState.linkValue, title: checklistState.inputValue })
                     }}>Hinzufügen</Button>
                 </DialogActions>
             </Dialog>
