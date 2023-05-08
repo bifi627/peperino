@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Application.Inventory.Command;
 using Peperino.Core.EntityFramework.Entities;
-using Peperino.Dtos.CheckList;
 using Peperino.Dtos.Inventory;
 using System.ComponentModel.DataAnnotations;
 
@@ -54,21 +53,6 @@ namespace Peperino.Controllers.Inventory
         {
             await Mediator.Send(deleteInventoryCommand);
             return Ok();
-        }
-
-        [HttpPost("add", Name = nameof(AddInventoryItem))]
-        public async Task<ActionResult<InventoryCheckListItemOutDto>> AddInventoryItem([FromBody][Required] AddInventoryItemCommand addInventoryItemCommand)
-        {
-            var inventoryItem = await Mediator.Send(addInventoryItemCommand);
-
-            if (inventoryItem is null)
-            {
-                return BadRequest();
-            }
-
-            var dto = inventoryItem.Adapt<InventoryCheckListItemOutDto>();
-
-            return dto;
         }
     }
 }

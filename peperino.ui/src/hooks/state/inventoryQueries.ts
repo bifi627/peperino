@@ -1,5 +1,5 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AddInventoryItemCommand, CreateInventoryCommand, InventoryCheckListItemOutDto, InventoryOutDto } from "../../lib/api";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { CreateInventoryCommand } from "../../lib/api";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 
 export module InventoryQueries {
@@ -20,41 +20,5 @@ export module InventoryQueries {
             onMutate: onMutate,
         });
         return createInventoryMutation;
-    }
-
-    export const useAddIventoryItemMutation = (onMutate?: () => unknown | Promise<unknown>) => {
-        const queryClient = useQueryClient();
-        const addInventoryItemMutation = useMutation({
-            mutationFn: async (command: AddInventoryItemCommand) => {
-                await ClientApi.inventory.addInventoryItem(command);
-            },
-            onSettled: async () => {
-                await queryClient.invalidateQueries({ queryKey: inventoryQueryKey });
-            },
-            onMutate: async (command) => {
-                await onMutate?.();
-                await queryClient.cancelQueries(inventoryQueryKey);
-                const previousValues = queryClient.getQueryData<InventoryOutDto>(inventoryQueryKey);
-
-                const newValue: InventoryCheckListItemOutDto = {
-                    text: command.text,
-                    quantity: command.quantity,
-                    unit: command.unit,
-                    id: 0,
-                    itemType: { variant: "Inventory", name: "", description: "" },
-                    sortIndex: 9999,
-                    checked: false,
-                } as InventoryCheckListItemOutDto;
-
-                queryClient.setQueryData<InventoryOutDto>(inventoryQueryKey, (old) => {
-                    old?.entities.push(newValue);
-                    return old;
-                });
-
-                return previousValues;
-            },
-        });
-
-        return addInventoryItemMutation;
     }
 }

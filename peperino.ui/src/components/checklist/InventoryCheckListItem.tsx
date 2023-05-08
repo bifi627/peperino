@@ -1,17 +1,16 @@
 import { Delete } from "@mui/icons-material";
 import { TextField } from "@mui/material";
-import { observer } from "mobx-react";
 import { useRef, useState } from "react";
-import { TextCheckListItemOutDto } from "../../lib/api";
+import { InventoryCheckListItemOutDto } from "../../lib/api";
 
 interface Props {
-    item: TextCheckListItemOutDto;
+    item: InventoryCheckListItemOutDto;
     checkListSlug: string;
-    onDelete: (item: TextCheckListItemOutDto) => void;
-    onUpdate: (item: TextCheckListItemOutDto) => void;
+    onDelete: (item: InventoryCheckListItemOutDto) => void;
+    onUpdate: (item: InventoryCheckListItemOutDto) => void;
 }
 
-export const TextCheckListItem = observer((props: Props) => {
+export const InventoryCheckListItem = (props: Props) => {
     const inputRef = useRef<HTMLInputElement>();
 
     const onInputBlur = async () => {
@@ -60,4 +59,4 @@ export const TextCheckListItem = observer((props: Props) => {
             {isInputFocused && <Delete onClick={onDeleteClick} />}
         </>
     );
-});
+};

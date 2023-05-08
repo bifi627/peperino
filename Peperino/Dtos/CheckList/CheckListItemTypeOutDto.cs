@@ -5,10 +5,10 @@ namespace Peperino.Dtos.CheckList
 {
     public class CheckListItemTypeOutDto
     {
-        [Required]
+        //[Required]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
+        //[Required]
         public string Description { get; set; } = string.Empty;
 
         [Required]

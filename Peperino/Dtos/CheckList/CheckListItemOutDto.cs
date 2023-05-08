@@ -11,7 +11,36 @@ namespace Peperino.Dtos.CheckList
     {
         public override TBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException("This should never be used");
+            if (reader.TokenType == JsonTokenType.Null)
+            {
+                return null;
+            }
+
+            // Use the JsonDocument to parse the JSON data.
+            using JsonDocument document = JsonDocument.ParseValue(ref reader);
+
+            // Get the root element of the JSON document.
+            JsonElement rootElement = document.RootElement;
+
+            if (rootElement.TryGetProperty("itemType", out var itemTypeElement))
+            {
+                if (itemTypeElement.TryGetProperty("variant", out var variantElement))
+                {
+                    if (Enum.TryParse<ItemVariant>(variantElement.ToString(), out var itemType))
+                    {
+                        TBase? deserializedObject = itemType switch
+                        {
+                            ItemVariant.Text => JsonSerializer.Deserialize<TextCheckListItemOutDto>(rootElement.GetRawText(), options) as TBase,
+                            ItemVariant.Link => JsonSerializer.Deserialize<LinkCheckListItemOutDto>(rootElement.GetRawText(), options) as TBase,
+                            ItemVariant.Image => JsonSerializer.Deserialize<ImageCheckListItemOutDto>(rootElement.GetRawText(), options) as TBase,
+                            ItemVariant.Inventory => JsonSerializer.Deserialize<InventoryCheckListItemOutDto>(rootElement.GetRawText(), options) as TBase,
+                            _ => throw new NotImplementedException(),
+                        };
+                        return deserializedObject;
+                    }
+                }
+            }
+            throw new NotImplementedException();
         }
 
         public override void Write(Utf8JsonWriter writer, TBase value, JsonSerializerOptions options)

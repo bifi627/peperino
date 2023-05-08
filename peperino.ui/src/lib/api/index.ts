@@ -10,7 +10,6 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AccessLevel } from './models/AccessLevel';
-export type { AddInventoryItemCommand } from './models/AddInventoryItemCommand';
 export type { ArrangeItemInDto } from './models/ArrangeItemInDto';
 export type { BaseCheckListItemOutDto } from './models/BaseCheckListItemOutDto';
 export type { BaseOwnableEntity } from './models/BaseOwnableEntity';
@@ -27,6 +26,7 @@ export type { GroupAccess } from './models/GroupAccess';
 export type { ImageCheckListItemInDto } from './models/ImageCheckListItemInDto';
 export type { ImageCheckListItemOutDto } from './models/ImageCheckListItemOutDto';
 export type { INotification } from './models/INotification';
+export type { InventoryCheckListItemInDto } from './models/InventoryCheckListItemInDto';
 export type { InventoryCheckListItemOutDto } from './models/InventoryCheckListItemOutDto';
 export type { InventoryOutDto } from './models/InventoryOutDto';
 export type { ItemVariant } from './models/ItemVariant';

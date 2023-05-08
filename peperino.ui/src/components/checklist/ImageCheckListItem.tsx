@@ -3,11 +3,13 @@ import { Box, IconButton, Popover } from "@mui/material";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { ImageCheckListItemOutDto, OpenAPI } from "../../lib/api";
-import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
     item: ImageCheckListItemOutDto;
     contextId: number;
+    checkListSlug: string;
+    onDelete: (item: ImageCheckListItemOutDto) => void;
+    onUpdate: (item: ImageCheckListItemOutDto) => void;
 }
 export const ImageCheckListItem = (props: Props) => {
 
@@ -15,8 +17,6 @@ export const ImageCheckListItem = (props: Props) => {
 
     const [optionsOpened, setOptionsOpened] = useState(false);
     const ref = useRef<HTMLButtonElement | null>(null);
-
-    const checkListPageState = useApplicationState().getChecklistState();
 
     const openLink = async () => {
         window.open(src, "_blank")?.focus();
@@ -46,7 +46,7 @@ export const ImageCheckListItem = (props: Props) => {
                     <p>Öffnen</p>
                 </Box>
                 <Box display="flex" flexDirection="row" gap="6px" sx={{ paddingRight: "20px" }} onClick={async () => {
-                    await checkListPageState.deleteItem(props.item);
+                    props.onDelete(props.item);
                 }}>
                     <IconButton color="error">
                         <Delete />
@@ -55,7 +55,7 @@ export const ImageCheckListItem = (props: Props) => {
                         Löschen
                     </p>
                 </Box>
-            </Popover>
+            </Popover >
         </>
     );
 }

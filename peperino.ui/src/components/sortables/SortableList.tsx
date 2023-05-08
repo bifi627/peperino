@@ -34,7 +34,7 @@ export function SortableList<T extends Data>(props: Props<T>) {
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                     >
-                                        <SortableItem dragHandleProps={provided.dragHandleProps}>
+                                        <SortableItem key={item.id} dragHandleProps={provided.dragHandleProps}>
                                             {props.renderData(item)}
                                         </SortableItem>
                                     </Box>

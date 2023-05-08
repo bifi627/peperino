@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type { BaseCheckListItemOutDto } from '../models/BaseCheckListItemOutDto';
 import type { ImageCheckListItemInDto } from '../models/ImageCheckListItemInDto';
+import type { InventoryCheckListItemInDto } from '../models/InventoryCheckListItemInDto';
 import type { LinkCheckListItemInDto } from '../models/LinkCheckListItemInDto';
 import type { RearrangeCheckListItemsInDto } from '../models/RearrangeCheckListItemsInDto';
 import type { TextCheckListItemInDto } from '../models/TextCheckListItemInDto';
@@ -79,22 +80,19 @@ requestBody: ImageCheckListItemInDto,
 
     /**
      * @param slug 
-     * @param id 
      * @param requestBody 
-     * @returns any Success
+     * @returns BaseCheckListItemOutDto Success
      * @throws ApiError
      */
-    public updateCheckListItem(
+    public addInventoryItem(
 slug: string,
-id: number,
-requestBody: string,
-): CancelablePromise<any> {
+requestBody: InventoryCheckListItemInDto,
+): CancelablePromise<BaseCheckListItemOutDto> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/api/CheckListItem/{slug}/{id}/text/update',
+            url: '/api/CheckListItem/{slug}/inventory/add',
             path: {
                 'slug': slug,
-                'id': id,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -103,22 +101,19 @@ requestBody: string,
 
     /**
      * @param slug 
-     * @param id 
      * @param requestBody 
      * @returns any Success
      * @throws ApiError
      */
-    public updateLinkCheckListItem(
+    public updateCheckListItem(
 slug: string,
-id: number,
-requestBody: LinkCheckListItemInDto,
+requestBody: BaseCheckListItemOutDto,
 ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/api/CheckListItem/{slug}/{id}/link/update',
+            url: '/api/CheckListItem/{slug}/updateItem',
             path: {
                 'slug': slug,
-                'id': id,
             },
             body: requestBody,
             mediaType: 'application/json',

@@ -5,7 +5,7 @@
 import type { ItemVariant } from './ItemVariant';
 
 export type CheckListItemTypeOutDto = {
-    name: string;
-    description: string;
+    name?: string | null;
+    description?: string | null;
     variant: ItemVariant;
 };

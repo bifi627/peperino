@@ -4,8 +4,7 @@
 
 import type { QuantityUnit } from './QuantityUnit';
 
-export type AddInventoryItemCommand = {
-    inventorySlug: string;
+export type InventoryCheckListItemInDto = {
     text: string;
     quantity: number;
     unit: QuantityUnit;

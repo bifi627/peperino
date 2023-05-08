@@ -1,23 +1,22 @@
 import { Autocomplete, Box, TextField } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { DropResult } from "react-beautiful-dnd";
 import { AppFrame } from "../../components/appFrame/AppFrame";
+import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
-import { InventoryQueries } from "../../hooks/state/inventoryQueries";
-import { isInventoryItem } from "../../lib/apiHelper/checkListItemGuards";
+import { CheckListQueries } from "../../hooks/state/checklistQueries";
+import { BaseCheckListItemOutDto } from "../../lib/api";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
+import { arrayMoveMutable } from "../../lib/helper/common";
 
 interface Props {
     slug: string;
 }
 
-const InventoryListPage = observer((props: Props) => {
+const InventoryListPage = (props: Props) => {
     useClientAuthGuard();
-
-    const queryClient = useQueryClient();
 
     const router = useRouter();
     const slug = router.query["slug"] as string ?? props.slug;
@@ -27,11 +26,17 @@ const InventoryListPage = observer((props: Props) => {
         router.back();
     };
 
-    const inventoryQuery = InventoryQueries.useGetInventoryQuery(slug);
-    const inventory = inventoryQuery.data;
-    const loading = inventoryQuery.isLoading;
+    const checkListQuery = CheckListQueries.useGetCheckListQuery(slug);
 
-    const addInventoryItemMutation = InventoryQueries.useAddIventoryItemMutation();
+    const inventory = checkListQuery.data;
+    const loading = checkListQuery.isLoading;
+    // const f = checkListQuery.isFetching; // Keep this so it rerenders on fetching
+
+    const addInventoryItemMutation = CheckListQueries.useAddIventoryItemMutation(slug);
+    const arrangeItemsMutation = CheckListQueries.useArrangeItemsMutation(slug);
+    const deleteItemMigration = CheckListQueries.useDeleteItemMutation(slug);
+    const updateItemMigration = CheckListQueries.useUpdateItemMutation(slug);
+    const toggleArrangeMutation = CheckListQueries.useToggleArrangeMutation(slug);
 
     const [inputValue, setInputValue] = useState("");
 
@@ -39,20 +44,73 @@ const InventoryListPage = observer((props: Props) => {
         return <>{"Loading..."}</>;
     }
 
+    const checkedItems = inventory.entities.filter(e => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
+    const uncheckedItems = inventory.entities.filter(e => !e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
+
+    const moveItems = async (sourceArray: BaseCheckListItemOutDto[], from: number, to: number) => {
+        const tempList = [...sourceArray];
+        arrayMoveMutable(tempList, from, to);
+        tempList.forEach((item, i) => {
+            item.sortIndex = i;
+        });
+
+        await arrangeItemsMutation.mutateAsync({ items: inventory.entities });
+    }
+
+    const onUncheckedDragEnd = (result: DropResult) => {
+        if (result.destination) {
+            moveItems(uncheckedItems, result.source.index, result.destination.index)
+        }
+    }
+
+    const onCheckedDragEnd = (result: DropResult) => {
+        if (result.destination) {
+            moveItems(checkedItems, result.source.index, result.destination.index)
+        }
+    }
+
+    const onDeleteItem = async (item: BaseCheckListItemOutDto) => {
+        await deleteItemMigration.mutateAsync(item.id);
+    }
+
+    const onUpdateItem = async (item: BaseCheckListItemOutDto) => {
+        await updateItemMigration.mutateAsync(item);
+    }
+
+    const onCheck = async (item: BaseCheckListItemOutDto) => {
+        if (item.checked === false) {
+            if (checkedItems.length === 0) {
+                item.sortIndex = 0;
+            }
+            else {
+                item.sortIndex = Math.min(...checkedItems.map(i => i.sortIndex));
+                checkedItems.forEach(item => {
+                    item.sortIndex++;
+                });
+            }
+        }
+        else {
+            if (uncheckedItems.length === 0) {
+                item.sortIndex = 0;
+            }
+            else {
+                item.sortIndex = Math.max(...uncheckedItems.map(i => i.sortIndex)) + 1;
+            }
+        }
+
+        item.checked = !item.checked;
+        await toggleArrangeMutation.mutateAsync({ arrangeRequest: { items: inventory.entities }, updateRequest: item });
+    };
+
     return (
         <AppFrame toolbarText={inventory.name}>
-            <>Inventory</>
+            <>Inventory </>
             <button onClick={deleteInventory}>Delete</button>
             <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
                 <SortableList
-                    data={inventory.entities}
-                    onDragEnd={() => { }}
-                    renderData={item => {
-                        if (isInventoryItem(item)) {
-                            return <>{item.text}</>
-                        }
-                        return <>Unknown item...</>;
-                    }}
+                    data={uncheckedItems}
+                    onDragEnd={onUncheckedDragEnd}
+                    renderData={item => <CheckListItem onCheck={onCheck} onUpdate={onUpdateItem} onDelete={onDeleteItem} key={item.id} checkListSlug={slug} item={item} />}
                 />
                 <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={async (e) => {
                     e.preventDefault();
@@ -60,16 +118,21 @@ const InventoryListPage = observer((props: Props) => {
                     if (inputValue !== "") {
                         const text = inputValue.trim();
                         setInputValue("");
-                        await addInventoryItemMutation.mutateAsync({ text: text, unit: "Unit", quantity: 1, inventorySlug: inventory.slug });
+                        await addInventoryItemMutation.mutateAsync({ text: text, unit: "Unit", quantity: 1 });
                     }
                 }}>
                     <Autocomplete inputValue={inputValue} onInputChange={(_, value) => setInputValue(value)} inputMode="search" options={[]} freeSolo fullWidth renderInput={params =>
                         <TextField autoFocus {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
                     }></Autocomplete>
                 </form>
+                <SortableList
+                    data={checkedItems}
+                    onDragEnd={onCheckedDragEnd}
+                    renderData={item => <CheckListItem onCheck={onCheck} onUpdate={onUpdateItem} onDelete={onDeleteItem} key={item.id} checkListSlug={slug} item={item} />}
+                />
             </Box>
         </AppFrame>
     );
-});
+};
 
 export default InventoryListPage;
