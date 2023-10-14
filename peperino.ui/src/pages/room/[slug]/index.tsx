@@ -117,7 +117,7 @@ const GroupPage = observer((props: Props) => {
                 }}
             >
                 <BottomNavigationAction label="Listen" icon={<List />} />
-                <BottomNavigationAction label="Inventar" icon={<Inventory />} />
+                <BottomNavigationAction disabled label="Inventar" icon={<Inventory />} />
                 <BottomNavigationAction disabled label="Placeholder" icon={<LocalActivity />} />
             </BottomNavigation>
             <RoomCreateDialog
