@@ -8,12 +8,14 @@ import { toast } from "react-toastify";
 import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
-import { CheckListQueries } from "../../hooks/state/checklistQueries";
+import { CheckListQueries } from "../../hooks/queries/checklistQueries";
+import { useWebSocketObserver } from "../../hooks/signalr/webSocketObserver";
 import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../lib/api";
 import { isInventoryItem, isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
 import { arrayMoveMutable, selectFile, toBase64 } from "../../lib/helper/common";
+import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
@@ -31,21 +33,6 @@ const CheckListPage = observer((props: Props) => {
     const router = useRouter();
     const slug = router.query["slug"] as string ?? props.slug;
 
-    // const initCheckList = async () => {
-    //     try {
-    //         const slug = router.query["slug"] as string ?? "";
-    //         await checklistState.pageInit(slug);
-    //         await checklistState.connectSignalR();
-    //     } catch (error) {
-    //         if (error instanceof Error) {
-    //             toast.error(error.message, { autoClose: 1000 });
-    //             setTimeout(() => {
-    //                 router.push(KnownRoutes.Root());
-    //             }, 1000);
-    //         }
-    //     }
-    // }
-
     const queryClient = useQueryClient();
     const checkListQuery = CheckListQueries.useGetCheckListQuery(slug);
     const checkList = checkListQuery.data;
@@ -58,12 +45,19 @@ const CheckListPage = observer((props: Props) => {
     const updateItemMutation = CheckListQueries.useUpdateItemMutation(slug);
     const toggleArrangeMutation = CheckListQueries.useToggleArrangeMutation(slug);
 
-    // useEffect(() => {
-    //     initCheckList();
-    //     return () => {
-    //         checklistState.disconnectSignalR();
-    //     }
-    // }, []);
+    const { connectionState } = useWebSocketObserver(
+        KnownRoutes.SignalR.CheckList(),
+        {
+            afterConnecting: async c => await c.send("JoinList", checkList?.slug ?? ""),
+            beforeDisconnecting: async c => await c.send("LeaveList", checkList?.slug ?? ""),
+        },
+        [
+            {
+                event: "Update",
+                action: async () => await checkListQuery.refetch()
+            },
+        ]
+    );
 
     if (!checkList || loading) {
         return <>{"Loading..."}</>;
@@ -114,8 +108,6 @@ const CheckListPage = observer((props: Props) => {
     }
 
     const openImageDialog = async () => {
-
-
         queryClient.setDefaultOptions({ queries: { refetchOnWindowFocus: false } });
 
         checklistState.attachmentOptionsOpened = false;
@@ -253,7 +245,7 @@ const CheckListPage = observer((props: Props) => {
                 bottom: "8px",
                 width: "100%"
             }}>
-                {checklistState.ConnectionState !== "Connected" && (
+                {connectionState !== "Connected" && (
                     <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
                 )}
             </Box>

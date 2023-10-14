@@ -1,9 +1,9 @@
 import { DeleteForever, Share } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
-import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { CardAction } from "../../../components/Common/Cards/CardAction";
-import { RoomQueries } from "../../../hooks/state/roomQueries";
+import { AppFrame } from "../../../components/appFrame/AppFrame";
+import { RoomQueries } from "../../../hooks/queries/roomQueries";
 import { SharedLinkOutDto } from "../../../lib/api";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";

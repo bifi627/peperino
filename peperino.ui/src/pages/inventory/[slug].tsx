@@ -5,7 +5,7 @@ import { DropResult } from "react-beautiful-dnd";
 import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
-import { CheckListQueries } from "../../hooks/state/checklistQueries";
+import { CheckListQueries } from "../../hooks/queries/checklistQueries";
 import { BaseCheckListItemOutDto } from "../../lib/api";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
@@ -30,7 +30,6 @@ const InventoryListPage = (props: Props) => {
 
     const inventory = checkListQuery.data;
     const loading = checkListQuery.isLoading;
-    // const f = checkListQuery.isFetching; // Keep this so it rerenders on fetching
 
     const addInventoryItemMutation = CheckListQueries.useAddIventoryItemMutation(slug);
     const arrangeItemsMutation = CheckListQueries.useArrangeItemsMutation(slug);

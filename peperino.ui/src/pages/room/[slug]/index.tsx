@@ -8,7 +8,7 @@ import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { CheckListCardAction } from "../../../components/pages/room/CheckListCardAction";
 import { InventoryListCardAction } from "../../../components/pages/room/InventoryListCardAction";
 import { RoomCreateDialog } from "../../../components/pages/room/dialogs/RoomCreateChecklistDialog";
-import { RoomQueries } from "../../../hooks/state/roomQueries";
+import { RoomQueries } from "../../../hooks/queries/roomQueries";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
 import { useAppFrameConfig } from "../../../lib/hooks/useAppFrameConfig";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
