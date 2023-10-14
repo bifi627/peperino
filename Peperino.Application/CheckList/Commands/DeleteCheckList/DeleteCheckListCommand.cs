@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Peperino.Contracts.Services;
 using Peperino.Core.Contracts;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.EntityFramework;
+using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Application.CheckList.Commands.DeleteCheckList
@@ -17,12 +19,14 @@ namespace Peperino.Application.CheckList.Commands.DeleteCheckList
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IFirebaseStorageService _firebaseStorageService;
         private readonly Core.EntityFramework.Entities.User? _currentUser;
 
-        public DeleteCheckListCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService)
+        public DeleteCheckListCommandHandler(IApplicationDbContext dbContext, ICurrentUserService currentUserService, IFirebaseStorageService firebaseStorageService)
         {
             _dbContext = dbContext;
             _currentUserService = currentUserService;
+            _firebaseStorageService = firebaseStorageService;
             _currentUser = _dbContext.Users.FirstOrDefault(u => u.Id == _currentUserService.UserId);
         }
 
@@ -39,6 +43,14 @@ namespace Peperino.Application.CheckList.Commands.DeleteCheckList
 
             _dbContext.CheckLists.Remove(checkList);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            foreach (var checkListItem in checkList.Entities)
+            {
+                if (checkListItem is ImageCheckListItem imageCheckListItem)
+                {
+                    await _firebaseStorageService.DeleteFile(StorageScope.CheckListStorage, imageCheckListItem.ImageReference);
+                }
+            }
 
             return Unit.Value;
         }
