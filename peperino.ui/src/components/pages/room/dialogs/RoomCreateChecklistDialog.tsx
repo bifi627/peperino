@@ -2,12 +2,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } 
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
+    title: string;
     dialogOpened: boolean;
     handleClose: () => void;
     handleSubmit: (value: string) => void;
 }
 
-export const RoomCreateChecklistDialog = (props: Props) => {
+export const RoomCreateDialog = (props: Props) => {
     const { dialogOpened, handleClose, handleSubmit } = props;
 
     const [listName, setListName] = useState("");
@@ -30,7 +31,7 @@ export const RoomCreateChecklistDialog = (props: Props) => {
     return (
         <>
             <Dialog open={dialogOpened} onClose={innerClose}>
-                <DialogTitle>{"Neue Liste erstellen"}</DialogTitle>
+                <DialogTitle>{props.title}</DialogTitle>
                 <DialogContent>
                     <TextField
                         inputMode="text"

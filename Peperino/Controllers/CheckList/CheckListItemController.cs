@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Peperino.Contracts.Services;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.CheckList;
+using Peperino.Dtos.CheckList.AddItems;
 using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;
 
@@ -30,8 +31,14 @@ namespace Peperino.Controllers.CheckList
 
             checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
 
-            var variant = item.GetType() == typeof(TextCheckListItem) ? ItemVariant.Text : item.GetType() == typeof(LinkCheckListItem) ? ItemVariant.Link : ItemVariant.Image;
-
+            var variant = item switch
+            {
+                TextCheckListItem _ => ItemVariant.Text,
+                LinkCheckListItem _ => ItemVariant.Link,
+                ImageCheckListItem _ => ItemVariant.Image,
+                InventoryCheckListItem _ => ItemVariant.Inventory,
+                _ => throw new NotImplementedException(),
+            };
             var itemType = await DbContext.CheckListItemTypes.FirstOrDefaultAsync(x => x.Variant == variant);
 
             if (itemType is null)
@@ -102,36 +109,25 @@ namespace Peperino.Controllers.CheckList
             return dto;
         }
 
-        [HttpPost("{slug}/{id}/text/update", Name = nameof(UpdateCheckListItem))]
-        public async Task<ActionResult> UpdateCheckListItem(string slug, int id, [FromBody][Required] string text)
+        [HttpPost("{slug}/inventory/add", Name = nameof(AddInventoryItem))]
+        public async Task<ActionResult<BaseCheckListItemOutDto>> AddInventoryItem(string slug, [FromBody][Required] InventoryCheckListItemInDto inventoryInDto)
         {
-            var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
-
-            if (checklist is null)
+            var inventoryCheckListItem = new InventoryCheckListItem
             {
-                return NotFound();
-            }
+                Text = inventoryInDto.Text,
+                Quantity = inventoryInDto.Quantity,
+                Unit = inventoryInDto.Unit,
+            };
 
-            checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
+            var dto = await AddCheckListItem(slug, inventoryCheckListItem);
 
-            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
-
-            if (baseCheckListItem is TextCheckListItem textCheckListItem)
-            {
-                textCheckListItem.Text = text;
-                await DbContext.SaveChangesAsync();
-
-                return Ok();
-            }
-
-            return BadRequest();
+            return dto;
         }
 
-        [HttpPost("{slug}/{id}/link/update", Name = nameof(UpdateLinkCheckListItem))]
-        public async Task<ActionResult> UpdateLinkCheckListItem(string slug, int id, [FromBody][Required] LinkCheckListItemInDto linkInDto)
+        [HttpPost("{slug}/updateItem", Name = nameof(UpdateCheckListItem))]
+        public async Task<ActionResult> UpdateCheckListItem(string slug, [FromBody][Required] BaseCheckListItemOutDto baseDto)
         {
             var checklist = await DbContext.CheckLists.FirstOrDefaultAsync(x => x.Slug == slug);
-
             if (checklist is null)
             {
                 return NotFound();
@@ -139,19 +135,37 @@ namespace Peperino.Controllers.CheckList
 
             checklist.RequireAccess(CurrentUser, AccessLevel.WriteContent);
 
-            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == id);
-
-            if (baseCheckListItem is LinkCheckListItem linkCheckListItem)
+            var baseCheckListItem = checklist.Entities.FirstOrDefault(e => e.Id == baseDto.Id);
+            if (baseCheckListItem is null)
             {
-                linkCheckListItem.Link = linkInDto.Link;
-                linkCheckListItem.Title = linkInDto.Title;
-
-                await DbContext.SaveChangesAsync();
-
-                return Ok();
+                return NotFound();
             }
 
-            return BadRequest();
+            // Set base data
+            baseCheckListItem.Checked = baseDto.Checked;
+
+            if (baseCheckListItem is TextCheckListItem textItem && baseDto is TextCheckListItemOutDto textDto)
+            {
+                textItem.Text = textDto.Text;
+            }
+            else if (baseCheckListItem is LinkCheckListItem linkItem && baseDto is LinkCheckListItemOutDto linkDto)
+            {
+                linkItem.Title = linkDto.Title;
+                linkItem.Link = linkDto.Link;
+            }
+            else if (baseCheckListItem is InventoryCheckListItem inventoryItem && baseDto is InventoryCheckListItemOutDto inventoryDto)
+            {
+                inventoryItem.Text = inventoryDto.Text;
+                inventoryItem.Quantity = inventoryDto.Quantity;
+                inventoryItem.Unit = inventoryDto.Unit;
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            await DbContext.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpDelete("{slug}/{id}", Name = nameof(DeleteCheckListItem))]

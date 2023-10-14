@@ -4,6 +4,7 @@
 
 import type { AccessLevel } from './AccessLevel';
 import type { CheckListOutDto } from './CheckListOutDto';
+import type { InventoryOutDto } from './InventoryOutDto';
 import type { UserOutDto } from './UserOutDto';
 
 export type RoomOutDto = {
@@ -13,4 +14,5 @@ export type RoomOutDto = {
     createdBy: UserOutDto;
     accessLevel: AccessLevel;
     checkLists: Array<CheckListOutDto>;
+    inventories: Array<InventoryOutDto>;
 };

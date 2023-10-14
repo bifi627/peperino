@@ -45,7 +45,7 @@ namespace Peperino.Application.CheckList.Commands.CreateCheckList
             room.RequireAccess(currentUser, AccessLevel.WriteContent);
 
             // Create CheckList
-            var slug = roomSlug.Slugify();
+            var slug = request.Name.Slugify();
 
             if (_dbContext.CheckLists.Any(r => r.Slug == slug))
             {

@@ -52,7 +52,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("BaseOwnableEntityUserAccess");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.BaseOwnableEntity", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,7 +81,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("BaseOwnableEntity");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.GroupAccess", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.GroupAccess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,7 +102,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("GroupAccess");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.User", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -116,7 +116,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.UserAccess", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.UserAccess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +137,7 @@ namespace Peperino.EntityFramework.Migrations
                     b.ToTable("UserAccess");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.UserGroup", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.UserGroup", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -317,13 +317,16 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckList", b =>
                 {
-                    b.HasBaseType("Peperino.Domain.Base.BaseOwnableEntity");
+                    b.HasBaseType("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RoomId")
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Room_InventoryId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Slug")
@@ -331,6 +334,8 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("Room_InventoryId");
 
                     b.ToTable("CheckLists", (string)null);
                 });
@@ -347,6 +352,23 @@ namespace Peperino.EntityFramework.Migrations
                         .HasColumnType("text");
 
                     b.ToTable("ImageCheckListItems", (string)null);
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.InventoryCheckListItem", b =>
+                {
+                    b.HasBaseType("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
+                    b.ToTable("InventoryCheckListItems", (string)null);
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.LinkCheckListItem", b =>
@@ -377,7 +399,7 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Demo", b =>
                 {
-                    b.HasBaseType("Peperino.Domain.Base.BaseOwnableEntity");
+                    b.HasBaseType("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -388,7 +410,7 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
                 {
-                    b.HasBaseType("Peperino.Domain.Base.BaseOwnableEntity");
+                    b.HasBaseType("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity");
 
                     b.Property<string>("RoomName")
                         .IsRequired()
@@ -403,13 +425,13 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("BaseOwnableEntityGroupAccess", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
                         .WithMany()
                         .HasForeignKey("EntitiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Peperino.Domain.Base.GroupAccess", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.GroupAccess", null)
                         .WithMany()
                         .HasForeignKey("GroupAccessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -418,27 +440,27 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("BaseOwnableEntityUserAccess", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
                         .WithMany()
                         .HasForeignKey("EntitiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Peperino.Domain.Base.UserAccess", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.UserAccess", null)
                         .WithMany()
                         .HasForeignKey("UserAccessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.BaseOwnableEntity", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -448,9 +470,9 @@ namespace Peperino.EntityFramework.Migrations
                     b.Navigation("LastModifiedBy");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.GroupAccess", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.GroupAccess", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.UserGroup", "UserGroup")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.UserGroup", "UserGroup")
                         .WithMany()
                         .HasForeignKey("UserGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -459,23 +481,23 @@ namespace Peperino.EntityFramework.Migrations
                     b.Navigation("UserGroup");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.UserAccess", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.UserAccess", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.User", "User")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Peperino.Domain.Base.UserGroup", b =>
+            modelBuilder.Entity("Peperino.Core.EntityFramework.Entities.UserGroup", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -493,7 +515,7 @@ namespace Peperino.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -503,7 +525,7 @@ namespace Peperino.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById");
 
@@ -518,17 +540,17 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.SharedLink", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.User", "CreatedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", "Entity")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", "Entity")
                         .WithMany()
                         .HasForeignKey("EntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Peperino.Domain.Base.User", "LastModifiedBy")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "LastModifiedBy")
                         .WithMany()
                         .HasForeignKey("LastModifiedById");
 
@@ -541,7 +563,7 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.UserStoreClient", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.User", "User")
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", "User")
                         .WithOne()
                         .HasForeignKey("Peperino.EntityFramework.Entities.UserStoreClient", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -552,13 +574,13 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("UserUserGroup", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.UserGroup", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.UserGroup", null)
                         .WithMany()
                         .HasForeignKey("UserGroupsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Peperino.Domain.Base.User", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -567,7 +589,7 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.CheckList", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
                         .WithOne()
                         .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.CheckList", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -576,10 +598,16 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasOne("Peperino.EntityFramework.Entities.Room", "Room")
                         .WithMany("CheckLists")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Peperino.EntityFramework.Entities.Room", "Room_Inventory")
+                        .WithMany("Inventories")
+                        .HasForeignKey("Room_InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Room");
+
+                    b.Navigation("Room_Inventory");
                 });
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", b =>
@@ -587,6 +615,15 @@ namespace Peperino.EntityFramework.Migrations
                     b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
                         .WithOne()
                         .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.ImageCheckListItem", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Peperino.EntityFramework.Entities.CheckList.InventoryCheckListItem", b =>
+                {
+                    b.HasOne("Peperino.EntityFramework.Entities.CheckList.BaseCheckListItem", null)
+                        .WithOne()
+                        .HasForeignKey("Peperino.EntityFramework.Entities.CheckList.InventoryCheckListItem", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -611,7 +648,7 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Demo", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
                         .WithOne()
                         .HasForeignKey("Peperino.EntityFramework.Entities.Demo", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -620,7 +657,7 @@ namespace Peperino.EntityFramework.Migrations
 
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
                 {
-                    b.HasOne("Peperino.Domain.Base.BaseOwnableEntity", null)
+                    b.HasOne("Peperino.Core.EntityFramework.Entities.BaseOwnableEntity", null)
                         .WithOne()
                         .HasForeignKey("Peperino.EntityFramework.Entities.Room", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -635,6 +672,8 @@ namespace Peperino.EntityFramework.Migrations
             modelBuilder.Entity("Peperino.EntityFramework.Entities.Room", b =>
                 {
                     b.Navigation("CheckLists");
+
+                    b.Navigation("Inventories");
                 });
 #pragma warning restore 612, 618
         }

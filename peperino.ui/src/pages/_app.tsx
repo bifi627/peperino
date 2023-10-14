@@ -1,7 +1,6 @@
 import { EmotionCache } from '@emotion/react';
 import { observer } from 'mobx-react';
 import type { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
 import { AuthProvider } from '../components/appFrame/PageMiddleware/AuthMiddleware';
 import "../lib/apiConfig";
 import "../lib/auth/client/firebase";
@@ -15,8 +14,6 @@ export interface MUIAppProps extends AppProps {
 
 function MyApp(props: MUIAppProps) {
     const { Component, pageProps, emotionCache } = props;
-
-    const router = useRouter();
 
     return (
         <PageThemeProvider emotionCache={emotionCache}>

@@ -3,10 +3,12 @@ import { Box, IconButton, Popover } from "@mui/material";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { LinkCheckListItemOutDto } from "../../lib/api";
-import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
     item: LinkCheckListItemOutDto;
+    checkListSlug: string;
+    onDelete: (item: LinkCheckListItemOutDto) => void;
+    onUpdate: (item: LinkCheckListItemOutDto) => void;
 }
 
 export const LinkCheckListItem = (props: Props) => {
@@ -16,8 +18,6 @@ export const LinkCheckListItem = (props: Props) => {
 
     const [optionsOpened, setOptionsOpened] = useState(false);
     const ref = useRef<HTMLButtonElement | null>(null);
-
-    const checkListPageState = useApplicationState().getChecklistState();
 
     const copyToClipboard = async () => {
         await navigator.clipboard.writeText(linkWithProtocol);
@@ -59,7 +59,7 @@ export const LinkCheckListItem = (props: Props) => {
                     <p>Kopieren</p>
                 </Box>
                 <Box display="flex" flexDirection="row" gap="6px" sx={{ paddingRight: "20px" }} onClick={async () => {
-                    await checkListPageState.deleteItem(props.item);
+                    props.onDelete(props.item);
                 }}>
                     <IconButton color="error">
                         <Delete />

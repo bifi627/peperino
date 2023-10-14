@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type ItemVariant = 'Text' | 'Link' | 'Image';
+export type ItemVariant = 'Text' | 'Link' | 'Image' | 'Inventory';

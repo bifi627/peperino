@@ -13,6 +13,7 @@ export module KnownRoutes {
     export const SharedLink = (slug: string) => `/share/${slug}`;
     export const SSO = (redirect: string) => `/login/sso?redirect=${redirect}`;
     export const CheckList = (slug: string) => `/checklist/${slug}`;
+    export const Inventory = (slug: string) => `/inventory/${slug}`;
     export const SignalR = {
         CheckList: () => `${BACKEND_URL}signalr/checkListHub`,
     }

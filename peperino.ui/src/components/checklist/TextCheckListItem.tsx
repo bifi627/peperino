@@ -1,45 +1,43 @@
 import { Delete } from "@mui/icons-material";
 import { TextField } from "@mui/material";
 import { observer } from "mobx-react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { TextCheckListItemOutDto } from "../../lib/api";
-import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
     item: TextCheckListItemOutDto;
+    checkListSlug: string;
+    onDelete: (item: TextCheckListItemOutDto) => void;
+    onUpdate: (item: TextCheckListItemOutDto) => void;
 }
 
 export const TextCheckListItem = observer((props: Props) => {
     const inputRef = useRef<HTMLInputElement>();
 
-    const checkListPageState = useApplicationState().getChecklistState();
-
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        props.item.text = e.target.value;
-        setInputChanged(true);
-    }
-
-    const onInputBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const onInputBlur = async () => {
         // Put focus off after delay so the click on delete can register
         setTimeout(() => {
             setInputFocused(false);
-        }, 100)
+        }, 200)
         await saveInput();
-        setInputChanged(false);
     }
 
     const saveInput = async () => {
-        if (isInputChanged) {
-            await checkListPageState.updateTextCheckItem(props.item, props.item.text);
+        if (inputRef.current) {
+            const newValue = inputRef.current.value;
+            if (newValue && newValue !== props.item.text) {
+                props.item.text = newValue;
+                props.onUpdate(props.item);
+            }
+            inputRef.current.value = props.item.text;
         }
     }
 
     const onDeleteClick = async () => {
-        await checkListPageState.deleteItem(props.item);
+        props.onDelete(props.item);
     }
 
     const [isInputFocused, setInputFocused] = useState(false);
-    const [isInputChanged, setInputChanged] = useState(false);
 
     return (
         <>
@@ -50,7 +48,14 @@ export const TextCheckListItem = observer((props: Props) => {
                 setInputFocused(false);
                 inputRef.current?.blur();
             }}>
-                <TextField onFocus={() => setInputFocused(true)} inputRef={inputRef} fullWidth value={props.item.text} onChange={onInputChange} onBlur={onInputBlur} size="small"></TextField>
+                <TextField
+                    defaultValue={props.item.text}
+                    onFocus={() => setInputFocused(true)}
+                    inputRef={inputRef}
+                    fullWidth
+                    onBlur={onInputBlur}
+                    size="small">
+                </TextField>
             </form>
             {isInputFocused && <Delete onClick={onDeleteClick} />}
         </>

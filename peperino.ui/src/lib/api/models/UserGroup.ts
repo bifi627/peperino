@@ -2,12 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { BaseEvent } from './BaseEvent';
+import type { INotification } from './INotification';
 import type { User } from './User';
 
 export type UserGroup = {
     id?: number;
-    readonly domainEvents?: Array<BaseEvent> | null;
+    readonly events?: Array<INotification> | null;
     created?: string;
     createdBy?: User;
     lastModified?: string | null;

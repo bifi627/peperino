@@ -31,6 +31,9 @@ namespace Peperino.Application.Room.Queries.GetRooms
                                            .Include(r => r.CheckLists)
                                            .ThenInclude(l => l.Entities)
                                            .ThenInclude(e => e.ItemType)
+                                           .Include(r => r.Inventories)
+                                           .ThenInclude(l => l.Entities)
+                                           .ThenInclude(e => e.ItemType)
                                            .WithOwnable()
                                            .FilterRequireRead(currentUser)
                                            .AsQueryable();

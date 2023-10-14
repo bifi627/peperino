@@ -11,7 +11,8 @@ namespace Peperino.Mapping.CheckList
             config.NewConfig<BaseCheckListItem, BaseCheckListItemOutDto>()
                   .Include<TextCheckListItem, TextCheckListItemOutDto>()
                   .Include<ImageCheckListItem, ImageCheckListItemOutDto>()
-                  .Include<LinkCheckListItem, LinkCheckListItemOutDto>();
+                  .Include<LinkCheckListItem, LinkCheckListItemOutDto>()
+                  .Include<InventoryCheckListItem, InventoryCheckListItemOutDto>();
         }
     }
 }
