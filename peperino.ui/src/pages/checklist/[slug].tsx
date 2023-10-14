@@ -3,19 +3,18 @@ import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, Dialog
 import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
 import { AppFrame } from "../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../components/checklist/CheckListItem";
 import { SortableList } from "../../components/sortables/SortableList";
 import { CheckListQueries } from "../../hooks/queries/checklistQueries";
-import { useWebSocketObserver } from "../../hooks/signalr/webSocketObserver";
 import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../lib/api";
 import { isInventoryItem, isTextItem } from "../../lib/apiHelper/checkListItemGuards";
 import { ClientApi } from "../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
 import { arrayMoveMutable, selectFile, toBase64 } from "../../lib/helper/common";
-import { KnownRoutes } from "../../lib/routing/knownRoutes";
 import { useApplicationState } from "../../lib/state/ApplicationState";
 
 interface Props {
@@ -45,19 +44,31 @@ const CheckListPage = observer((props: Props) => {
     const updateItemMutation = CheckListQueries.useUpdateItemMutation(slug);
     const toggleArrangeMutation = CheckListQueries.useToggleArrangeMutation(slug);
 
-    const { connectionState } = useWebSocketObserver(
-        KnownRoutes.SignalR.CheckList(),
-        {
-            afterConnecting: async c => await c.send("JoinList", checkList?.slug ?? ""),
-            beforeDisconnecting: async c => await c.send("LeaveList", checkList?.slug ?? ""),
-        },
-        [
-            {
-                event: "Update",
-                action: async () => await checkListQuery.refetch()
-            },
-        ]
-    );
+    const [listJoined, setListJoined] = useState(false);
+
+    // const { connectionState } = useWebSocketObserver(
+    //     KnownRoutes.SignalR.CheckList(),
+    //     {
+    //         afterConnecting: async c => await c.send("JoinList", checkList?.slug ?? ""),
+    //         beforeDisconnecting: async c => {
+    //             setListJoined(false)
+    //             await c.send("LeaveList", checkList?.slug ?? "")
+    //         },
+    //     },
+    //     [
+    //         {
+    //             event: "ListJoined",
+    //             action: async () => setListJoined(true)
+    //         },
+    //         {
+    //             event: "Update",
+    //             action: async () => {
+    //                 console.log("APP: REFRESH")
+    //                 await checkListQuery.refetch()
+    //             }
+    //         },
+    //     ]
+    // );
 
     if (!checkList || loading) {
         return <>{"Loading..."}</>;
@@ -245,9 +256,9 @@ const CheckListPage = observer((props: Props) => {
                 bottom: "8px",
                 width: "100%"
             }}>
-                {connectionState !== "Connected" && (
+                {/* {connectionState !== "Connected" && listJoined && (
                     <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
-                )}
+                )} */}
             </Box>
             <Dialog open={checklistState.linkDialogOpened} onClose={() => checklistState.linkDialogOpened = false}>
                 <DialogTitle>{"Neuen Link hinzufügen"}</DialogTitle>

@@ -13,7 +13,6 @@ interface WebSocketSetupActions {
 }
 
 export const useWebSocketObserver = (url: string, setupActions?: WebSocketSetupActions, callbacks?: WebSocketCallbackAction[]) => {
-    const [connection, setConnection] = useState<HubConnection>();
     const [connectionState, setConnectionState] = useState<HubConnectionState>(HubConnectionState.Disconnected);
 
     useEffect(() => {
@@ -24,61 +23,63 @@ export const useWebSocketObserver = (url: string, setupActions?: WebSocketSetupA
                 accessTokenFactory: () => getAuth().currentUser?.getIdToken() ?? "",
             }).withAutomaticReconnect().build();
 
-        setConnection(hubConnection);
-
         const refreshConnectionState = () => {
-            setConnectionState(hubConnection.state);
+            setConnectionState(hubConnection?.state ?? HubConnectionState.Disconnected);
         }
 
-        const setupConnectionMonitoring = () => {
-            hubConnection.onclose(() => {
-                refreshConnectionState();
-            });
-            hubConnection.onreconnected(() => {
-                refreshConnectionState();
-            });
-            hubConnection.onreconnecting(() => {
-                refreshConnectionState();
-            });
-            hubConnection.on("connected", () => {
-                refreshConnectionState();
-            });
-        }
+        hubConnection?.onclose(() => {
+            refreshConnectionState();
+        });
+        hubConnection?.onreconnected(() => {
+            refreshConnectionState();
+        });
+        hubConnection?.onreconnecting(() => {
+            refreshConnectionState();
+        });
+        hubConnection?.on("connected", () => {
+            refreshConnectionState();
+        });
 
         const stopConnectionMonitoring = () => {
-            hubConnection.off("connected");
+            hubConnection?.off("connected");
         }
 
-        (async () => {
-            if (hubConnection && hubConnection.state !== HubConnectionState.Connected) {
-                callbacks?.forEach(cb => {
-                    cb.event && hubConnection.on(cb.event, async () => {
+        let timer = 0;
+
+        if (hubConnection && hubConnection.state !== HubConnectionState.Connected) {
+            callbacks?.forEach(cb => cb.event && hubConnection.off(cb.event));
+            callbacks?.forEach(cb => {
+                cb.event && hubConnection.on(cb.event, async () => {
+                    console.log("APP: start timeout")
+                    clearTimeout(timer);
+
+                    timer = window.setTimeout(() => {
+                        console.log("APP: finish timeout")
                         refreshConnectionState();
-                        await cb.action(hubConnection)
-                    });
+                        cb.action(hubConnection);
+                        timer = 0;
+                    }, 500);
                 });
+            });
 
-                setupConnectionMonitoring();
-
-                await hubConnection?.start();
-                await setupActions?.afterConnecting?.(hubConnection);
-                refreshConnectionState();
-            }
-        })();
+            hubConnection?.start().then(async () => {
+                setupActions?.afterConnecting?.(hubConnection);
+            });
+            refreshConnectionState();
+        };
         return () => {
-            if (connection) {
-                callbacks?.forEach(cb => cb.event && connection.off(cb.event));
-                if (connection.state === HubConnectionState.Connected) {
-                    setupActions?.beforeDisconnecting?.(connection);
+            if (hubConnection) {
+                callbacks?.forEach(cb => cb.event && hubConnection.off(cb.event));
+                if (hubConnection.state === HubConnectionState.Connected) {
+                    setupActions?.beforeDisconnecting?.(hubConnection);
                 }
                 stopConnectionMonitoring();
-                connection?.stop().then(() => {
+                hubConnection?.stop().then(() => {
                     refreshConnectionState();
                 });
-                setConnection(undefined);
             }
         }
     }, []);
 
-    return { connection, connectionState };
+    return { connectionState };
 }
