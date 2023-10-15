@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Peperino.Contracts.Services;
 using Peperino.Core.Contracts;
 using Peperino.Core.EntityFramework.Entities;
+using Peperino.Core.EntityFramework.Exceptions;
 using Peperino.EntityFramework;
 using Peperino.EntityFramework.Entities.CheckList;
 using System.ComponentModel.DataAnnotations;
@@ -39,7 +40,13 @@ namespace Peperino.Application.CheckList.Commands.DeleteCheckList
                 throw new ArgumentException("CheckList not found");
             }
 
-            checkList.RequireAccess(_currentUser, AccessLevel.Delete);
+            var checkListPermission = checkList.RequireAccess(_currentUser, AccessLevel.Delete, false);
+            var roomPermission = checkList.Room?.RequireAccess(_currentUser, AccessLevel.Delete, false) ?? false;
+
+            if (!checkListPermission && !roomPermission)
+            {
+                throw new EntityAccessException(checkList.Name, checkList.Id, _currentUser?.Id ?? "?", AccessLevel.Delete);
+            }
 
             _dbContext.CheckLists.Remove(checkList);
             await _dbContext.SaveChangesAsync(cancellationToken);

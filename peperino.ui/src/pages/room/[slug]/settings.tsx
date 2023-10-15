@@ -62,7 +62,7 @@ const GroupSettingsPage = observer((props: Props) => {
     }
 
     return (
-        <AppFrame>
+        <AppFrame style="OnlyBack" toolbarText="Einstellungen">
             <CardAction mainText={room?.roomName ?? "Name"} />
             <CardAction mainText="Teilen" subTexts={["Lade jemanden mit diesem Link in den Raum ein."]} actions={[{
                 id: "share",

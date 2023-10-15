@@ -30,6 +30,7 @@ namespace Peperino.Controllers.CheckList
             }
 
             var dto = checkList.Adapt<CheckListOutDto>();
+            dto.AccessLevel = checkList.CalculateAccessLevel(CurrentUser);
 
             return dto;
         }
@@ -45,6 +46,7 @@ namespace Peperino.Controllers.CheckList
             }
 
             var dto = checkList.Adapt<CheckListOutDto>();
+            dto.AccessLevel = checkList.CalculateAccessLevel(CurrentUser);
 
             return dto;
         }
