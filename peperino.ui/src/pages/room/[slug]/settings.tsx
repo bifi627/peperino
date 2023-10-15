@@ -8,7 +8,7 @@ import { RoomQueries } from "../../../hooks/queries/roomQueries";
 import { SharedLinkOutDto } from "../../../lib/api";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
-import { checkAccessLevel as requireAccess } from "../../../lib/helper/common";
+import { checkAccessLevel } from "../../../lib/helper/common";
 import { useAppFrameConfig } from "../../../lib/hooks/useAppFrameConfig";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { FRONTEND_URL } from "../../../shared/constants";
@@ -63,7 +63,7 @@ const GroupSettingsPage = observer((props: Props) => {
         }
     }
 
-    const canWrite = requireAccess("Write", room?.accessLevel)
+    const canWrite = checkAccessLevel("Write", room?.accessLevel)
 
     const renameRoom = async (newName: string) => {
         if (room) {
@@ -76,7 +76,6 @@ const GroupSettingsPage = observer((props: Props) => {
         <AppFrame style="OnlyBack" toolbarText="Einstellungen">
             {!canWrite && <CardAction mainText={room?.roomName ?? "Name"} />}
             {canWrite && <EditTextCardAction mainText={room?.roomName ?? ""} onTextChanged={renameRoom} />}
-
             <CardAction mainText="Teilen" subTexts={["Lade jemanden mit diesem Link in den Raum ein."]} actions={[{
                 id: "share",
                 icon: <Share />,
