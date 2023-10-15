@@ -2,11 +2,13 @@ import { DeleteForever, Share } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { CardAction } from "../../../components/Common/Cards/CardAction";
+import { EditTextCardAction } from "../../../components/Common/Cards/EditTextCardAction";
 import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { RoomQueries } from "../../../hooks/queries/roomQueries";
 import { SharedLinkOutDto } from "../../../lib/api";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
+import { checkAccessLevel as requireAccess } from "../../../lib/helper/common";
 import { useAppFrameConfig } from "../../../lib/hooks/useAppFrameConfig";
 import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 import { FRONTEND_URL } from "../../../shared/constants";
@@ -17,8 +19,8 @@ interface Props {
 const GroupSettingsPage = observer((props: Props) => {
     useClientAuthGuard();
 
-    const router = useRouter();
     const appFrame = useAppFrameConfig();
+    const router = useRouter();
 
     const roomBySlugIdQuery = RoomQueries.useGetRoomBySlugQuery(router.query["slug"] as string ?? "");
     const room = roomBySlugIdQuery.data;
@@ -61,9 +63,20 @@ const GroupSettingsPage = observer((props: Props) => {
         }
     }
 
+    const canWrite = requireAccess("Write", room?.accessLevel)
+
+    const renameRoom = async (newName: string) => {
+        if (room) {
+            await ClientApi.room.renameRoom(room.slug, { slug: room.slug, newName: newName });
+            await roomBySlugIdQuery.refetch();
+        }
+    }
+
     return (
         <AppFrame style="OnlyBack" toolbarText="Einstellungen">
-            <CardAction mainText={room?.roomName ?? "Name"} />
+            {!canWrite && <CardAction mainText={room?.roomName ?? "Name"} />}
+            {canWrite && <EditTextCardAction mainText={room?.roomName ?? ""} onTextChanged={renameRoom} />}
+
             <CardAction mainText="Teilen" subTexts={["Lade jemanden mit diesem Link in den Raum ein."]} actions={[{
                 id: "share",
                 icon: <Share />,

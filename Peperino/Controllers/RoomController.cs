@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Peperino.Application.Room.Commands.CreateRoom;
 using Peperino.Application.Room.Commands.DeleteRoom;
+using Peperino.Application.Room.Commands.UpdateRoom;
 using Peperino.Application.Room.Queries.GetRooms;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.UserGroup;
@@ -79,6 +80,13 @@ namespace Peperino.Controllers
         public async Task<ActionResult> DeleteBySlug(string slug)
         {
             await Mediator.Send(new DeleteRoomCommand(slug));
+            return Ok();
+        }
+
+        [HttpPost("{slug}/rename", Name = "RenameRoom")]
+        public async Task<ActionResult> RenameRoom(RenameRoomCommand command)
+        {
+            await Mediator.Send(command);
             return Ok();
         }
     }

@@ -34,6 +34,7 @@ export type { LinkCheckListItemInDto } from './models/LinkCheckListItemInDto';
 export type { LinkCheckListItemOutDto } from './models/LinkCheckListItemOutDto';
 export type { QuantityUnit } from './models/QuantityUnit';
 export type { RearrangeCheckListItemsInDto } from './models/RearrangeCheckListItemsInDto';
+export type { RenameRoomCommand } from './models/RenameRoomCommand';
 export type { RoomOutDto } from './models/RoomOutDto';
 export type { SharedLinkInDto } from './models/SharedLinkInDto';
 export type { SharedLinkOutDto } from './models/SharedLinkOutDto';
