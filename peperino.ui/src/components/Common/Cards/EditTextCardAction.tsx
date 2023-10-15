@@ -78,7 +78,7 @@ export const EditTextCardAction = (props: MyTextCardActionProps) => {
                                 {props.leftIcon}
                             </IconButton>}
                             <Box display={"flex"} flexDirection={"column"}>
-                                <TextField size="small" {...register("state.editText")} error={Boolean(formState.errors.state?.editText)} helperText={formState.errors.state?.editText?.message} />
+                                <TextField autoFocus size="small" {...register("state.editText")} error={Boolean(formState.errors.state?.editText)} helperText={formState.errors.state?.editText?.message} />
                                 {props.subTexts?.map(text => {
                                     return <span key={text} style={{ fontSize: "12px" }}>{text}</span>
                                 })}
