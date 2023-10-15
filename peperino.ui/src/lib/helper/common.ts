@@ -1,3 +1,4 @@
+import { AccessLevel } from "../api";
 
 export function arrayMoveMutable(array: any[], fromIndex: number, toIndex: number) {
     const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
@@ -50,3 +51,33 @@ export const toBase64 = (file: File) => new Promise<string>((resolve, reject) =>
     reader.onload = () => resolve(reader.result?.toString() ?? "");
     reader.onerror = error => reject(error);
 });
+
+type AccessComparison = "min" | "equal";
+
+export const checkAccessLevel = (requested: AccessLevel, check?: AccessLevel, comparison: AccessComparison = "min") => {
+    if (!check) {
+        return false;
+    }
+
+    if (comparison === "equal") {
+        return requested === check;
+    }
+
+    const accessOrder: AccessLevel[] = [
+        "None",
+        "Read",
+        "WriteContent",
+        "Write",
+        "Delete",
+        "Owner"
+    ];
+
+    const requestedIndex = accessOrder.indexOf(requested);
+    const checkIndex = accessOrder.indexOf(check);
+
+    if (comparison === "min") {
+        return checkIndex >= requestedIndex;
+    }
+
+    return false;
+}

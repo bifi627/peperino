@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Peperino.Application.CheckList.Commands.CreateCheckList;
 using Peperino.Application.CheckList.Commands.DeleteCheckList;
+using Peperino.Application.CheckList.Commands.UpdateCheckList;
 using Peperino.Core.EntityFramework.Entities;
 using Peperino.Dtos.CheckList;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +31,7 @@ namespace Peperino.Controllers.CheckList
             }
 
             var dto = checkList.Adapt<CheckListOutDto>();
+            dto.AccessLevel = checkList.CalculateAccessLevel(CurrentUser);
 
             return dto;
         }
@@ -45,6 +47,7 @@ namespace Peperino.Controllers.CheckList
             }
 
             var dto = checkList.Adapt<CheckListOutDto>();
+            dto.AccessLevel = checkList.CalculateAccessLevel(CurrentUser);
 
             return dto;
         }
@@ -53,6 +56,13 @@ namespace Peperino.Controllers.CheckList
         public async Task<ActionResult> DeleteList(DeleteCheckListCommand deleteCheckListCommand)
         {
             await Mediator.Send(deleteCheckListCommand);
+            return Ok();
+        }
+
+        [HttpPost("{slug}/rename", Name = "RenameList")]
+        public async Task<ActionResult> RenameList(RenameCheckListCommand command)
+        {
+            await Mediator.Send(command);
             return Ok();
         }
     }

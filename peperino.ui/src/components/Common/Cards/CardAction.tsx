@@ -29,7 +29,7 @@ export const CardAction = (props: MyCardActionProps) => {
                         {actions.map(action => {
                             return (
                                 <IconButton key={action.id} onClick={() => {
-                                    action.disabled === false && action.action();
+                                    action.disabled !== true && action.action();
                                 }}>
                                     <Paper elevation={3} sx={{ borderRadius: 20, padding: 1, display: "flex" }}>
                                         {action.icon ?? <ChevronRight />}

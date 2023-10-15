@@ -1,4 +1,4 @@
-import { AttachFile, Link, MoveUp, Photo, Send } from "@mui/icons-material";
+import { AttachFile, Link, MoveUp, Photo, Send, Settings } from "@mui/icons-material";
 import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, TextField, useTheme } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
@@ -6,16 +6,17 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { toast } from "react-toastify";
-import { AppFrame } from "../../components/appFrame/AppFrame";
-import { CheckListItem } from "../../components/checklist/CheckListItem";
-import { SortableList } from "../../components/sortables/SortableList";
-import { CheckListQueries } from "../../hooks/queries/checklistQueries";
-import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../lib/api";
-import { isInventoryItem, isTextItem } from "../../lib/apiHelper/checkListItemGuards";
-import { ClientApi } from "../../lib/auth/client/apiClient";
-import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
-import { arrayMoveMutable, selectFile, toBase64 } from "../../lib/helper/common";
-import { useApplicationState } from "../../lib/state/ApplicationState";
+import { AppFrame } from "../../../components/appFrame/AppFrame";
+import { CheckListItem } from "../../../components/checklist/CheckListItem";
+import { SortableList } from "../../../components/sortables/SortableList";
+import { CheckListQueries } from "../../../hooks/queries/checklistQueries";
+import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../../lib/api";
+import { isInventoryItem, isTextItem } from "../../../lib/apiHelper/checkListItemGuards";
+import { ClientApi } from "../../../lib/auth/client/apiClient";
+import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
+import { arrayMoveMutable, selectFile, toBase64 } from "../../../lib/helper/common";
+import { KnownRoutes } from "../../../lib/routing/knownRoutes";
+import { useApplicationState } from "../../../lib/state/ApplicationState";
 
 interface Props {
     slug: string;
@@ -71,7 +72,7 @@ const CheckListPage = observer((props: Props) => {
     // );
 
     if (!checkList || loading) {
-        return <>{"Loading..."}</>;
+        return <AppFrame>...loading</AppFrame>;
     }
 
     const checkedItems = checkList.entities.filter(e => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
@@ -189,8 +190,19 @@ const CheckListPage = observer((props: Props) => {
         await toggleArrangeMutation.mutateAsync({ arrangeRequest: { items: checkList.entities }, updateRequest: item });
     };
 
+    const settingsAction = {
+        id: "settings",
+        action: async () => {
+            if (checkList) {
+                await router.push(KnownRoutes.CheckListSettings(checkList.slug));
+            }
+        },
+        icon: <Settings />,
+        text: "Einstellungen",
+    }
+
     return (
-        <AppFrame toolbarText={checkList.name}>
+        <AppFrame toolbarText={checkList.name} menuActions={[settingsAction]}>
             <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
                 <SortableList
                     data={uncheckedItems}

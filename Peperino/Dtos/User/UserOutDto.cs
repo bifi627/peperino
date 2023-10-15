@@ -1,7 +1,13 @@
-﻿namespace Peperino.Dtos.User
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Peperino.Dtos.User
 {
     public class UserOutDto
     {
-        public string UserName { get; set; }
+        [Required]
+        public string Id { get; set; } = string.Empty;
+
+        [Required]
+        public string UserName { get; set; } = string.Empty;
     }
 }

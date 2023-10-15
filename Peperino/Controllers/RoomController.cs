@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Peperino.Application.Room.Commands.CreateRoom;
 using Peperino.Application.Room.Commands.DeleteRoom;
+using Peperino.Application.Room.Commands.UpdateRoom;
 using Peperino.Application.Room.Queries.GetRooms;
 using Peperino.Core.EntityFramework.Entities;
+using Peperino.Dtos.User;
 using Peperino.Dtos.UserGroup;
 
 namespace Peperino.Controllers
@@ -22,6 +24,8 @@ namespace Peperino.Controllers
             var createdRoom = await Mediator.Send(createRoomCommand);
 
             var dto = createdRoom.Adapt<RoomOutDto>();
+            dto.AccessLevel = createdRoom.CalculateAccessLevel(CurrentUser);
+            dto.Users = createdRoom.UserAccess.Select(ua => ua.User).Adapt<List<UserOutDto>>();
 
             if (dto is null)
             {
@@ -41,6 +45,7 @@ namespace Peperino.Controllers
             {
                 var roomOut = room.Adapt<RoomOutDto>();
                 roomOut.AccessLevel = room.CalculateAccessLevel(currentUser);
+                //roomOut.Users = room.UserAccess.Select(ua => ua.User).Adapt<List<UserOutDto>>();
                 return roomOut;
             });
 
@@ -66,6 +71,7 @@ namespace Peperino.Controllers
 
             var dto = room.Adapt<RoomOutDto>();
             dto.AccessLevel = room.CalculateAccessLevel(CurrentUser);
+            dto.Users = room.UserAccess.Select(ua => ua.User).Adapt<List<UserOutDto>>();
 
             if (dto is null)
             {
@@ -79,6 +85,20 @@ namespace Peperino.Controllers
         public async Task<ActionResult> DeleteBySlug(string slug)
         {
             await Mediator.Send(new DeleteRoomCommand(slug));
+            return Ok();
+        }
+
+        [HttpPost("{slug}/rename", Name = "RenameRoom")]
+        public async Task<ActionResult> RenameRoom(RenameRoomCommand command)
+        {
+            await Mediator.Send(command);
+            return Ok();
+        }
+
+        [HttpDelete("{slug}/revoke", Name = "RevokeUserAccess")]
+        public async Task<ActionResult> RevokeUserAccess(RevokeRoomAccessCommand command)
+        {
+            await Mediator.Send(command);
             return Ok();
         }
     }

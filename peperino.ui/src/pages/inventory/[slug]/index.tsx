@@ -1,15 +1,17 @@
+import { Settings } from "@mui/icons-material";
 import { Autocomplete, Box, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
-import { AppFrame } from "../../components/appFrame/AppFrame";
-import { CheckListItem } from "../../components/checklist/CheckListItem";
-import { SortableList } from "../../components/sortables/SortableList";
-import { CheckListQueries } from "../../hooks/queries/checklistQueries";
-import { BaseCheckListItemOutDto } from "../../lib/api";
-import { ClientApi } from "../../lib/auth/client/apiClient";
-import { useClientAuthGuard } from "../../lib/auth/client/useClientAuthGuard";
-import { arrayMoveMutable } from "../../lib/helper/common";
+import { AppFrame } from "../../../components/appFrame/AppFrame";
+import { CheckListItem } from "../../../components/checklist/CheckListItem";
+import { SortableList } from "../../../components/sortables/SortableList";
+import { CheckListQueries } from "../../../hooks/queries/checklistQueries";
+import { BaseCheckListItemOutDto } from "../../../lib/api";
+import { ClientApi } from "../../../lib/auth/client/apiClient";
+import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
+import { arrayMoveMutable } from "../../../lib/helper/common";
+import { KnownRoutes } from "../../../lib/routing/knownRoutes";
 
 interface Props {
     slug: string;
@@ -40,7 +42,7 @@ const InventoryListPage = (props: Props) => {
     const [inputValue, setInputValue] = useState("");
 
     if (!inventory || loading) {
-        return <>{"Loading..."}</>;
+        return <AppFrame>...loading</AppFrame>;
     }
 
     const checkedItems = inventory.entities.filter(e => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
@@ -101,10 +103,19 @@ const InventoryListPage = (props: Props) => {
         await toggleArrangeMutation.mutateAsync({ arrangeRequest: { items: inventory.entities }, updateRequest: item });
     };
 
+    const settingsAction = {
+        id: "settings",
+        action: async () => {
+            if (inventory) {
+                await router.push(KnownRoutes.InventorySettings(inventory.slug));
+            }
+        },
+        icon: <Settings />,
+        text: "Einstellungen",
+    }
+
     return (
-        <AppFrame toolbarText={inventory.name}>
-            <>Inventory </>
-            <button onClick={deleteInventory}>Delete</button>
+        <AppFrame toolbarText={inventory.name} menuActions={[settingsAction]}>
             <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
                 <SortableList
                     data={uncheckedItems}

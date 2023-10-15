@@ -2,6 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CreateRoomCommand } from '../models/CreateRoomCommand';
+import type { RenameRoomCommand } from '../models/RenameRoomCommand';
+import type { RevokeRoomAccessCommand } from '../models/RevokeRoomAccessCommand';
 import type { RoomOutDto } from '../models/RoomOutDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -69,6 +71,48 @@ slug: string,
             path: {
                 'slug': slug,
             },
+        });
+    }
+
+    /**
+     * @param slug 
+     * @param requestBody 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public renameRoom(
+slug: string,
+requestBody?: RenameRoomCommand,
+): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/api/Room/{slug}/rename',
+            path: {
+                'slug': slug,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @param slug 
+     * @param requestBody 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public revokeUserAccess(
+slug: string,
+requestBody?: RevokeRoomAccessCommand,
+): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/api/Room/{slug}/revoke',
+            path: {
+                'slug': slug,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 

@@ -456,3 +456,5 @@ $RECYCLE.BIN/
 Peperino.Core/Peperino.UserManagement/UserManagement.Api/appsettings.Development.json
 
 Peperino/appsettings.Development.json
+
+peperino.ui/public/sw.js.map

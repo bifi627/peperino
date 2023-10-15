@@ -15,4 +15,5 @@ export type RoomOutDto = {
     accessLevel: AccessLevel;
     checkLists: Array<CheckListOutDto>;
     inventories: Array<InventoryOutDto>;
+    users: Array<UserOutDto>;
 };

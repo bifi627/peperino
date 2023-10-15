@@ -13,7 +13,9 @@ export module KnownRoutes {
     export const SharedLink = (slug: string) => `/share/${slug}`;
     export const SSO = (redirect: string) => `/login/sso?redirect=${redirect}`;
     export const CheckList = (slug: string) => `/checklist/${slug}`;
+    export const CheckListSettings = (slug: string) => `/checklist/${slug}/settings`;
     export const Inventory = (slug: string) => `/inventory/${slug}`;
+    export const InventorySettings = (slug: string) => `/inventory/${slug}/settings`;
     export const SignalR = {
         CheckList: () => `${BACKEND_URL}signalr/checkListHub`,
     }

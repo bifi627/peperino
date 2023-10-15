@@ -11,6 +11,7 @@ namespace Peperino.Application.Room.Commands.CreateRoom
         public const string SHARED_ROOM_ACCESS = "SHARED_ROOM_ACCESS";
 
         [Required]
+        [MinLength(3)]
         public string RoomName { get; set; }
 
         public CreateRoomCommand(string roomName)
