@@ -4,12 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Peperino.Dtos.UserGroup
 {
-    public enum MemberType
-    {
-        Admin,
-        Member,
-    }
-
     public class RoomOutDto
     {
         [Required]
@@ -32,5 +26,8 @@ namespace Peperino.Dtos.UserGroup
 
         [Required]
         public List<Inventory.InventoryOutDto> Inventories { get; set; } = new();
+
+        [Required]
+        public List<UserOutDto> Users { get; set; } = new();
     }
 }

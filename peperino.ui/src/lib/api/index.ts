@@ -37,6 +37,7 @@ export type { RearrangeCheckListItemsInDto } from './models/RearrangeCheckListIt
 export type { RenameCheckListCommand } from './models/RenameCheckListCommand';
 export type { RenameInventoryCommand } from './models/RenameInventoryCommand';
 export type { RenameRoomCommand } from './models/RenameRoomCommand';
+export type { RevokeRoomAccessCommand } from './models/RevokeRoomAccessCommand';
 export type { RoomOutDto } from './models/RoomOutDto';
 export type { SharedLinkInDto } from './models/SharedLinkInDto';
 export type { SharedLinkOutDto } from './models/SharedLinkOutDto';

@@ -1,11 +1,13 @@
 import { DeleteForever, Share } from "@mui/icons-material";
+import { getAuth } from "firebase/auth";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { CardAction } from "../../../components/Common/Cards/CardAction";
 import { EditTextCardAction } from "../../../components/Common/Cards/EditTextCardAction";
+import { UserCardAction } from "../../../components/Common/Cards/UserCardAction";
 import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { RoomQueries } from "../../../hooks/queries/roomQueries";
-import { SharedLinkOutDto } from "../../../lib/api";
+import { SharedLinkOutDto, UserOutDto } from "../../../lib/api";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
 import { checkAccessLevel } from "../../../lib/helper/common";
@@ -72,6 +74,15 @@ const GroupSettingsPage = observer((props: Props) => {
         }
     }
 
+    const removeUserAccess = async (user: UserOutDto) => {
+        if (room) {
+            if (confirm("Zugriff löschen?")) {
+                await ClientApi.room.revokeUserAccess(room.slug, { slug: room.slug, userId: user.id });
+                await roomBySlugIdQuery.refetch();
+            }
+        }
+    }
+
     return (
         <AppFrame style="OnlyBack" toolbarText="Einstellungen">
             {!canWrite && <CardAction mainText={room?.roomName ?? "Name"} />}
@@ -90,6 +101,7 @@ const GroupSettingsPage = observer((props: Props) => {
                     await deleteRoom();
                 },
             }]} />
+            <UserCardAction users={(room?.users ?? []).filter(u => u.id !== getAuth().currentUser?.uid)} onDelete={removeUserAccess} />
         </AppFrame>
     );
 });

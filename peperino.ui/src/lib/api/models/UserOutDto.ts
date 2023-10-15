@@ -3,5 +3,6 @@
 /* eslint-disable */
 
 export type UserOutDto = {
-    userName?: string | null;
+    id: string;
+    userName: string;
 };
