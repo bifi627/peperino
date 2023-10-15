@@ -4,6 +4,7 @@
 import type { CreateInventoryCommand } from '../models/CreateInventoryCommand';
 import type { DeleteInventoryCommand } from '../models/DeleteInventoryCommand';
 import type { InventoryOutDto } from '../models/InventoryOutDto';
+import type { RenameInventoryCommand } from '../models/RenameInventoryCommand';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -56,6 +57,27 @@ requestBody?: DeleteInventoryCommand,
         return this.httpRequest.request({
             method: 'DELETE',
             url: '/api/Inventory',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @param slug 
+     * @param requestBody 
+     * @returns any Success
+     * @throws ApiError
+     */
+    public renameInventory(
+slug: string,
+requestBody?: RenameInventoryCommand,
+): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/api/Inventory/{slug}/rename',
+            path: {
+                'slug': slug,
+            },
             body: requestBody,
             mediaType: 'application/json',
         });

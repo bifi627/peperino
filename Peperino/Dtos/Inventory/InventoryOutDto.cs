@@ -1,4 +1,5 @@
-﻿using Peperino.Dtos.CheckList;
+﻿using Peperino.Core.EntityFramework.Entities;
+using Peperino.Dtos.CheckList;
 using Peperino.Dtos.UserGroup;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,5 +21,8 @@ namespace Peperino.Dtos.Inventory
 
         [Required]
         public List<BaseCheckListItemOutDto> Entities { get; set; } = new List<BaseCheckListItemOutDto>();
+
+        [Required]
+        public AccessLevel AccessLevel { get; set; }
     }
 }

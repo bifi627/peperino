@@ -29,6 +29,7 @@ namespace Peperino.Controllers.Inventory
             }
 
             var dto = inventory.Adapt<InventoryOutDto>();
+            dto.AccessLevel = inventory.CalculateAccessLevel(CurrentUser);
 
             return dto;
         }
@@ -36,14 +37,15 @@ namespace Peperino.Controllers.Inventory
         [HttpPost(Name = nameof(CreateInventory))]
         public async Task<ActionResult<InventoryOutDto>> CreateInventory(CreateInventoryCommand createInventoryCommand)
         {
-            var checkList = await Mediator.Send(createInventoryCommand);
+            var inventory = await Mediator.Send(createInventoryCommand);
 
-            if (checkList is null)
+            if (inventory is null)
             {
                 return BadRequest();
             }
 
-            var dto = checkList.Adapt<InventoryOutDto>();
+            var dto = inventory.Adapt<InventoryOutDto>();
+            dto.AccessLevel = inventory.CalculateAccessLevel(CurrentUser);
 
             return dto;
         }
@@ -52,6 +54,13 @@ namespace Peperino.Controllers.Inventory
         public async Task<ActionResult> DeleteInventory(DeleteInventoryCommand deleteInventoryCommand)
         {
             await Mediator.Send(deleteInventoryCommand);
+            return Ok();
+        }
+
+        [HttpPost("{slug}/rename", Name = "RenameInventory")]
+        public async Task<ActionResult> RenameInventory(RenameInventoryCommand command)
+        {
+            await Mediator.Send(command);
             return Ok();
         }
     }

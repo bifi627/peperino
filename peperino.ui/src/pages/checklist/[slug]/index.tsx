@@ -72,7 +72,7 @@ const CheckListPage = observer((props: Props) => {
     // );
 
     if (!checkList || loading) {
-        return <AppFrame></AppFrame>;
+        return <AppFrame>...loading</AppFrame>;
     }
 
     const checkedItems = checkList.entities.filter(e => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
