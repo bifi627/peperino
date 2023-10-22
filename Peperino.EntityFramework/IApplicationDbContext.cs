@@ -17,5 +17,6 @@ namespace Peperino.EntityFramework
         DbSet<SharedLink> SharedLinks { get; }
         DbSet<CheckList> CheckLists { get; }
         DbSet<CheckListItemType> CheckListItemTypes { get; }
+        DbSet<Favorites> Favorites { get; }
     }
 }

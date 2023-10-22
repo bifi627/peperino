@@ -1,12 +1,14 @@
-import { AccountBox, ChevronRight, Groups } from "@mui/icons-material";
+import { AccountBox, ChevronRight, Groups, Star } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { getAuth } from "firebase/auth";
 import type { NextPage } from 'next';
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { AppFrame } from "../components/appFrame/AppFrame";
 import { CardAction } from "../components/Common/Cards/CardAction";
+import { AppFrame } from "../components/appFrame/AppFrame";
+import { FullLoadingPage } from "../components/loadingScreen/FullLoadingPage";
+import { FavoritesQueries } from "../hooks/queries/favoritesQueries";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
 const HomePage: NextPage = () => {
@@ -14,8 +16,11 @@ const HomePage: NextPage = () => {
     const router = useRouter();
     const [user, loading, error] = useAuthState(getAuth());
 
+    const favoriteCheckListsQuery = FavoritesQueries.useGetFavoriteCheckListsQuery();
+    const favoriteCheckListsData = favoriteCheckListsQuery.data;
+
     if (loading) {
-        return <>Loading...</>;
+        return <AppFrame><FullLoadingPage /></AppFrame>;
     }
 
     const gradientColor = theme.palette.mode === "dark" ? theme.palette.primary.dark : theme.palette.primary.light;
@@ -43,16 +48,23 @@ const HomePage: NextPage = () => {
                                 icon: <ChevronRight />
                             }]}
                         />
-                        {/* <CardAction
-                        mainText="Mein Profil"
-                        leftIcon={<VerifiedUser />}
-                        disabled
-                    />
-                    <CardAction
-                        mainText="Einstellungen"
-                        leftIcon={<Settings />}
-                        disabled
-                    /> */}
+                        {(favoriteCheckListsData && favoriteCheckListsData.length > 0) &&
+                            <>
+                                {favoriteCheckListsData.map(c =>
+                                    <CardAction
+                                        key={c.id}
+                                        mainText={c.name}
+                                        leftIcon={<Star />}
+                                        subTexts={[c.room.roomName]}
+                                        actions={[{
+                                            id: "open",
+                                            action: async () => await router.push(KnownRoutes.CheckList(c.slug)),
+                                            icon: <ChevronRight />
+                                        }]}
+                                    />
+                                )}
+                            </>
+                        }
                     </>
                     :
                     <CardAction

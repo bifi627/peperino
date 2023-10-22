@@ -13,4 +13,5 @@ export type CheckListOutDto = {
     slug: string;
     entities: Array<BaseCheckListItemOutDto>;
     accessLevel: AccessLevel;
+    isFavorite: boolean;
 };

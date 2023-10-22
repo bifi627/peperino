@@ -1,5 +1,5 @@
 import { getApps, initializeApp } from 'firebase/app';
-import { getAuth, onIdTokenChanged, User } from 'firebase/auth';
+import { User, getAuth, onIdTokenChanged } from 'firebase/auth';
 import { FIREBASE_CONFIG } from '../../../shared/constants';
 import { GlobalApplicationStateObject } from '../../state/ApplicationState';
 
@@ -19,4 +19,9 @@ if (getApps().length === 0) {
 
 onIdTokenChanged(getAuth(), (user: User | null) => {
     GlobalApplicationStateObject.userInit();
+    // if (isClient()) {
+    //     user?.getIdToken().then(token => {
+    //         fetch("/api/auth", { method: "POST", body: token });
+    //     });
+    // }
 });

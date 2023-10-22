@@ -1,0 +1,1 @@
+export const NEXTJS_FIREBASE_COOKIE = "nextjs_firebase";

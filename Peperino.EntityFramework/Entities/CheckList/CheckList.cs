@@ -8,5 +8,6 @@ namespace Peperino.EntityFramework.Entities.CheckList
         public virtual Room? Room_Inventory { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Slug { get; set; } = string.Empty;
+        public virtual IList<Favorites> Favorites { get; set; } = new List<Favorites>();
     }
 }
