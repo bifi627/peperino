@@ -1,13 +1,13 @@
-import { AttachFile, Link, MoveUp, Photo, Send, Settings } from "@mui/icons-material";
-import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Popover, TextField, useTheme } from "@mui/material";
+import { Settings } from "@mui/icons-material";
+import { Box, useTheme } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
-import { toast } from "react-toastify";
 import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../../components/checklist/CheckListItem";
+import { EnhancedInputField } from "../../../components/checklist/EnhancedInputField";
 import { SortableList } from "../../../components/sortables/SortableList";
 import { CheckListQueries } from "../../../hooks/queries/checklistQueries";
 import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../../lib/api";
@@ -100,29 +100,18 @@ const CheckListPage = observer((props: Props) => {
         }
     }
 
-    const getAutoCompleteOptions = () => {
-        if (checklistState.inputValue.length < 3) {
+    const getAutoCompleteOptions = (inputValue: string) => {
+        if (inputValue.length < 3) {
             return [];
         }
-
         const uniqueItems = new Set(checkList.entities.filter(e => isTextItem(e) || isInventoryItem(e)).map(e => isTextItem(e) || isInventoryItem(e) ? e.text : ""));
         const result = [...uniqueItems.values()];
         return result;
     }
 
-    const createAttachment = () => {
-        checklistState.attachmentOptionsOpened = true;
-    }
-
-    const openLinkDialog = () => {
-        checklistState.attachmentOptionsOpened = false;
-        checklistState.linkDialogOpened = true;
-    }
-
     const openImageDialog = async () => {
         queryClient.setDefaultOptions({ queries: { refetchOnWindowFocus: false } });
 
-        checklistState.attachmentOptionsOpened = false;
         const files = await selectFile("image/*");
 
         await appFrame.withLoadingScreen(async () => {
@@ -156,6 +145,10 @@ const CheckListPage = observer((props: Props) => {
             await addTextItemMutation.mutateAsync({ text: text });
         }
     };
+
+    const addLinkItem = async ({ inputValue, linkValue }: { inputValue: string, linkValue: string }) => {
+        await addLinkItemMutation.mutateAsync({ link: linkValue, title: inputValue })
+    }
 
     const onDeleteItem = async (item: BaseCheckListItemOutDto) => {
         await deleteItemMutation.mutateAsync(item.id);
@@ -210,52 +203,22 @@ const CheckListPage = observer((props: Props) => {
                     renderData={item => <CheckListItem onCheck={onCheck} onUpdate={onUpdateItem} onDelete={onDeleteItem} key={item.id} checkListSlug={checkList.slug} item={item} />}
                 />
 
-                <form style={{ display: "flex", flexDirection: "row", gap: "6px" }} onSubmit={async (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (checklistState.inputValue !== "") {
-                        const text = checklistState.inputValue.trim();
-                        checklistState.inputValue = "";
+                <EnhancedInputField
+                    onOptionsRequested={getAutoCompleteOptions}
+                    onAddTextItem={addTextItem}
+                    onAddLinkItem={addLinkItem}
+                    onOpenImagePicker={openImageDialog}
+                    onIsExistingItem={value => {
+                        const exists = checkList.entities.filter(e =>
+                            isTextItem(e) ||
+                            isInventoryItem(e)
+                        ).find(e =>
+                            (isTextItem(e) || isInventoryItem(e)) &&
+                            e.text === value) !== undefined;
 
-                        await addTextItem(text);
-                    }
-                }}>
-                    <Autocomplete inputValue={checklistState.inputValue} onInputChange={(_, value) => checklistState.inputValue = value} inputMode="search" options={getAutoCompleteOptions()} freeSolo fullWidth renderInput={params =>
-                        <TextField autoFocus {...params} sx={{ paddingLeft: 2 }} fullWidth size="small" />
-                    }></Autocomplete>
-                    <IconButton ref={ref => {
-                        if (!checklistState.attachmentOptionsAnchor) {
-                            checklistState.attachmentOptionsAnchor = ref;
-                        }
-                    }} size="small" onClick={createAttachment}>
-                        <AttachFile color="primary" />
-                    </IconButton>
-                    <Popover
-                        open={checklistState.attachmentOptionsOpened}
-                        anchorEl={checklistState.attachmentOptionsAnchor}
-                        onClose={() => checklistState.attachmentOptionsOpened = false}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                    >
-                        <Box display="flex" flexDirection="row" gap="6px" onClick={openLinkDialog}>
-                            <IconButton>
-                                <Link />
-                            </IconButton>
-                            <p>Link</p>
-                        </Box>
-                        <Box display="flex" flexDirection="row" gap="6px" onClick={openImageDialog} sx={{ paddingRight: "20px" }}>
-                            <IconButton>
-                                <Photo />
-                            </IconButton>
-                            <p>Bild / Foto</p>
-                        </Box>
-                    </Popover>
-                    <IconButton size="small" type="submit" sx={{ paddingRight: "20px", paddingLeft: "20px" }}>
-                        {checkList.entities.filter(e => isTextItem(e) || isInventoryItem(e)).find(e => (isTextItem(e) || isInventoryItem(e)) && e.text === checklistState.inputValue) === undefined ? <Send color="primary" /> : <MoveUp color="primary" />}
-                    </IconButton>
-                </form>
+                        return exists;
+                    }}
+                />
 
                 <SortableList
                     data={checkedItems}
@@ -272,46 +235,6 @@ const CheckListPage = observer((props: Props) => {
                     <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
                 )} */}
             </Box>
-            <Dialog open={checklistState.linkDialogOpened} onClose={() => checklistState.linkDialogOpened = false}>
-                <DialogTitle>{"Neuen Link hinzufügen"}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        inputMode="text"
-                        value={checklistState.inputValue}
-                        onChange={(s) => { checklistState.inputValue = s.target.value }}
-                        autoComplete="off"
-                        margin="dense"
-                        id="name"
-                        label="Titel"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <TextField
-                        inputMode="url"
-                        value={checklistState.linkValue}
-                        onChange={(s) => { checklistState.linkValue = s.target.value }}
-                        autoComplete="off"
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Link*"
-                        fullWidth
-                        variant="standard"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => checklistState.linkDialogOpened = false}>Abbrechen</Button>
-                    <Button onClick={async () => {
-                        if (!checklistState.isValidHttpUrl(checklistState.linkValue)) {
-                            toast.error("Ungültiger Link");
-                            return;
-                        }
-
-                        checklistState.linkDialogOpened = false;
-                        await addLinkItemMutation.mutateAsync({ link: checklistState.linkValue, title: checklistState.inputValue })
-                    }}>Hinzufügen</Button>
-                </DialogActions>
-            </Dialog>
         </AppFrame>
     );
 });

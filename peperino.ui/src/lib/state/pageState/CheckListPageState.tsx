@@ -33,11 +33,7 @@ export class CheckListPageState extends BasePageState {
         this.appFrameConfig.toolbarText = value?.name ?? "Check List Page";
     }
 
-    public inputValue = "";
     public linkValue = "";
-
-    public attachmentOptionsOpened = false;
-    public attachmentOptionsAnchor: HTMLElement | null = null;
 
     public linkDialogOpened = false;
 
@@ -47,11 +43,6 @@ export class CheckListPageState extends BasePageState {
         makeObservable(this as CheckListPageState & { _checkList: CheckListOutDto }, {
             _checkList: observable,
             _connectionState: observable,
-            inputValue: observable,
-            linkValue: observable,
-            linkDialogOpened: observable,
-            attachmentOptionsOpened: observable,
-            attachmentOptionsAnchor: observable,
             addTextItem: action,
             addLinkItem: action,
         });
@@ -96,16 +87,6 @@ export class CheckListPageState extends BasePageState {
             const list = await ClientApi.checkList.getCheckListBySlug(this.checkList.slug);
             this.checkList = list;
         }
-    }
-
-    public isValidHttpUrl(string: string) {
-        let url;
-        try {
-            url = new URL(string);
-        } catch (_) {
-            return false;
-        }
-        return url.protocol === "http:" || url.protocol === "https:";
     }
 
     public async addLinkItem(text: string, link: string) {
