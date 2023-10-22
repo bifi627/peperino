@@ -75,7 +75,11 @@ export const EnhancedInputField = (props: Props) => {
                     {props.onIsExistingItem(inputValue) ? <MoveUp color="primary" /> : <Send color="primary" />}
                 </IconButton>
             </form>
-            <Dialog open={linkDialogOpened} onClose={() => setLinkDialogOpened(false)}>
+            <Dialog open={linkDialogOpened} onClose={() => {
+                setLinkDialogOpened(false);
+                setLinkValue("");
+                setInputValue("");
+            }}>
                 <DialogTitle>{"Neuen Link hinzufügen"}</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -111,6 +115,8 @@ export const EnhancedInputField = (props: Props) => {
                         }
 
                         setLinkDialogOpened(false);
+                        setLinkValue("");
+                        setInputValue("");
                         props.onAddLinkItem({ inputValue, linkValue })
                     }}>Hinzufügen</Button>
                 </DialogActions>
