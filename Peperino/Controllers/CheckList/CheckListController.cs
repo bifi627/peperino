@@ -25,13 +25,14 @@ namespace Peperino.Controllers.CheckList
                                                 .FilterRequireRead(CurrentUser)
                                                 .FirstOrDefault(r => r.Slug == listSlug);
 
-            if (checkList is null)
+            if (checkList is null || CurrentUser is null)
             {
                 return NotFound();
             }
 
             var dto = checkList.Adapt<CheckListOutDto>();
             dto.AccessLevel = checkList.CalculateAccessLevel(CurrentUser);
+            dto.IsFavorite = checkList.Favorites.Any(x => x.User.Id == CurrentUser.Id);
 
             return dto;
         }

@@ -9,6 +9,7 @@ import { CheckListService } from './services/CheckListService';
 import { CheckListItemService } from './services/CheckListItemService';
 import { DemoService } from './services/DemoService';
 import { EnvironmentService } from './services/EnvironmentService';
+import { FavoritesService } from './services/FavoritesService';
 import { HealthCheckService } from './services/HealthCheckService';
 import { ImageStoreService } from './services/ImageStoreService';
 import { InventoryService } from './services/InventoryService';
@@ -26,6 +27,7 @@ export class PeperinoApiClient {
     public readonly checkListItem: CheckListItemService;
     public readonly demo: DemoService;
     public readonly environment: EnvironmentService;
+    public readonly favorites: FavoritesService;
     public readonly healthCheck: HealthCheckService;
     public readonly imageStore: ImageStoreService;
     public readonly inventory: InventoryService;
@@ -54,6 +56,7 @@ export class PeperinoApiClient {
         this.checkListItem = new CheckListItemService(this.request);
         this.demo = new DemoService(this.request);
         this.environment = new EnvironmentService(this.request);
+        this.favorites = new FavoritesService(this.request);
         this.healthCheck = new HealthCheckService(this.request);
         this.imageStore = new ImageStoreService(this.request);
         this.inventory = new InventoryService(this.request);

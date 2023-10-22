@@ -23,5 +23,8 @@ namespace Peperino.Dtos.CheckList
 
         [Required]
         public AccessLevel AccessLevel { get; set; }
+
+        [Required]
+        public bool IsFavorite { get; set; }
     }
 }

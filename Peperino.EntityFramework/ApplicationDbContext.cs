@@ -32,6 +32,7 @@ namespace Peperino.EntityFramework
         public DbSet<SharedLink> SharedLinks => Set<SharedLink>();
         public DbSet<CheckList> CheckLists => Set<CheckList>();
         public DbSet<CheckListItemType> CheckListItemTypes => Set<CheckListItemType>();
+        public DbSet<Favorites> Favorites => Set<Favorites>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

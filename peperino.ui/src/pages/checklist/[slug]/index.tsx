@@ -1,4 +1,4 @@
-import { Settings } from "@mui/icons-material";
+import { Settings, Star } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { observer } from "mobx-react";
@@ -12,6 +12,7 @@ import { SortableList } from "../../../components/sortables/SortableList";
 import { CheckListQueries } from "../../../hooks/queries/checklistQueries";
 import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../../lib/api";
 import { isInventoryItem, isTextItem } from "../../../lib/apiHelper/checkListItemGuards";
+import { MenuAction } from "../../../lib/appFrame/Action";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
 import { arrayMoveMutable, selectFile, toBase64 } from "../../../lib/helper/common";
@@ -183,6 +184,19 @@ const CheckListPage = observer((props: Props) => {
         await toggleArrangeMutation.mutateAsync({ arrangeRequest: { items: checkList.entities }, updateRequest: item });
     };
 
+    const favoritesAction: MenuAction = {
+        id: "favorite",
+        action: async () => {
+            if (checkList) {
+                await ClientApi.favorites.updateFavoriteCheckList(checkList.slug, { slug: checkList.slug, favorite: !checkList.isFavorite });
+                await checkListQuery.refetch();
+            }
+        },
+        keepMenuOpen: true,
+        icon: checkList.isFavorite ? <Star color="primary" /> : <Star />,
+        text: "Favorit",
+    }
+
     const settingsAction = {
         id: "settings",
         action: async () => {
@@ -195,7 +209,7 @@ const CheckListPage = observer((props: Props) => {
     }
 
     return (
-        <AppFrame toolbarText={checkList.name} menuActions={[settingsAction]}>
+        <AppFrame toolbarText={checkList.name} menuActions={[settingsAction, favoritesAction]}>
             <Box sx={{ minHeight: "100%" }} display="flex" flexDirection="column" gap={1}>
                 <SortableList
                     data={uncheckedItems}
