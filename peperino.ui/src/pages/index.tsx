@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { CardAction } from "../components/Common/Cards/CardAction";
 import { AppFrame } from "../components/appFrame/AppFrame";
+import { FullLoadingPage } from "../components/loadingScreen/FullLoadingPage";
 import { FavoritesQueries } from "../hooks/queries/favoritesQueries";
 import { KnownRoutes } from "../lib/routing/knownRoutes";
 
@@ -17,10 +18,9 @@ const HomePage: NextPage = () => {
 
     const favoriteCheckListsQuery = FavoritesQueries.useGetFavoriteCheckListsQuery();
     const favoriteCheckListsData = favoriteCheckListsQuery.data;
-    const favoriteCheckListsLoading = favoriteCheckListsQuery.isLoading;
 
     if (loading) {
-        return <>Loading...</>;
+        return <AppFrame><FullLoadingPage /></AppFrame>;
     }
 
     const gradientColor = theme.palette.mode === "dark" ? theme.palette.primary.dark : theme.palette.primary.light;

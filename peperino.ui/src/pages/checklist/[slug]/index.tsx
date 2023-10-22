@@ -1,13 +1,13 @@
 import { Settings, Star } from "@mui/icons-material";
-import { Box, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { observer } from "mobx-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { DropResult } from "react-beautiful-dnd";
 import { AppFrame } from "../../../components/appFrame/AppFrame";
 import { CheckListItem } from "../../../components/checklist/CheckListItem";
 import { EnhancedInputField } from "../../../components/checklist/EnhancedInputField";
+import { FullLoadingPage } from "../../../components/loadingScreen/FullLoadingPage";
 import { SortableList } from "../../../components/sortables/SortableList";
 import { CheckListQueries } from "../../../hooks/queries/checklistQueries";
 import { BaseCheckListItemOutDto, TextCheckListItemOutDto } from "../../../lib/api";
@@ -23,12 +23,9 @@ interface Props {
     slug: string;
 }
 
-const CheckListPage = observer((props: Props) => {
+const CheckListPage = (props: Props) => {
     useClientAuthGuard();
 
-    const theme = useTheme();
-
-    const checklistState = useApplicationState().getChecklistState();
     const appFrame = useApplicationState().getAppFrame();
 
     const router = useRouter();
@@ -73,7 +70,7 @@ const CheckListPage = observer((props: Props) => {
     // );
 
     if (!checkList || loading) {
-        return <AppFrame>...loading</AppFrame>;
+        return <AppFrame><FullLoadingPage /></AppFrame>;
     }
 
     const checkedItems = checkList.entities.filter(e => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
@@ -251,7 +248,7 @@ const CheckListPage = observer((props: Props) => {
             </Box>
         </AppFrame>
     );
-});
+};
 
 export default CheckListPage;
 

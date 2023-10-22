@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { CardAction } from "../../../components/Common/Cards/CardAction";
 import { EditTextCardAction } from "../../../components/Common/Cards/EditTextCardAction";
 import { AppFrame } from "../../../components/appFrame/AppFrame";
+import { FullLoadingPage } from "../../../components/loadingScreen/FullLoadingPage";
 import { CheckListQueries } from "../../../hooks/queries/checklistQueries";
 import { ClientApi } from "../../../lib/auth/client/apiClient";
 import { useClientAuthGuard } from "../../../lib/auth/client/useClientAuthGuard";
@@ -23,7 +24,7 @@ const CheckListSettingsPage = () => {
     if (loading) {
         return (
             <AppFrame toolbarText="Einstellungen">
-                <>Loading...</>
+                <FullLoadingPage />
             </AppFrame>
         )
     }
