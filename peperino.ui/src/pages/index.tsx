@@ -2,7 +2,7 @@ import { AccountBox, ChevronRight, Groups, Star } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { getAuth } from "firebase/auth";
 import type { NextPage } from 'next';
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { CardAction } from "../components/Common/Cards/CardAction";
@@ -31,8 +31,8 @@ const HomePage: NextPage = () => {
                 {user && <CardAction mainText={`Eingeloggt als ${user.displayName ?? user.email}`} />}
                 <Image
                     style={{ background: `radial-gradient(black 0%, ${gradientColor} 20%, transparent 60%)` }}
-                    height="200px"
-                    width="207px"
+                    height="200"
+                    width="207"
                     layout="fixed"
                     src="/images/peperino_large.png"
                     alt="logo">

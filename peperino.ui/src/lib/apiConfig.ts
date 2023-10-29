@@ -5,7 +5,7 @@ import { OpenAPI } from "./api/core/OpenAPI";
 
 OpenAPI.BASE = BACKEND_URL.slice(0, BACKEND_URL.length - 1);
 OpenAPI.TOKEN = async () => {
-    const token = await getAuth().currentUser?.getIdToken() ?? "";
+    const token = (await getAuth().currentUser?.getIdToken()) ?? "";
     return token;
 };
 

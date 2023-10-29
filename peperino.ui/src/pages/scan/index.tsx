@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AppFrame } from "../../components/appFrame/AppFrame";
+import { isClient } from "../../lib/helper/common";
 // const { createCanvas, loadImage } = require('canvas');
-
-const { scanImageData } = require('zbar.wasm');
 
 const ScanPage = () => {
     const [videoStream, setVideoStream] = useState<MediaStream>();
@@ -12,9 +11,14 @@ const ScanPage = () => {
     const [response, setResponse] = useState<{ data: string, ms: number }>();
 
     useEffect(() => {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false }).then(stream => {
-            setVideoStream(stream);
-        }).catch(error => alert(error));
+        if (navigator.mediaDevices) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false }).then(stream => {
+                setVideoStream(stream);
+            }).catch(error => alert(error));
+        }
+        else {
+            alert("No media access?")
+        }
     }, []);
 
     useEffect(() => {
@@ -66,13 +70,16 @@ const ScanPage = () => {
 
             try {
                 const t0 = new Date().getTime();
-                const rawRes = await scanImageData(img);
-                console.log(rawRes);
-                if (rawRes[0]) {
-                    const res = new TextDecoder().decode(rawRes[0].data)
-                    console.log(res);
-                    const t1 = new Date().getTime();
-                    setResponse({ data: res, ms: t1 - t0 });
+                if (isClient()) {
+                    const { scanImageData } = require('zbar.wasm');
+                    const rawRes = await scanImageData(img);
+                    console.log(rawRes);
+                    if (rawRes[0]) {
+                        const res = new TextDecoder().decode(rawRes[0].data)
+                        console.log(res);
+                        const t1 = new Date().getTime();
+                        setResponse({ data: res, ms: t1 - t0 });
+                    }
                 }
             } catch (error) {
                 alert(error);
