@@ -18,6 +18,11 @@ export const NavigateAuth = () => {
             <Button onClick={() => {
                 appFrame.setTitle("");
             }}>Delete Title</Button>
+            <Button onClick={async () => {
+                await appFrame.withLoading(async () => {
+                    return await new Promise((resolve, reject) => setTimeout(resolve, 2000))
+                }, "Overlay");
+            }}>Test Load</Button>
         </>
     );
 }

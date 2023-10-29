@@ -20,3 +20,21 @@ export module KnownRoutes {
         CheckList: () => `${BACKEND_URL}signalr/checkListHub`,
     }
 }
+
+export module KnownRoutes {
+    export module V2 {
+        export const Root = () => "/v2";
+        export const Login = (redirect = "") => {
+            if (redirect !== "") {
+                return `/v2/auth/login?redirect=${redirect}`;
+            }
+            return `/v2/auth/login`;
+        };
+        export const Logout = (redirect = "") => {
+            if (redirect !== "") {
+                return `/v2/auth/logout?redirect=${redirect}`;
+            }
+            return `/v2/auth/logout`;
+        }
+    }
+}

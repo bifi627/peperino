@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { NEXTJS_FIREBASE_COOKIE } from '../lib/auth/shared/constants';
+import { KnownRoutes } from '../lib/routing/knownRoutes';
 
 
 
@@ -18,7 +19,7 @@ export default async function middleware(req: NextRequest) {
     console.log(token);
 
     if (!token && isProtectedRoute(req.nextUrl.pathname)) {
-        return NextResponse.redirect(new URL("/v2/auth/login", req.url));
+        return NextResponse.redirect(new URL(KnownRoutes.V2.Login(req.nextUrl.pathname), req.url));
     }
 }
 

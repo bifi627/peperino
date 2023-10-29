@@ -4,6 +4,8 @@ import { AppBar, Container, Typography } from "@mui/material";
 import { usePathname } from "next/navigation";
 import React from "react";
 
+import { FullLoadingPage } from "../../components/loadingScreen/FullLoadingPage";
+import { OverlayLoadingPage } from "../../components/loadingScreen/OverlayLoadingPage";
 import { isClient } from "../../lib/helper/common";
 import { useAppFrameStore } from "./state/appFrameState";
 
@@ -28,7 +30,9 @@ export const ClientLayout = ({ children }: Props) => {
                 </Typography>
                 <Container sx={{ minHeight: "32px" }}></Container>
             </AppBar>
-            {children}
+            {appFrame.loadingState === "Full" && <FullLoadingPage />}
+            {appFrame.loadingState === "Overlay" && <OverlayLoadingPage>{children}</OverlayLoadingPage>}
+            {appFrame.loadingState === undefined && children}
         </>
     );
 }

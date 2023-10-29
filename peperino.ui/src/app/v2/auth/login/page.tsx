@@ -18,10 +18,10 @@ export default function Page() {
         // Popup signin flow rather than redirect flow.
         signInFlow: 'popup',
         callbacks: {
-            signInSuccessWithAuthResult: (result) => {
+            signInSuccessWithAuthResult: () => {
                 appFrame.withLoadingScreen(async () => {
                     await GlobalApplicationStateObject.initClientState();
-                    router.replace(redirect || KnownRoutes.Root())
+                    router.replace(redirect || KnownRoutes.V2.Root())
                 });
 
                 return false;
@@ -38,6 +38,6 @@ export default function Page() {
     };
 
     return (
-        <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig}></StyledFirebaseAuth>
+        <StyledFirebaseAuth firebaseAuth={getAuth()} uiConfig={uiConfig} />
     );
 }
