@@ -11,9 +11,14 @@ const ScanPage = () => {
     const [response, setResponse] = useState<{ data: string, ms: number }>();
 
     useEffect(() => {
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false }).then(stream => {
-            setVideoStream(stream);
-        }).catch(error => alert(error));
+        if (navigator.mediaDevices) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false }).then(stream => {
+                setVideoStream(stream);
+            }).catch(error => alert(error));
+        }
+        else {
+            alert("No media access?")
+        }
     }, []);
 
     useEffect(() => {
