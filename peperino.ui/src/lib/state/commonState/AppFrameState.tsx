@@ -1,4 +1,4 @@
-import { Groups, Home } from "@mui/icons-material";
+import { Explore, Groups, Home } from "@mui/icons-material";
 import { getAuth } from "firebase/auth";
 import { isObservableArray, makeObservable, observable } from "mobx";
 import { DrawerItem } from "../../../components/appFrame/Drawer/DrawerItem";
@@ -38,8 +38,14 @@ export class AppFrameState extends BaseState {
         rooms.icon = <Groups />;
         rooms.action = async () => { await this.router?.push(KnownRoutes.Room()) };
         rooms.childItems = [];
-
         user && drawerItems.push(rooms);
+
+        const v2 = new DrawerItem();
+        rooms.text = "v2";
+        rooms.icon = <Explore />;
+        rooms.action = async () => { await this.router?.push(KnownRoutes.Root() + "/v2") };
+        rooms.childItems = [];
+        drawerItems.push(v2);
 
         if (isObservableArray(this.drawerItems)) {
             this.drawerItems.replace(drawerItems)

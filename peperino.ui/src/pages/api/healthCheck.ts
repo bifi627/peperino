@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import "../../lib/apiConfig";
 
 async function healthCheck(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "GET") {

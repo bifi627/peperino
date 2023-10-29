@@ -19,6 +19,10 @@ export function isServer() {
     return typeof window === "undefined";
 }
 
+export function isProduction() {
+    return process.env.NODE_ENV === "production";
+}
+
 /**
  * Select file(s).
  * @param {String} contentType The content type of files you wish to select. For instance, use "image/*" to select all types of images.

@@ -17,14 +17,20 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "next.config.js",
-    "src/lib/pwa/cacheStrategy.js"
+    "src/lib/pwa/cacheStrategy.js",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

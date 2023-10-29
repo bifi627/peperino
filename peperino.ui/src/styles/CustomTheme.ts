@@ -8,27 +8,27 @@ export type AllowedTheme = NonNullable<PaletteOptions["mode"]>;
 export const DEFAULT_THEME: AllowedTheme = "dark";
 
 export const getDefaultTheme = () => {
-    return "light";
+  return "dark";
 }
 
 export const lightTheme = createTheme({
-    palette: {
-        mode: "light",
-        primary: {
-            main: "#1d943e",
-        },
-        secondary: {
-            main: "#BF28D7"
-        }
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#1d943e",
     },
+    secondary: {
+      main: "#BF28D7"
+    }
+  },
 });
 
 export const darkTheme = createTheme({
-    palette: {
-        primary: { main: "#9147FF" },
-        secondary: { main: "#2a48f3" },
-        mode: "dark",
-    },
+  palette: {
+    primary: { main: "#9147FF" },
+    secondary: { main: "#2a48f3" },
+    mode: "dark",
+  },
 });
 
 export const globalStyles = css`

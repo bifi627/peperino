@@ -1,3 +1,5 @@
+"use client"
+
 import { onAuthStateChanged } from 'firebase/auth';
 import firebaseui from "firebaseui";
 import 'firebaseui/dist/firebaseui.css';
@@ -15,7 +17,6 @@ interface Props {
     firebaseAuth: any; // As firebaseui-web
     className?: string;
 }
-
 
 const StyledFirebaseAuth = ({ uiConfig, firebaseAuth, className, uiCallback }: Props) => {
     const [firebaseui, setFirebaseui] = useState<any | null>(null);

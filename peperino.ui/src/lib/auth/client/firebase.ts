@@ -1,6 +1,8 @@
+"use client"
 import { getApps, initializeApp } from 'firebase/app';
-import { User, getAuth, onIdTokenChanged } from 'firebase/auth';
+import { User, getAuth, onAuthStateChanged, onIdTokenChanged } from 'firebase/auth';
 import { FIREBASE_CONFIG } from '../../../shared/constants';
+import { isClient } from '../../helper/common';
 import { GlobalApplicationStateObject } from '../../state/ApplicationState';
 
 const firebaseConfig = {
@@ -19,9 +21,15 @@ if (getApps().length === 0) {
 
 onIdTokenChanged(getAuth(), (user: User | null) => {
     GlobalApplicationStateObject.userInit();
-    // if (isClient()) {
-    //     user?.getIdToken().then(token => {
-    //         fetch("/api/auth", { method: "POST", body: token });
-    //     });
-    // }
+    if (isClient()) {
+        user?.getIdToken().then(token => {
+            fetch("/api/auth", { method: "POST", body: token });
+        });
+    }
+});
+
+onAuthStateChanged(getAuth(), (user: User | null) => {
+    if (isClient() && !user) {
+        fetch("/api/auth", { method: "POST", body: "" });
+    }
 });
