@@ -29,7 +29,7 @@ export function isProduction() {
  * @param {Boolean} multiple Indicates if the user can select multiple files.
  * @returns {Promise<File|File[]>} A promise of a file or array of files in case the multiple parameter is true.
  */
-export function selectFile(contentType: string, multiple = false) {
+export function selectFile(contentType: string, multiple: boolean = false): Promise<File | File[]> {
     return new Promise<File[]>((resolve, reject) => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -95,3 +95,5 @@ export const isValidHttpUrl = (string: string) => {
     }
     return url.protocol === "http:" || url.protocol === "https:";
 }
+
+export const wait = async (time: number) => new Promise(r => setTimeout(r, time));
