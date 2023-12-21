@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "431297510031",
+    "project_id": "peperino-app",
+    "storage_bucket": "peperino-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431297510031:android:fa8db6dda08c69e2c54efa",
+        "android_client_info": {
+          "package_name": "com.example.peperino_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "431297510031-di2up24dsgd6tn634f01c56f0c5rhvq7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtIpK4AT6BIRGl8gNY9Vr42Jo6JSCf4Kk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "431297510031-di2up24dsgd6tn634f01c56f0c5rhvq7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "431297510031-2n35k6loubee96f6bbgf6ig69hn9fvmg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.peperinoApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
