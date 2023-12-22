@@ -1,55 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peperino_app/components/app_bar.dart';
+import 'package:peperino_app/components/app_drawer.dart';
 
-class HomePage extends StatefulWidget {
+import '../../auth/bloc/auth_bloc.dart';
+
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   Widget _title() {
     return const Text("Peperino");
   }
 
+  Widget _userEmail() {
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      return Text(state.user?.email ?? "User email");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _title(),
-        backgroundColor: const ColorScheme.dark().background,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              title: const Text("Peperino"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/");
-              },
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: const MainAppBar(title: "Peperino"),
+          drawer: const MainAppDrawer(),
+          body: Container(
+            height: double.infinity,
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [_userEmail()],
             ),
-            const Divider(),
-            ListTile(
-              title: const Text("Login"),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          // children: [_userId(), _signOutButton()],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

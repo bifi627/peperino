@@ -2,25 +2,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:peperino_app/auth/auth.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginRegisterPage extends StatefulWidget {
+  const LoginRegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginRegisterPage> createState() => _LoginRegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginRegisterPageState extends State<LoginRegisterPage> {
   String? errorMessage = "";
   bool isLogin = true;
+  bool isLoading = false;
+
+  final _formKey = GlobalKey<FormState>();
 
   Widget _title() {
-    return const Text("Einloggen");
+    return Text(isLogin ? "Einloggen" : "Registrieren");
   }
 
   final TextEditingController _controllerEmail = TextEditingController();
   Widget _emailField() {
-    return TextField(
+    return TextFormField(
       controller: _controllerEmail,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Email eingeben";
+        }
+      },
       decoration: const InputDecoration(
         labelText: "Email",
       ),
@@ -29,8 +37,13 @@ class _LoginPageState extends State<LoginPage> {
 
   final TextEditingController _controllerPassword = TextEditingController();
   Widget _passwordField() {
-    return TextField(
+    return TextFormField(
       controller: _controllerPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Passwort eingeben";
+        }
+      },
       decoration: const InputDecoration(
         labelText: "Passwort",
       ),
@@ -44,44 +57,50 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _submitButton() {
     return ElevatedButton(
-      onPressed: isLogin ? signInWithEmailAndPassword : createUserWithEmailAndPassword,
-      child: Text(isLogin ? "Login" : "Register"),
-    );
-  }
-
-  Widget _loginGoogleButton() {
-    return ElevatedButton(
-      onPressed: signInGoogle,
-      child: const Text("Google"),
-    );
-  }
-
-  Widget _loginOrRegisterButton() {
-    return TextButton(
       onPressed: () {
-        setState(() {
-          isLogin = !isLogin;
-        });
+        if (_formKey.currentState!.validate()) {
+          isLogin ? signInWithEmailAndPassword() : createUserWithEmailAndPassword();
+        }
       },
-      child: Text(isLogin ? "Register" : "Login"),
+      child: Text(isLogin ? "Login" : "Register"),
     );
   }
 
   Future<void> signInWithEmailAndPassword() async {
     try {
-      await Auth().signInWithEmailAndPassword(
-          email: _controllerEmail.text, password: _controllerPassword.text);
-    } on FirebaseAuthException catch (e) {
       setState(() {
-        errorMessage = e.message;
+        errorMessage = "";
       });
-    }
-  }
 
-  Future<void> signInGoogle() async {
-    try {
-      await Auth().signInWithProvider("google");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text("Signing in..."),
+              ],
+            ),
+          );
+        },
+        barrierDismissible: false, // Prevents user from dismissing the dialog
+      );
+
+      await Auth().signInWithEmailAndPassword(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+      await Future.delayed(const Duration(seconds: 2));
+      if (context.mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } on FirebaseAuthException catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
       setState(() {
         errorMessage = e.message;
       });
@@ -90,8 +109,15 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> createUserWithEmailAndPassword() async {
     try {
+      setState(() {
+        errorMessage = "";
+      });
       await Auth().createUserWithEmailAndPassword(
-          email: _controllerEmail.text, password: _controllerPassword.text);
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
+      await Future.delayed(const Duration(seconds: 2));
+      if (context.mounted) Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -109,23 +135,43 @@ class _LoginPageState extends State<LoginPage> {
         height: double.infinity,
         width: double.infinity,
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _emailField(),
-            _passwordField(),
-            _errorMessage(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _submitButton(),
-                _loginOrRegisterButton(),
-                if (isLogin) _loginGoogleButton(),
-              ],
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _emailField(),
+              _passwordField(),
+              _errorMessage(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _submitButton(),
+                ],
+              ),
+            ],
+          ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: isLogin ? 0 : 1,
+        selectedItemColor: Colors.green.shade200,
+        onTap: (value) {
+          setState(() {
+            isLogin = value == 0;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.login),
+            label: "Login",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.app_registration_rounded),
+            label: "Register",
+          ),
+        ],
       ),
     );
   }

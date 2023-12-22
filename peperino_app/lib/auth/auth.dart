@@ -6,12 +6,6 @@ import 'package:flutter/foundation.dart';
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  User? get currentUser => _firebaseAuth.currentUser;
-
-  bool get isLoggedIn => currentUser != null;
-
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
-
   Future<UserCredential> signInWithEmailAndPassword(
       {required String email, required String password}) async {
     return await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
@@ -24,11 +18,12 @@ class Auth {
 
   Future<UserCredential> signInWithProvider(String provider) async {
     if (provider == "google") {
+      var authProvider = GoogleAuthProvider();
       if (kIsWeb) {
-        return await _firebaseAuth.signInWithPopup(GoogleAuthProvider());
+        return await _firebaseAuth.signInWithPopup(authProvider);
       }
       if (Platform.isAndroid) {
-        return await _firebaseAuth.signInWithProvider(GoogleAuthProvider());
+        return await _firebaseAuth.signInWithProvider(authProvider);
       }
     }
 
