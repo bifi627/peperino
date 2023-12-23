@@ -6,6 +6,6 @@ targets:
     builders:
       swagger_dart_code_generator:
         options:
-          input_folder: "lib/_swagger"
-          output_folder: "lib/_generated/"
+          input_folder: "lib/api/_swagger"
+          output_folder: "lib/api/_generated/"
           # use_path_for_request_names: false

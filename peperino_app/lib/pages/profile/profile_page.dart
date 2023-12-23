@@ -1,8 +1,8 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
+import 'package:peperino_app/api/auth_api.dart';
 
 import '../../auth/bloc/auth_bloc.dart';
 import '../../components/app_bar.dart';
@@ -17,9 +17,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   Future<void> fetch() async {
-    var response = await http.get(Uri.parse('http://localhost:5000/api/HealthCheck'));
-    var data = jsonDecode(response.body);
-    debugPrint(data.toString());
+    var responseSwagger = await PeperinoClient.api.apiHealthCheckGet();
+    debugPrint(responseSwagger.body.toString());
+    var responseRooms = await PeperinoClient.api.apiRoomGet();
+    debugPrint(responseRooms.body.toString());
   }
 
   @override
