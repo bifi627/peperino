@@ -99,7 +99,9 @@ Map<String, dynamic> _$CheckListItemTypeOutDtoToJson(
 CheckListOutDto _$CheckListOutDtoFromJson(Map<String, dynamic> json) =>
     CheckListOutDto(
       id: json['id'] as int,
-      room: RoomOutDto.fromJson(json['room'] as Map<String, dynamic>),
+      room: json['room'] == null
+          ? null
+          : RoomOutDto.fromJson(json['room'] as Map<String, dynamic>),
       name: json['name'] as String,
       slug: json['slug'] as String,
       entities: (json['entities'] as List<dynamic>?)
@@ -114,7 +116,7 @@ CheckListOutDto _$CheckListOutDtoFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$CheckListOutDtoToJson(CheckListOutDto instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'room': instance.room.toJson(),
+      'room': instance.room?.toJson(),
       'name': instance.name,
       'slug': instance.slug,
       'entities': instance.entities.map((e) => e.toJson()).toList(),

@@ -9,8 +9,7 @@ namespace Peperino.Dtos.CheckList
         [Required]
         public int Id { get; set; }
 
-        [Required]
-        public RoomOutDto Room { get; set; }
+        public RoomOutDto? Room { get; set; }
 
         [Required]
         public string Name { get; set; } = string.Empty;

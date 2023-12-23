@@ -1577,7 +1577,6 @@
           "id",
           "isFavorite",
           "name",
-          "room",
           "slug"
         ],
         "type": "object",

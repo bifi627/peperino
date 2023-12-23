@@ -6,7 +6,7 @@ final class PeperinoClient {
   factory PeperinoClient() => _instance;
 
   static final Swagger _api = Swagger.create(
-    baseUrl: Uri.parse("http://localhost:5000"),
+    baseUrl: Uri.parse("http://192.168.0.106:5000"),
     httpClient: AuthorizedClient(),
   );
 

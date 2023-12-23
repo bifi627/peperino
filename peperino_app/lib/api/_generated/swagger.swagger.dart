@@ -1020,7 +1020,7 @@ extension $CheckListItemTypeOutDtoExtension on CheckListItemTypeOutDto {
 class CheckListOutDto {
   const CheckListOutDto({
     required this.id,
-    required this.room,
+    this.room,
     required this.name,
     required this.slug,
     required this.entities,
@@ -1037,7 +1037,7 @@ class CheckListOutDto {
   @JsonKey(name: 'id')
   final int id;
   @JsonKey(name: 'room')
-  final RoomOutDto room;
+  final RoomOutDto? room;
   @JsonKey(name: 'name')
   final String name;
   @JsonKey(name: 'slug')
@@ -1113,7 +1113,7 @@ extension $CheckListOutDtoExtension on CheckListOutDto {
 
   CheckListOutDto copyWithWrapped(
       {Wrapped<int>? id,
-      Wrapped<RoomOutDto>? room,
+      Wrapped<RoomOutDto?>? room,
       Wrapped<String>? name,
       Wrapped<String>? slug,
       Wrapped<List<BaseCheckListItemOutDto>>? entities,
