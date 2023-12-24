@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peperino_app/pages/appInfo/appInfo_page.dart';
 
 import '../auth/bloc/auth_bloc.dart';
 import '../pages/auth/login_auth_picker.dart';
@@ -30,8 +31,21 @@ class _MainAppDrawerState extends State<MainAppDrawer> {
                 title: const Text("Login"),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const LoginAuthPickerPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginAuthPickerPage()),
+                  );
+                },
+              ),
+              const Divider(),
+              ListTile(
+                title: const Text("App Info"),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AppInfoPage()),
+                  );
                 },
               ),
             ],
