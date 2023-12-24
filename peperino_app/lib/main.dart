@@ -1,10 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:peperino_app/auth/bloc/auth_bloc.dart';
 import 'package:peperino_app/pages/home/home_page.dart';
 
 import 'firebase_options.dart';
+import 'state/auth/bloc/auth_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +19,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // AuthBloc _authBloc = AuthBloc();
-
     return BlocProvider(
       create: (context) => AuthBloc(),
       child: MaterialApp(

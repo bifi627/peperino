@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:peperino_app/api/auth_api.dart';
 
-import '../../auth/bloc/auth_bloc.dart';
 import '../../components/app_bar.dart';
 import '../../components/app_drawer.dart';
+import '../../state/auth/bloc/auth_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

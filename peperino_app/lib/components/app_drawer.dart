@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:peperino_app/pages/appInfo/appInfo_page.dart';
 
-import '../auth/bloc/auth_bloc.dart';
 import '../pages/auth/login_auth_picker.dart';
+import '../state/auth/bloc/auth_bloc.dart';
 
 class MainAppDrawer extends StatefulWidget {
   const MainAppDrawer({super.key});

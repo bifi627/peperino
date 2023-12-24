@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import '../auth/auth.dart';
+import '../state/auth/auth.dart';
 
 class AuthorizedClient extends http.BaseClient {
   final _httpClient = http.Client();

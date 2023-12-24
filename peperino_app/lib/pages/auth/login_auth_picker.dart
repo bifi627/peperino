@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
-import '../../auth/auth.dart';
+import '../../state/auth/auth.dart';
 import 'login_register_page.dart';
 
 class LoginAuthPickerPage extends StatefulWidget {

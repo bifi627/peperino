@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../auth/bloc/auth_bloc.dart';
 import '../pages/profile/profile_page.dart';
+import '../state/auth/bloc/auth_bloc.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;

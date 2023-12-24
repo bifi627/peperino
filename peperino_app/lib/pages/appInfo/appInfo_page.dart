@@ -11,8 +11,10 @@ import 'package:peperino_app/updater/metadata.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../auth/bloc/auth_bloc.dart';
 import '../../components/app_bar.dart';
+import '../../state/auth/bloc/auth_bloc.dart';
+import 'components/app_info.dart';
+import 'components/update_info.dart';
 
 class AppInfoPage extends StatefulWidget {
   const AppInfoPage({super.key});
@@ -120,38 +122,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("appName"),
-                            Text(_packageInfo?.appName ?? ""),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("packageName"),
-                            Text(_packageInfo?.packageName ?? ""),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("version"),
-                            Text(_packageInfo?.version ?? ""),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("buildNumber"),
-                            Text(_packageInfo?.buildNumber ?? ""),
-                          ],
-                        ),
-                      ],
-                    )
+                    AppInfo(packageInfo: _packageInfo),
                   ],
                 ),
                 const Divider(),
@@ -164,31 +135,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                   },
                   child: const Text('Check Update'),
                 ),
-                if (hasUpdate)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("version"),
-                              Text(_metaData?.elements[0].versionName ?? ""),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("buildNumber"),
-                              Text(_metaData?.elements[0].versionCode.toString() ?? ""),
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                if (hasUpdate) UpdateInfo(metaData: _metaData),
                 if (hasUpdate) const Divider(),
                 if (hasUpdate)
                   ElevatedButton(
