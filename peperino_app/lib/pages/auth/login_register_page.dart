@@ -24,6 +24,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   final TextEditingController _controllerEmail = TextEditingController();
   Widget _emailField() {
     return TextFormField(
+      autofocus: true,
       controller: _controllerEmail,
       validator: (value) {
         if (value == null || value.isEmpty) {

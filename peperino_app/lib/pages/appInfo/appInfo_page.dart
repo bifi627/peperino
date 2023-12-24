@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +29,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
   PackageInfo? _packageInfo;
   UpdateMetaDataModel? _metaData;
 
+  bool canUpdate = !kIsWeb && Platform.isAndroid;
+
   bool hasUpdate = false;
 
   double downloadPercent = 0.0;
@@ -41,11 +45,13 @@ class _AppInfoPageState extends State<AppInfoPage> {
       canInstall = false;
       downloadPercent = 0.0;
     });
-    var metadata = await checkUpdate();
-    setState(() {
-      _metaData = metadata;
-      hasUpdate = int.parse(_packageInfo?.buildNumber ?? "0") < metadata!.elements[0].versionCode;
-    });
+    if (canUpdate) {
+      var metadata = await checkUpdate();
+      setState(() {
+        _metaData = metadata;
+        hasUpdate = int.parse(_packageInfo?.buildNumber ?? "0") < metadata!.elements[0].versionCode;
+      });
+    }
   }
 
   Future<void> downloadUpdate() async {
@@ -125,16 +131,17 @@ class _AppInfoPageState extends State<AppInfoPage> {
                     AppInfo(packageInfo: _packageInfo),
                   ],
                 ),
-                const Divider(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(30),
+                if (canUpdate) const Divider(),
+                if (canUpdate)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(30),
+                    ),
+                    onPressed: () {
+                      fetch();
+                    },
+                    child: const Text('Check Update'),
                   ),
-                  onPressed: () {
-                    fetch();
-                  },
-                  child: const Text('Check Update'),
-                ),
                 if (hasUpdate) UpdateInfo(metaData: _metaData),
                 if (hasUpdate) const Divider(),
                 if (hasUpdate)

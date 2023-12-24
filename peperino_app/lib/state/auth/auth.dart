@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  Stream authStateChanges() => _firebaseAuth.authStateChanges();
+
   Future<String?> getAuthToken() async {
     return _firebaseAuth.currentUser?.getIdToken();
   }

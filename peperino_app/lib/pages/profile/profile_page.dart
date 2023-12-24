@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:peperino_app/api/auth_api.dart';
 
 import '../../components/app_bar.dart';
-import '../../components/app_drawer.dart';
+import '../../state/auth/auth.dart';
 import '../../state/auth/bloc/auth_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -36,15 +36,28 @@ class _ProfilePageState extends State<ProfilePage> {
         var display = state.user?.displayName ?? state.user?.email ?? "User";
         return Scaffold(
           appBar: MainAppBar(title: "Profile $display"),
-          drawer: const MainAppDrawer(),
+          // drawer: const MainAppDrawer(),
           body: Container(
             height: double.infinity,
             width: double.infinity,
             padding: const EdgeInsets.all(20),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [],
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(30),
+                  ),
+                  onPressed: () async {
+                    await Auth().signOut();
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
+                  },
+                  child: const Text("Logout"),
+                )
+              ],
             ),
           ),
         );
