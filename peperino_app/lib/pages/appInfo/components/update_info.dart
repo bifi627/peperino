@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:peperino_app/updater/metadata.dart';
+import 'package:peperino_app/models/updater/metadata.dart';
 
 class UpdateInfo extends StatelessWidget {
   const UpdateInfo({
