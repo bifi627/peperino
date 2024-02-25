@@ -23,12 +23,14 @@ export class AppFrameState extends BaseState {
 
     public userInit() {
         const user = getAuth().currentUser;
-        const drawerItems: DrawerItem[] = []
+        const drawerItems: DrawerItem[] = [];
 
         const home = new DrawerItem();
         home.text = "Peperino";
         home.icon = <Home />;
-        home.action = async () => { await this.router?.push(KnownRoutes.Root()) };
+        home.action = async () => {
+            await this.router?.push(KnownRoutes.Root());
+        };
         home.childItems = [];
 
         drawerItems.push(home);
@@ -36,19 +38,23 @@ export class AppFrameState extends BaseState {
         const rooms = new DrawerItem();
         rooms.text = "Räume";
         rooms.icon = <Groups />;
-        rooms.action = async () => { await this.router?.push(KnownRoutes.Room()) };
+        rooms.action = async () => {
+            await this.router?.push(KnownRoutes.Room());
+        };
         rooms.childItems = [];
         user && drawerItems.push(rooms);
 
         const v2 = new DrawerItem();
-        rooms.text = "v2";
-        rooms.icon = <Explore />;
-        rooms.action = async () => { await this.router?.push(KnownRoutes.Root() + "/v2") };
-        rooms.childItems = [];
+        v2.text = "v2";
+        v2.icon = <Explore />;
+        v2.action = async () => {
+            await this.router?.push(KnownRoutes.Root() + "/v2");
+        };
+        v2.childItems = [];
         drawerItems.push(v2);
 
         if (isObservableArray(this.drawerItems)) {
-            this.drawerItems.replace(drawerItems)
+            this.drawerItems.replace(drawerItems);
         }
 
         return Promise.resolve();
@@ -60,8 +66,7 @@ export class AppFrameState extends BaseState {
         }, delay);
         try {
             await action();
-        }
-        finally {
+        } finally {
             clearTimeout(t);
             this.showLoading = false;
         }

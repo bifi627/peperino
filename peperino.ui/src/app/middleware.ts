@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { NEXTJS_FIREBASE_COOKIE } from '../lib/auth/shared/constants';
 import { KnownRoutes } from '../lib/routing/knownRoutes';
 
-
-
 const isProtectedRoute = (pathname: string) => {
-    if (pathname === '/v2/room') {
+    if (pathname.startsWith('/v2/rooms')) {
         return true
     }
 

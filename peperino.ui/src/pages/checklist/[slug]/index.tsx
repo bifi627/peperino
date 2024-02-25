@@ -29,7 +29,7 @@ const CheckListPage = (props: Props) => {
     const appFrame = useApplicationState().getAppFrame();
 
     const router = useRouter();
-    const slug = router.query["slug"] as string ?? props.slug;
+    const slug = (router.query["slug"] as string) ?? props.slug;
 
     const queryClient = useQueryClient();
     const checkListQuery = CheckListQueries.useGetCheckListQuery(slug);
@@ -70,11 +70,15 @@ const CheckListPage = (props: Props) => {
     // );
 
     if (!checkList || loading) {
-        return <AppFrame><FullLoadingPage /></AppFrame>;
+        return (
+            <AppFrame>
+                <FullLoadingPage />
+            </AppFrame>
+        );
     }
 
-    const checkedItems = checkList.entities.filter(e => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
-    const uncheckedItems = checkList.entities.filter(e => !e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
+    const checkedItems = checkList.entities.filter((e) => e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
+    const uncheckedItems = checkList.entities.filter((e) => !e.checked).sort((a, b) => a.sortIndex - b.sortIndex);
 
     const moveItems = async (sourceArray: BaseCheckListItemOutDto[], from: number, to: number) => {
         const tempList = [...sourceArray];
@@ -84,28 +88,32 @@ const CheckListPage = (props: Props) => {
         });
 
         await arrangeItemsMutation.mutateAsync({ items: checkList.entities });
-    }
+    };
 
     const onUncheckedDragEnd = (result: DropResult) => {
         if (result.destination) {
-            moveItems(uncheckedItems, result.source.index, result.destination.index)
+            moveItems(uncheckedItems, result.source.index, result.destination.index);
         }
-    }
+    };
 
     const onCheckedDragEnd = (result: DropResult) => {
         if (result.destination) {
-            moveItems(checkedItems, result.source.index, result.destination.index)
+            moveItems(checkedItems, result.source.index, result.destination.index);
         }
-    }
+    };
 
     const getAutoCompleteOptions = (inputValue: string) => {
         if (inputValue.length < 3) {
             return [];
         }
-        const uniqueItems = new Set(checkList.entities.filter(e => isTextItem(e) || isInventoryItem(e)).map(e => isTextItem(e) || isInventoryItem(e) ? e.text : ""));
+        const uniqueItems = new Set(
+            checkList.entities
+                .filter((e) => isTextItem(e) || isInventoryItem(e))
+                .map((e) => (isTextItem(e) || isInventoryItem(e) ? e.text : ""))
+        );
         const result = [...uniqueItems.values()];
         return result;
-    }
+    };
 
     const openImageDialog = async () => {
         queryClient.setDefaultOptions({ queries: { refetchOnWindowFocus: false } });
@@ -113,7 +121,7 @@ const CheckListPage = (props: Props) => {
         const files = await selectFile("image/*");
 
         await appFrame.withLoadingScreen(async () => {
-            if (files.length > 0) {
+            if (Array.isArray(files) && files.length > 0) {
                 var file = files[0];
                 var fileContent = await toBase64(file);
                 await ClientApi.checkListItem.addImageItem(slug, { title: "TEST", imageBase64: fileContent });
@@ -121,59 +129,54 @@ const CheckListPage = (props: Props) => {
                 await queryClient.invalidateQueries(CheckListQueries.computeQueryKey(slug));
             }
         });
-    }
+    };
 
     const addTextItem = async (text: string) => {
-        const existing = checkList.entities.find(e => isTextItem(e) && e.text === text) as TextCheckListItemOutDto;
+        const existing = checkList.entities.find((e) => isTextItem(e) && e.text === text) as TextCheckListItemOutDto;
         // If this text already exists, we want to move it to the latest unchecked element
         if (existing && existing.text.length >= 3) {
             if (existing.checked === true) {
                 await onCheck(existing);
-            }
-            else {
-                const sorted = uncheckedItems.sort(i => i.sortIndex);
+            } else {
+                const sorted = uncheckedItems.sort((i) => i.sortIndex);
                 const from = sorted.indexOf(existing);
                 const to = sorted.length + 1;
                 existing.sortIndex = uncheckedItems.length + 1;
 
                 await moveItems(sorted, from, to);
             }
-        }
-        else {
+        } else {
             await addTextItemMutation.mutateAsync({ text: text });
         }
     };
 
-    const addLinkItem = async ({ inputValue, linkValue }: { inputValue: string, linkValue: string }) => {
-        await addLinkItemMutation.mutateAsync({ link: linkValue, title: inputValue })
-    }
+    const addLinkItem = async ({ inputValue, linkValue }: { inputValue: string; linkValue: string }) => {
+        await addLinkItemMutation.mutateAsync({ link: linkValue, title: inputValue });
+    };
 
     const onDeleteItem = async (item: BaseCheckListItemOutDto) => {
         await deleteItemMutation.mutateAsync(item.id);
-    }
+    };
 
     const onUpdateItem = async (item: BaseCheckListItemOutDto) => {
         await updateItemMutation.mutateAsync(item);
-    }
+    };
 
     const onCheck = async (item: BaseCheckListItemOutDto) => {
         if (item.checked === false) {
             if (checkedItems.length === 0) {
                 item.sortIndex = 0;
-            }
-            else {
-                item.sortIndex = Math.min(...checkedItems.map(i => i.sortIndex));
-                checkedItems.forEach(item => {
+            } else {
+                item.sortIndex = Math.min(...checkedItems.map((i) => i.sortIndex));
+                checkedItems.forEach((item) => {
                     item.sortIndex++;
                 });
             }
-        }
-        else {
+        } else {
             if (uncheckedItems.length === 0) {
                 item.sortIndex = 0;
-            }
-            else {
-                item.sortIndex = Math.max(...uncheckedItems.map(i => i.sortIndex)) + 1;
+            } else {
+                item.sortIndex = Math.max(...uncheckedItems.map((i) => i.sortIndex)) + 1;
             }
         }
 
@@ -185,14 +188,17 @@ const CheckListPage = (props: Props) => {
         id: "favorite",
         action: async () => {
             if (checkList) {
-                await ClientApi.favorites.updateFavoriteCheckList(checkList.slug, { slug: checkList.slug, favorite: !checkList.isFavorite });
+                await ClientApi.favorites.updateFavoriteCheckList(checkList.slug, {
+                    slug: checkList.slug,
+                    favorite: !checkList.isFavorite,
+                });
                 await checkListQuery.refetch();
             }
         },
         keepMenuOpen: true,
         icon: checkList.isFavorite ? <Star color="primary" /> : <Star />,
         text: "Favorit",
-    }
+    };
 
     const settingsAction = {
         id: "settings",
@@ -203,7 +209,7 @@ const CheckListPage = (props: Props) => {
         },
         icon: <Settings />,
         text: "Einstellungen",
-    }
+    };
 
     return (
         <AppFrame toolbarText={checkList.name} menuActions={[settingsAction, favoritesAction]}>
@@ -211,7 +217,16 @@ const CheckListPage = (props: Props) => {
                 <SortableList
                     data={uncheckedItems}
                     onDragEnd={onUncheckedDragEnd}
-                    renderData={item => <CheckListItem onCheck={onCheck} onUpdate={onUpdateItem} onDelete={onDeleteItem} key={item.id} checkListSlug={checkList.slug} item={item} />}
+                    renderData={(item) => (
+                        <CheckListItem
+                            onCheck={onCheck}
+                            onUpdate={onUpdateItem}
+                            onDelete={onDeleteItem}
+                            key={item.id}
+                            checkListSlug={checkList.slug}
+                            item={item}
+                        />
+                    )}
                 />
 
                 <EnhancedInputField
@@ -219,13 +234,11 @@ const CheckListPage = (props: Props) => {
                     onAddTextItem={addTextItem}
                     onAddLinkItem={addLinkItem}
                     onOpenImagePicker={openImageDialog}
-                    onIsExistingItem={value => {
-                        const exists = checkList.entities.filter(e =>
-                            isTextItem(e) ||
-                            isInventoryItem(e)
-                        ).find(e =>
-                            (isTextItem(e) || isInventoryItem(e)) &&
-                            e.text === value) !== undefined;
+                    onIsExistingItem={(value) => {
+                        const exists =
+                            checkList.entities
+                                .filter((e) => isTextItem(e) || isInventoryItem(e))
+                                .find((e) => (isTextItem(e) || isInventoryItem(e)) && e.text === value) !== undefined;
 
                         return exists;
                     }}
@@ -234,14 +247,25 @@ const CheckListPage = (props: Props) => {
                 <SortableList
                     data={checkedItems}
                     onDragEnd={onCheckedDragEnd}
-                    renderData={item => <CheckListItem onCheck={onCheck} onUpdate={onUpdateItem} onDelete={onDeleteItem} key={item.id} checkListSlug={checkList.slug} item={item} />}
+                    renderData={(item) => (
+                        <CheckListItem
+                            onCheck={onCheck}
+                            onUpdate={onUpdateItem}
+                            onDelete={onDeleteItem}
+                            key={item.id}
+                            checkListSlug={checkList.slug}
+                            item={item}
+                        />
+                    )}
                 />
             </Box>
-            <Box sx={{
-                position: "sticky",
-                bottom: "8px",
-                width: "100%"
-            }}>
+            <Box
+                sx={{
+                    position: "sticky",
+                    bottom: "8px",
+                    width: "100%",
+                }}
+            >
                 {/* {connectionState !== "Connected" && listJoined && (
                     <Box color="error" sx={{ width: "12px", height: "12px", margin: 2, backgroundColor: theme.palette.error.main, borderRadius: "22px" }} />
                 )} */}
@@ -251,4 +275,3 @@ const CheckListPage = (props: Props) => {
 };
 
 export default CheckListPage;
-

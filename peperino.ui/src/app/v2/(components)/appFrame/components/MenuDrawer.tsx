@@ -1,4 +1,4 @@
-import { ChevronLeft } from "@mui/icons-material";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { Box, Divider, Drawer, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { DrawerItemInterface } from "../../../../../components/appFrame/Drawer/DrawerItem";
 import { wait } from "../../../../../lib/helper/common";
@@ -32,6 +32,15 @@ export const MenuDrawer = (props: Props) => {
                 {props.items?.map((drawerItem, index) => (
                     <div key={index}>
                         <ListItem onClick={async () => await onItemClicked(drawerItem)}>
+                            {/*  */}
+                            <ChevronRight
+                                sx={{
+                                    visibility:
+                                        (drawerItem.childItems?.filter((i) => i.visible).length ?? 0) > 0
+                                            ? undefined
+                                            : "hidden",
+                                }}
+                            />
                             <ListItemIcon>{drawerItem.icon}</ListItemIcon>
                             <ListItemText primary={drawerItem.text} />
                         </ListItem>

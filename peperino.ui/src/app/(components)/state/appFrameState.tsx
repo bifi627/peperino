@@ -2,7 +2,6 @@ import { TextSnippetOutlined, TextureSharp } from "@mui/icons-material";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { DrawerItemInterface } from "../../../components/appFrame/Drawer/DrawerItem";
-import { useAuthStore } from "./authState";
 
 type LoadingState = "Full" | "Overlay";
 
@@ -22,12 +21,11 @@ type AppFrameStore = {
     setMenuOpened: (open: boolean) => void;
     menuItems: DrawerItemInterface[];
     toggleMenuItemOpened: (index: number) => void;
-    loggedIn: () => boolean;
 };
 
 export const useAppFrameStore = create<AppFrameStore>()(
     immer((set) => ({
-        title: "Peperino",
+        title: "Peperino v2",
         setTitle: (title: string) => set({ title }),
         //
         loadingState: undefined,
@@ -77,6 +75,5 @@ export const useAppFrameStore = create<AppFrameStore>()(
                 });
             });
         },
-        loggedIn: () => useAuthStore.getState().isUserLoggedIn,
     }))
 );

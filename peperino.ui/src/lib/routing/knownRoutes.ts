@@ -36,5 +36,7 @@ export module KnownRoutes {
             }
             return `/v2/auth/logout`;
         }
+        export const RoomOverview = () => "/v2/rooms";
+        export const Room = (slug: string) => `/v2/rooms/${slug}`;
     }
 }

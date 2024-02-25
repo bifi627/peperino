@@ -1,14 +1,17 @@
+import { User } from "firebase/auth";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 interface AuthStore {
     isUserLoggedIn: boolean;
-    setLogin: (loggedIn: boolean) => void;
+    user?: User;
+    setLogin: (user?: User) => void;
 }
 
 export const useAuthStore = create<AuthStore>()(
     immer((set) => ({
         isUserLoggedIn: false,
-        setLogin: (loggedIn) => set({ isUserLoggedIn: loggedIn }),
+        user: undefined,
+        setLogin: (user) => set({ isUserLoggedIn: Boolean(user), user }),
     }))
 );
